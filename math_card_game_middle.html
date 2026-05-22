@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>중학교 수학 카드 뒤집기 게임</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Malgun Gothic', sans-serif;
+  background: radial-gradient(ellipse at top, #0d1b2a 0%, #080c14 60%);
+  min-height: 100vh;
+  color: #fff;
+  overflow-x: hidden;
+}
+
+.screen { display: none; }
+.screen.active { display: block; }
+
+/* ── GRADE SELECT ── */
+#s-grade {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 16px;
+}
+
+.main-title {
+  font-size: 2.2rem;
+  font-weight: 900;
+  background: linear-gradient(90deg, #f7971e, #ffd200);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-align: center;
+  margin-bottom: 8px;
+  letter-spacing: 1px;
+}
+
+.main-sub { color: #6a85b0; text-align: center; margin-bottom: 48px; font-size: 0.95rem; }
+
+.grade-cards { display: flex; gap: 28px; flex-wrap: wrap; justify-content: center; }
+
+.grade-card {
+  width: 230px;
+  padding: 36px 24px 28px;
+  border-radius: 22px;
+  cursor: pointer;
+  text-align: center;
+  border: 2px solid transparent;
+  transition: transform .22s, box-shadow .22s;
+  position: relative;
+  overflow: hidden;
+}
+
+.grade-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(255,255,255,.08) 0%, transparent 70%);
+}
+
+.grade-card:hover { transform: translateY(-8px); }
+
+.gc1 { background: linear-gradient(145deg,#002d4a,#0066a0); border-color: #00b4d8; box-shadow: 0 8px 30px rgba(0,180,216,.3); }
+.gc1:hover { box-shadow: 0 14px 44px rgba(0,180,216,.5); }
+.gc2 { background: linear-gradient(145deg,#163326,#256b45); border-color: #43c97e; box-shadow: 0 8px 30px rgba(67,201,126,.3); }
+.gc2:hover { box-shadow: 0 14px 44px rgba(67,201,126,.5); }
+.gc3 { background: linear-gradient(145deg,#25094a,#5d17a0); border-color: #a66cff; box-shadow: 0 8px 30px rgba(166,108,255,.3); }
+.gc3:hover { box-shadow: 0 14px 44px rgba(166,108,255,.5); }
+
+.gc-icon { font-size: 3.2rem; margin-bottom: 14px; }
+.gc-name { font-size: 1.45rem; font-weight: bold; margin-bottom: 10px; }
+.gc-desc { font-size: 0.78rem; color: rgba(255,255,255,.65); line-height: 1.7; }
+.gc-badge {
+  display: inline-block; margin-top: 14px;
+  font-size: 0.72rem; font-weight: bold;
+  padding: 3px 12px; border-radius: 12px;
+  background: rgba(255,255,255,.15);
+}
+
+/* ── UNIT SELECT ── */
+#s-unit { padding: 28px 20px 48px; max-width: 880px; margin: 0 auto; }
+
+.back-btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 18px; border: 1px solid rgba(255,255,255,.25);
+  border-radius: 24px; background: rgba(255,255,255,.07);
+  color: rgba(255,255,255,.7); cursor: pointer;
+  font-size: 0.88rem; font-family: inherit;
+  transition: all .18s; margin-bottom: 28px;
+}
+.back-btn:hover { border-color: rgba(255,255,255,.6); color: #fff; background: rgba(255,255,255,.12); }
+
+.section-title { font-size: 1.6rem; font-weight: bold; margin-bottom: 6px; }
+.section-sub { color: #6a85b0; font-size: 0.88rem; margin-bottom: 26px; }
+
+.unit-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(230px,1fr)); gap: 16px; }
+
+.unit-btn {
+  padding: 22px 18px; border-radius: 16px;
+  border: 2px solid transparent; cursor: pointer;
+  text-align: left; font-family: inherit;
+  transition: transform .2s, box-shadow .2s, border-color .2s;
+  position: relative; background: none;
+}
+.unit-btn:hover { transform: translateY(-4px); }
+
+.ub1 { background: linear-gradient(145deg,#002d4a88,#0066a088); border-color: #00b4d855; }
+.ub1:hover { border-color: #00b4d8; box-shadow: 0 8px 28px rgba(0,180,216,.35); }
+.ub2 { background: linear-gradient(145deg,#16332688,#256b4588); border-color: #43c97e55; }
+.ub2:hover { border-color: #43c97e; box-shadow: 0 8px 28px rgba(67,201,126,.35); }
+.ub3 { background: linear-gradient(145deg,#25094a88,#5d17a088); border-color: #a66cff55; }
+.ub3:hover { border-color: #a66cff; box-shadow: 0 8px 28px rgba(166,108,255,.35); }
+
+.ub-icon { font-size: 1.9rem; margin-bottom: 10px; }
+.ub-name { font-size: 1.05rem; font-weight: bold; color: #fff; }
+.ub-count { font-size: 0.76rem; color: rgba(255,255,255,.55); margin-top: 5px; }
+.ub-best {
+  position: absolute; top: 12px; right: 14px;
+  font-size: 0.68rem; background: rgba(255,210,0,.18);
+  color: #ffd200; border-radius: 10px; padding: 2px 9px;
+}
+
+/* ── GAME SCREEN ── */
+#s-game { padding: 20px 16px 40px; max-width: 940px; margin: 0 auto; }
+
+.game-header { display: flex; align-items: center; gap: 14px; margin-bottom: 18px; flex-wrap: wrap; }
+.game-title { font-size: 1.25rem; font-weight: bold; flex: 1; }
+.grade-badge { font-size: 0.8rem; padding: 4px 14px; border-radius: 14px; font-weight: bold; }
+
+.stats-bar {
+  display: flex; align-items: center;
+  gap: 0; margin-bottom: 18px;
+  background: rgba(255,255,255,.05);
+  border-radius: 14px; overflow: hidden;
+}
+
+.stat-block { text-align: center; padding: 12px 20px; border-right: 1px solid rgba(255,255,255,.08); }
+.stat-val { font-size: 1.5rem; font-weight: bold; color: #ffd200; line-height: 1; }
+.stat-lbl { font-size: 0.68rem; color: #6a85b0; margin-top: 3px; }
+
+.progress-wrap { flex: 1; padding: 0 20px; }
+.progress-track { height: 9px; background: rgba(255,255,255,.1); border-radius: 5px; overflow: hidden; }
+.progress-fill  { height: 100%; border-radius: 5px; background: linear-gradient(90deg,#f7971e,#ffd200); width: 0%; transition: width .4s ease; }
+.progress-label { font-size: 0.72rem; color: #6a85b0; margin-top: 5px; text-align: right; }
+
+/* ── CARDS ── */
+#board { display: grid; gap: 10px; }
+
+.card { perspective: 900px; cursor: pointer; height: 112px; }
+
+.card-inner {
+  position: relative; width: 100%; height: 100%;
+  transform-style: preserve-3d;
+  transition: transform .42s cubic-bezier(.4,2,.55,.9);
+  border-radius: 13px;
+}
+.card.flipped .card-inner,
+.card.matched .card-inner { transform: rotateY(180deg); }
+
+.card-front, .card-back {
+  position: absolute; inset: 0; border-radius: 13px;
+  backface-visibility: hidden;
+  display: flex; align-items: center; justify-content: center;
+  text-align: center; padding: 8px; user-select: none;
+}
+
+.card-front {
+  background: linear-gradient(145deg, #151e30, #1e2d48);
+  border: 2px solid #2a3f60;
+  font-size: 2rem; color: #3a5a90;
+}
+
+.card-back { transform: rotateY(180deg); font-weight: bold; line-height: 1.38; }
+
+.card-back.term {
+  font-size: 1rem;
+  background: linear-gradient(145deg, #0a5e5e, #0c9e84);
+  border: 2px solid #14c9a0; color: #fff;
+}
+.card-back.def {
+  font-size: 0.71rem;
+  background: linear-gradient(145deg, #3a0d66, #6b27b5);
+  border: 2px solid #9b5de5; color: #f0e6ff;
+}
+
+.card.matched .card-back {
+  border-color: #ffd200 !important;
+  box-shadow: 0 0 20px rgba(255,210,0,.55);
+}
+
+.card.wrong .card-inner { animation: shake .38s ease; }
+
+@keyframes shake {
+  0%,100% { transform: rotateY(180deg) translateX(0); }
+  30%      { transform: rotateY(180deg) translateX(-9px); }
+  70%      { transform: rotateY(180deg) translateX(9px); }
+}
+
+/* ── MODAL ── */
+#modal {
+  position: fixed; inset: 0; background: rgba(0,0,0,.72);
+  display: flex; align-items: center; justify-content: center; z-index: 300;
+}
+#modal[hidden] { display: none; }
+
+.modal-box {
+  background: linear-gradient(145deg, #0d1520, #172035);
+  border: 2px solid #ffd200;
+  border-radius: 26px; padding: 38px 48px;
+  text-align: center; width: 90%; max-width: 380px;
+  box-shadow: 0 0 60px rgba(255,210,0,.3);
+  animation: popIn .32s cubic-bezier(.4,2,.55,.9);
+}
+
+@keyframes popIn { from { transform: scale(.55); opacity:0; } to { transform: scale(1); opacity:1; } }
+
+.modal-box h2 { font-size: 1.9rem; color: #ffd200; margin-bottom: 6px; }
+.modal-stars  { font-size: 2.2rem; margin: 8px 0; }
+.modal-grade-msg { font-size: 1.1rem; font-weight: bold; color: #fff; margin: 8px 0 14px; }
+.modal-stat   { font-size: 0.95rem; color: #99aac0; margin: 5px 0; }
+.modal-best   { font-size: 0.9rem; color: #ffd200; margin-top: 8px; }
+
+.modal-btns { margin-top: 22px; display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+.mbtn {
+  padding: 11px 22px; border: none; border-radius: 26px;
+  font-size: 0.92rem; cursor: pointer; font-family: inherit; font-weight: bold;
+  transition: transform .15s;
+}
+.mbtn:hover { transform: scale(1.06); }
+.mbtn-primary   { background: linear-gradient(90deg,#f7971e,#ffd200); color: #111; }
+.mbtn-secondary { background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.3); color: #fff; }
+.mbtn-tertiary  { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.15); color: rgba(255,255,255,.7); }
+
+/* Color helpers */
+.c1 { color: #00b4d8; } .c2 { color: #43c97e; } .c3 { color: #a66cff; }
+.bg1 { background: linear-gradient(90deg,#0077b6,#00b4d8); }
+.bg2 { background: linear-gradient(90deg,#256b45,#43c97e); }
+.bg3 { background: linear-gradient(90deg,#5d17a0,#a66cff); }
+
+@media (max-width: 580px) {
+  .grade-cards { flex-direction: column; align-items: center; }
+  .grade-card  { width: 90%; max-width: 320px; }
+  #board { grid-template-columns: repeat(3, 1fr) !important; }
+  .card  { height: 95px; }
+  .card-back.term { font-size: 0.83rem; }
+  .card-back.def  { font-size: 0.63rem; }
+  .stat-block { padding: 10px 12px; }
+  .stat-val   { font-size: 1.2rem; }
+  .modal-box  { padding: 28px 24px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ══ SCREEN 1: 학년 선택 ══ -->
+<div id="s-grade" class="screen active">
+  <div class="main-title">📐 중학교 수학 카드 게임</div>
+  <div class="main-sub">학년을 선택하고 수학 용어와 정의를 짝 맞추세요!</div>
+  <div class="grade-cards">
+    <div class="grade-card gc1" onclick="selectGrade(1)">
+      <div class="gc-icon">📘</div>
+      <div class="gc-name">중학교 1학년</div>
+      <div class="gc-desc">소인수분해 · 정수와 유리수<br>문자와 식 · 일차방정식<br>좌표와 그래프 · 기본 도형</div>
+      <div class="gc-badge">6개 단원 · 36쌍</div>
+    </div>
+    <div class="grade-card gc2" onclick="selectGrade(2)">
+      <div class="gc-icon">📗</div>
+      <div class="gc-name">중학교 2학년</div>
+      <div class="gc-desc">유리수와 순환소수 · 식의 계산<br>연립방정식 · 일차함수<br>도형의 성질 · 확률</div>
+      <div class="gc-badge">6개 단원 · 36쌍</div>
+    </div>
+    <div class="grade-card gc3" onclick="selectGrade(3)">
+      <div class="gc-icon">📙</div>
+      <div class="gc-name">중학교 3학년</div>
+      <div class="gc-desc">제곱근과 실수 · 인수분해<br>이차방정식 · 이차함수<br>삼각비 · 통계</div>
+      <div class="gc-badge">6개 단원 · 36쌍</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCREEN 2: 단원 선택 ══ -->
+<div id="s-unit" class="screen">
+  <div style="max-width:880px;margin:0 auto;padding:28px 20px 48px;">
+    <button class="back-btn" onclick="goGrade()">← 학년 선택</button>
+    <div id="unit-grade-title" class="section-title"></div>
+    <div class="section-sub">학습할 단원을 선택하세요</div>
+    <div id="unit-grid" class="unit-grid"></div>
+  </div>
+</div>
+
+<!-- ══ SCREEN 3: 게임 ══ -->
+<div id="s-game" class="screen">
+  <div style="max-width:940px;margin:0 auto;padding:20px 16px 48px;">
+    <div class="game-header">
+      <button class="back-btn" onclick="goUnit()">← 단원 선택</button>
+      <div class="game-title" id="game-title"></div>
+      <span class="grade-badge" id="grade-badge"></span>
+    </div>
+    <div class="stats-bar">
+      <div class="stat-block">
+        <div class="stat-val" id="v-moves">0</div>
+        <div class="stat-lbl">시도 횟수</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-val" id="v-match">0/6</div>
+        <div class="stat-lbl">매칭 성공</div>
+      </div>
+      <div class="stat-block">
+        <div class="stat-val" id="v-time">0</div>
+        <div class="stat-lbl">경과(초)</div>
+      </div>
+      <div class="progress-wrap">
+        <div class="progress-track"><div class="progress-fill" id="prog"></div></div>
+        <div class="progress-label" id="prog-label">0 / 6 쌍</div>
+      </div>
+    </div>
+    <div id="board"></div>
+  </div>
+</div>
+
+<!-- ══ MODAL ══ -->
+<div id="modal" hidden>
+  <div class="modal-box">
+    <h2>🎉 완료!</h2>
+    <div id="m-stars" class="modal-stars"></div>
+    <div id="m-msg"   class="modal-grade-msg"></div>
+    <div id="m-moves" class="modal-stat"></div>
+    <div id="m-time"  class="modal-stat"></div>
+    <div id="m-best"  class="modal-best"></div>
+    <div class="modal-btns">
+      <button class="mbtn mbtn-primary"    onclick="restartGame()">🔄 다시 풀기</button>
+      <button class="mbtn mbtn-secondary"  onclick="nextUnit()">다음 단원 →</button>
+      <button class="mbtn mbtn-tertiary"   onclick="goUnitFromModal()">📋 단원 목록</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ════════════════════════════════════════
+//  DATA — 학년별 단원별 용어 데이터
+// ════════════════════════════════════════
+const DATA = {
+  1: {
+    fullName: '중학교 1학년', cls: 1,
+    units: [
+      { name: '소인수분해', icon: '🔢', pairs: [
+        { term: '소수 (素數)',     def: '1과 자기 자신만을\n약수로 갖는 자연수\n예) 2, 3, 5, 7, 11' },
+        { term: '합성수 (合成數)', def: '1보다 크고 소수가\n아닌 자연수\n예) 4, 6, 8, 9, 10' },
+        { term: '거듭제곱',       def: '같은 수를 여러 번 곱한 것\n2³=2×2×2=8\na의 n제곱: aⁿ' },
+        { term: '소인수분해',     def: '자연수를 소수의 곱으로\n나타내는 것\n예) 12 = 2² × 3' },
+        { term: '최대공약수 GCD', def: '두 수의 공약수 중\n가장 큰 수\n예) GCD(12,18)=6' },
+        { term: '최소공배수 LCM', def: '두 수의 공배수 중\n가장 작은 수\n예) LCM(4,6)=12' },
+      ]},
+      { name: '정수와 유리수', icon: '🔢', pairs: [
+        { term: '양의 정수',      def: '+1, +2, +3, ...\n자연수와 같음\n수직선의 0 오른쪽' },
+        { term: '음의 정수',      def: '−1, −2, −3, ...\n수직선의 0 왼쪽' },
+        { term: '정수 (整數)',    def: '양의 정수, 0, 음의 정수를\n통틀어 이르는 말' },
+        { term: '유리수 (有理數)',def: 'a/b (b≠0) 꼴로 나타낼\n수 있는 수\n예) 1/2, −3, 0.25' },
+        { term: '절댓값 |a|',    def: '수직선에서 원점으로부터\n어떤 수까지의 거리\n|−3|=3, |3|=3' },
+        { term: '역수 (逆數)',    def: '곱해서 1이 되는 수\n예) 2/3의 역수=3/2\na×(역수)=1' },
+      ]},
+      { name: '문자와 식', icon: '✏️', pairs: [
+        { term: '변수 (變數)',    def: '여러 값을 가질 수 있는\n문자\n예) x, y, a, b' },
+        { term: '계수 (係數)',    def: '항에서 문자에 곱해진 수\n예) 3x에서 계수=3\n−2y에서 계수=−2' },
+        { term: '차수 (次數)',    def: '항에서 문자가 곱해진 횟수\n예) x²의 차수=2\nx³y의 차수=4' },
+        { term: '단항식 (單項式)',def: '수 또는 문자의 곱으로만\n이루어진 식\n예) 3x, −2a², 5' },
+        { term: '다항식 (多項式)',def: '두 개 이상의 항의\n합으로 이루어진 식\n예) x²+3x−5' },
+        { term: '동류항 (同類項)',def: '문자와 차수가 같은 항\n3x와 −5x는 동류항\n합쳐서 계산 가능' },
+      ]},
+      { name: '일차방정식', icon: '⚖️', pairs: [
+        { term: '방정식 (方程式)',def: 'x 값에 따라 참·거짓이\n결정되는 등식\n예) 2x+1=5' },
+        { term: '항등식 (恒等式)',def: 'x에 어떤 값을 넣어도\n항상 참인 등식\n예) x+x=2x' },
+        { term: '해 / 근 (根)',  def: '방정식을 참으로\n만드는 x의 값\n2x+1=5 → x=2' },
+        { term: '이항 (移項)',   def: '등식의 항을 부호를\n바꾸어 반대 변으로\n이동하는 것' },
+        { term: '등식의 성질',   def: 'a=b이면\na±c=b±c, a×c=b×c\n(c≠0이면 a÷c=b÷c)' },
+        { term: '일차방정식',    def: '미지수의 최고 차수가\n1인 방정식\nax+b=0 (a≠0)' },
+      ]},
+      { name: '좌표와 그래프', icon: '📈', pairs: [
+        { term: '순서쌍',        def: '두 수를 순서를 정해\n쌍으로 나타낸 것\n예) (3, −2)' },
+        { term: '좌표축',        def: '수직으로 만나는 두 수직선\nx축 (가로), y축 (세로)' },
+        { term: '사분면 (四分面)',def: '좌표축이 나눈 네 영역\n제1사분면: x>0, y>0\n제3사분면: x<0, y<0' },
+        { term: '함수 (函數)',   def: 'x값 하나에 y값이\n하나씩 대응하는 관계\ny=f(x)' },
+        { term: '함숫값',        def: 'x=a일 때 대응하는 y 값\nf(a)로 표현\n예) f(x)=2x, f(3)=6' },
+        { term: 'x절편 / y절편', def: 'x절편: 그래프와 x축의 교점\ny=0으로 놓아 구함\ny절편: x=0으로 구함' },
+      ]},
+      { name: '기본 도형', icon: '📐', pairs: [
+        { term: '맞꼭지각',      def: '두 직선이 만날 때\n마주 보는 각\n크기가 서로 같음' },
+        { term: '동위각 (同位角)',def: '두 직선이 다른 직선과\n만날 때 같은 위치의 각\n평행이면 크기 같음' },
+        { term: '엇각 (錯角)',   def: '두 직선이 다른 직선과\n만날 때 엇갈린 위치 각\n평행이면 크기 같음' },
+        { term: '수직이등분선',  def: '선분의 중점을 지나며\n그 선분에 수직인 직선\n중점까지 등거리' },
+        { term: '작도 (作圖)',   def: '눈금 없는 자와\n컴퍼스만으로\n도형을 그리는 방법' },
+        { term: '합동 (合同)',   def: '두 도형이 모양과\n크기가 완전히 같음\n기호: ≅' },
+      ]},
+    ]
+  },
+  2: {
+    fullName: '중학교 2학년', cls: 2,
+    units: [
+      { name: '유리수와 순환소수', icon: '🔄', pairs: [
+        { term: '유한소수',           def: '소수점 아래 자릿수가\n유한한 소수\n예) 0.25, 1.375' },
+        { term: '무한소수',           def: '소수점 아래 자릿수가\n무한한 소수\n예) 0.333…, π' },
+        { term: '순환소수 (循環小數)', def: '소수점 아래 어떤 자리부터\n같은 숫자가 반복되는\n무한소수' },
+        { term: '순환마디',           def: '순환소수에서 반복되는\n가장 짧은 부분\n0.3̄의 순환마디: 3' },
+        { term: '기약분수 (旣約分數)',  def: '분자와 분모의 GCD가\n1인 분수\n예) 3/4, 5/7, 2/9' },
+        { term: '유한소수 조건',       def: '기약분수의 분모가\n2와 5의 곱으로만\n이루어질 때 유한소수' },
+      ]},
+      { name: '식의 계산', icon: '✏️', pairs: [
+        { term: '지수법칙',        def: 'aᵐ×aⁿ=aᵐ⁺ⁿ\n(aᵐ)ⁿ=aᵐⁿ\naᵐ÷aⁿ=aᵐ⁻ⁿ (m>n)' },
+        { term: '단항식의 곱셈',   def: '계수끼리 곱하고\n같은 문자끼리 지수법칙\n예) 2a²×3a=6a³' },
+        { term: '분배법칙',        def: 'a(b+c)=ab+ac\n다항식 전개의\n기본 원리' },
+        { term: '곱셈공식 (합차)', def: '(a+b)(a−b)=a²−b²\n제곱의 차는\n합과 차의 곱' },
+        { term: '곱셈공식 (완전제곱)',def: '(a+b)²=a²+2ab+b²\n(a−b)²=a²−2ab+b²' },
+        { term: '다항식의 나눗셈', def: '다항식÷단항식:\n각 항을 단항식으로\n나누어 계산' },
+      ]},
+      { name: '연립방정식', icon: '🔗', pairs: [
+        { term: '미지수 (未知數)', def: '방정식에서 값이\n정해지지 않은 문자\n예) x, y' },
+        { term: '연립방정식',     def: '두 방정식을 동시에\n만족하는 x, y 값을\n구하는 방정식 쌍' },
+        { term: '대입법 (代入法)',def: '한 미지수를 다른 식으로\n나타내어 대입하여\n푸는 방법' },
+        { term: '가감법 (加減法)',def: '두 방정식을 더하거나\n빼서 한 미지수를\n소거하는 방법' },
+        { term: '부정 (不定)',    def: '연립방정식의 해가\n무수히 많은 경우\n두 방정식이 같은 직선' },
+        { term: '불능 (不能)',    def: '연립방정식의 해가\n없는 경우\n두 직선이 평행' },
+      ]},
+      { name: '일차함수', icon: '📊', pairs: [
+        { term: '일차함수',       def: 'y=ax+b (a≠0)\n꼴의 함수\n그래프는 직선' },
+        { term: '기울기 (slope)', def: 'x가 1 증가할 때\ny의 변화량\ny=ax+b에서 a' },
+        { term: 'y절편',          def: '그래프가 y축과\n만나는 점의 y좌표\ny=ax+b에서 b' },
+        { term: '평행이동',       def: '그래프의 모양·기울기를\n유지하며 평행하게\n이동하는 변환' },
+        { term: '두 직선의 위치', def: '기울기 같고 y절편 다름: 평행\n기울기·y절편 같음: 일치\n기울기 다름: 한 점에서 만남' },
+        { term: '일차함수의 활용',def: '거리=속도×시간\n정비례·반비례 관계를\n일차함수로 표현' },
+      ]},
+      { name: '도형의 성질', icon: '🔺', pairs: [
+        { term: '이등변삼각형',   def: '두 변의 길이가 같은 삼각형\n두 밑각의 크기가 같음\n꼭짓각의 이등분선⊥밑변' },
+        { term: '외심 (外心)',   def: '삼각형의 세 꼭짓점에서\n같은 거리인 점\n외접원의 중심' },
+        { term: '내심 (內心)',   def: '삼각형의 세 변에서\n같은 거리인 점\n내접원의 중심' },
+        { term: '평행사변형',    def: '두 쌍의 대변이 평행\n대변과 대각의 크기 같음\n두 대각선이 서로 이등분' },
+        { term: '마름모 (菱形)', def: '네 변의 길이가 모두 같음\n두 대각선이 수직 이등분\n직사각형+정사각형 포함 관계' },
+        { term: '닮음 (닮음비)', def: '모양은 같고 크기가 다름\n대응변의 길이 비=닮음비\n대응각의 크기는 같음' },
+      ]},
+      { name: '확률', icon: '🎲', pairs: [
+        { term: '경우의 수',      def: '사건이 일어날 수 있는\n모든 가지 수\n수형도로 구할 수 있음' },
+        { term: '확률 P(A)',      def: '사건 A가 일어날\n가능성을 수로 표현\n0 ≤ P(A) ≤ 1' },
+        { term: '여사건 Aᶜ',     def: 'A가 일어나지 않는 사건\nP(Aᶜ)=1−P(A)\n반드시 일어남=1' },
+        { term: '배반사건',       def: '동시에 일어날 수 없는\n두 사건 A, B\nP(A∩B)=0' },
+        { term: '합의 법칙',      def: '동시에 일어나지 않는 두 일의\n전체 경우의 수는\nm+n (합)' },
+        { term: '곱의 법칙',      def: '잇달아 일어나는 두 일의\n전체 경우의 수는\nm×n (곱)' },
+      ]},
+    ]
+  },
+  3: {
+    fullName: '중학교 3학년', cls: 3,
+    units: [
+      { name: '제곱근과 실수', icon: '√', pairs: [
+        { term: '제곱근 (√a)',    def: '제곱하면 a가 되는 수\n√4=2, √9=3\na>0일 때 양·음 두 개' },
+        { term: '무리수 (無理數)',def: '유리수가 아닌 실수\n순환하지 않는 무한소수\n예) √2, √3, π' },
+        { term: '실수 (實數)',    def: '유리수와 무리수 전체\n수직선을 빈틈없이 채움\n실수의 대소 비교 가능' },
+        { term: '근호 (根號)',    def: '제곱근을 나타내는 기호 √\n√a (a≥0)\n√0=0, √1=1' },
+        { term: '유리화 (有理化)',def: '분모의 근호를 없애는 것\n1/√2 = √2/2\n분모·분자에 √2 곱함' },
+        { term: '제곱근의 성질', def: '(√a)²=a\n√(a²)=|a|\n√a×√b=√(ab) (a,b≥0)' },
+      ]},
+      { name: '인수분해', icon: '🧩', pairs: [
+        { term: '인수 (因數)',        def: '다항식을 곱의 꼴로\n나타낼 때 각각의 식\n예) x²+3x+2=(x+1)(x+2)' },
+        { term: '공통인수',           def: '다항식의 각 항에\n공통으로 있는 인수\n괄호 밖으로 묶어냄' },
+        { term: '인수분해 (因數分解)', def: '다항식을 두 개 이상의\n인수의 곱으로 나타내기\n전개의 역과정' },
+        { term: '완전제곱식',         def: '(a+b)² = a²+2ab+b²\n(a−b)² = a²−2ab+b²\n꼴로 나타낼 수 있는 식' },
+        { term: '합차 공식',          def: 'a²−b²=(a+b)(a−b)\n두 수의 제곱 차는\n합과 차의 곱' },
+        { term: '인수분해 공식',       def: 'x²+(a+b)x+ab=(x+a)(x+b)\n두 수의 합·곱이\na+b, ab인 경우' },
+      ]},
+      { name: '이차방정식', icon: '🔵', pairs: [
+        { term: '이차방정식',     def: 'ax²+bx+c=0 (a≠0)\n최고차항의 차수=2\n일반형' },
+        { term: '판별식 D',      def: 'D=b²−4ac\nD>0: 서로 다른 두 근\nD=0: 중근, D<0: 근 없음' },
+        { term: '중근 (重根)',   def: '이차방정식에서\n두 근이 같은 경우\nD=0일 때 발생' },
+        { term: '근의 공식',     def: 'x=(-b±√(b²-4ac))÷2a\n이차방정식의 근을\n계수로 구하는 공식' },
+        { term: '인수분해 풀이', def: '이차방정식을 인수분해하여\n(x−α)(x−β)=0 꼴로\n각 인수=0으로 해 구하기' },
+        { term: '완전제곱식 풀이',def: '(x−p)²=q 꼴로 변형 후\nx=p±√q\n한 변을 완전제곱식으로' },
+      ]},
+      { name: '이차함수', icon: '⌒', pairs: [
+        { term: '이차함수',        def: 'y=ax²+bx+c (a≠0)\n최고차항의 차수=2\n그래프는 포물선' },
+        { term: '포물선 (抛物線)', def: 'a>0: 아래로 볼록 (U)\na<0: 위로 볼록 (∩)\n이차함수의 그래프 모양' },
+        { term: '꼭짓점',         def: '포물선과 축의 교점\ny=a(x−p)²+q 에서\n꼭짓점: (p, q)' },
+        { term: '축 (대칭축)',    def: '포물선의 대칭축\ny=a(x−p)²+q 에서\nx=p인 직선' },
+        { term: '최댓값·최솟값', def: 'a<0이면 꼭짓점에서 최댓값\na>0이면 꼭짓점에서 최솟값\n(꼭짓점의 y좌표)' },
+        { term: '평행이동',       def: 'y=ax²를 x축으로 p\ny축으로 q만큼 이동\n→ y=a(x−p)²+q' },
+      ]},
+      { name: '삼각비', icon: '📐', pairs: [
+        { term: '사인 sin A',   def: '직각삼각형에서\n(∠A의 대변) ÷ 빗변\nsinA = 대변/빗변' },
+        { term: '코사인 cos A', def: '직각삼각형에서\n(∠A의 인접변) ÷ 빗변\ncosA = 인접변/빗변' },
+        { term: '탄젠트 tan A', def: '직각삼각형에서\n대변 ÷ 인접변\ntanA = sinA / cosA' },
+        { term: '피타고라스 정리',def: '직각삼각형에서\n(두 직각변의 제곱합)\n= 빗변의 제곱 (a²+b²=c²)' },
+        { term: '삼각비 관계식',  def: 'sin²A+cos²A=1\ntanA=sinA÷cosA\nsinA=cos(90°−A)' },
+        { term: '특수각 삼각비',  def: 'sin30°=½, cos30°=√3/2\nsin45°=√2/2\nsin60°=√3/2, cos60°=½' },
+      ]},
+      { name: '통계', icon: '📊', pairs: [
+        { term: '대푯값 (代表値)',   def: '자료 전체를 대표하는\n하나의 값\n평균·중앙값·최빈값' },
+        { term: '평균 (平均)',      def: '자료의 총합 ÷ 자료의 개수\n가장 많이 쓰이는\n대푯값' },
+        { term: '중앙값 (中央値)',  def: '크기 순 정렬 시\n가운데 위치한 값\n짝수 개: 중간 두 값의 평균' },
+        { term: '최빈값 (最頻値)',  def: '자료에서 가장 많이\n나타나는 값\n여러 개 있을 수 있음' },
+        { term: '분산 (分散)',      def: '편차의 제곱의 평균\n자료가 퍼진 정도\n클수록 분포가 넓음' },
+        { term: '표준편차 (標準偏差)',def: '분산의 양의 제곱근\n자료와 단위 동일\n작을수록 고르게 분포' },
+      ]},
+    ]
+  }
+};
+
+// ════════════════════════════════════════
+//  STATE
+// ════════════════════════════════════════
+let curGrade  = null;
+let curUnitIdx = null;
+let flipped   = [];
+let matched   = 0;
+let moves     = 0;
+let locked    = false;
+let timerID   = null;
+let seconds   = 0;
+
+// ════════════════════════════════════════
+//  SCREEN NAVIGATION
+// ════════════════════════════════════════
+function show(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function selectGrade(g) {
+  curGrade = g;
+  const gd = DATA[g];
+  const titleEl = document.getElementById('unit-grade-title');
+  titleEl.textContent = gd.fullName + ' — 단원 선택';
+  titleEl.className = 'section-title c' + gd.cls;
+
+  const grid = document.getElementById('unit-grid');
+  grid.innerHTML = '';
+  gd.units.forEach((u, i) => {
+    const best = getBest(g, i);
+    const btn = document.createElement('button');
+    btn.className = 'unit-btn ub' + gd.cls;
+    btn.innerHTML = `
+      <div class="ub-icon">${u.icon}</div>
+      <div class="ub-name">${u.name}</div>
+      <div class="ub-count">카드 ${u.pairs.length * 2}장 (${u.pairs.length}쌍)</div>
+      ${best !== null ? `<div class="ub-best">⭐ 최고 ${best}회</div>` : ''}
+    `;
+    btn.onclick = () => selectUnit(i);
+    grid.appendChild(btn);
+  });
+  show('s-unit');
+}
+
+function goGrade() { stopTimer(); show('s-grade'); }
+
+function selectUnit(idx) {
+  curUnitIdx = idx;
+  const gd = DATA[curGrade];
+  const u  = gd.units[idx];
+
+  document.getElementById('game-title').textContent = u.name;
+  const badge = document.getElementById('grade-badge');
+  badge.textContent = gd.fullName.replace('중학교 ', '중');
+  badge.className = 'grade-badge bg' + gd.cls;
+
+  show('s-game');
+  startGame();
+}
+
+function goUnit() { stopTimer(); show('s-unit'); }
+function goUnitFromModal() {
+  document.getElementById('modal').hidden = true;
+  stopTimer(); show('s-unit');
+}
+
+function nextUnit() {
+  document.getElementById('modal').hidden = true;
+  const units = DATA[curGrade].units;
+  const next  = (curUnitIdx + 1) % units.length;
+  selectUnit(next);
+}
+
+// ════════════════════════════════════════
+//  GAME
+// ════════════════════════════════════════
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startGame() {
+  stopTimer();
+  const pairs = DATA[curGrade].units[curUnitIdx].pairs;
+  matched = 0; moves = 0; flipped = []; locked = false; seconds = 0;
+
+  document.getElementById('v-moves').textContent = 0;
+  document.getElementById('v-match').textContent = `0/${pairs.length}`;
+  document.getElementById('v-time').textContent  = 0;
+  document.getElementById('prog').style.width    = '0%';
+  document.getElementById('prog-label').textContent = `0 / ${pairs.length} 쌍`;
+
+  const cards = shuffle([
+    ...pairs.map((p, id) => ({ id, type: 'term', text: p.term })),
+    ...pairs.map((p, id) => ({ id, type: 'def',  text: p.def  })),
+  ]);
+
+  const board = document.getElementById('board');
+  board.innerHTML = '';
+  // 6쌍=12장 → 4열 3행
+  board.style.gridTemplateColumns = 'repeat(4, 1fr)';
+
+  cards.forEach(c => {
+    const el = document.createElement('div');
+    el.className = 'card';
+    el.dataset.id   = c.id;
+    el.dataset.type = c.type;
+    el.innerHTML = `
+      <div class="card-inner">
+        <div class="card-front">🧮</div>
+        <div class="card-back ${c.type}">${c.text.replace(/\n/g, '<br>')}</div>
+      </div>`;
+    el.addEventListener('click', () => onFlip(el));
+    board.appendChild(el);
+  });
+
+  startTimer();
+}
+
+function onFlip(el) {
+  if (locked || el.classList.contains('flipped') || el.classList.contains('matched')) return;
+  if (flipped.length >= 2) return;
+  el.classList.add('flipped');
+  flipped.push(el);
+  if (flipped.length === 2) { moves++; document.getElementById('v-moves').textContent = moves; locked = true; checkPair(); }
+}
+
+function checkPair() {
+  const [a, b] = flipped;
+  const isMatch = a.dataset.id === b.dataset.id && a.dataset.type !== b.dataset.type;
+  if (isMatch) {
+    setTimeout(() => {
+      a.classList.add('matched'); b.classList.add('matched');
+      matched++;
+      const total = DATA[curGrade].units[curUnitIdx].pairs.length;
+      document.getElementById('v-match').textContent = `${matched}/${total}`;
+      document.getElementById('prog').style.width = `${(matched / total) * 100}%`;
+      document.getElementById('prog-label').textContent = `${matched} / ${total} 쌍`;
+      flipped = []; locked = false;
+      if (matched === total) onClear();
+    }, 500);
+  } else {
+    a.classList.add('wrong'); b.classList.add('wrong');
+    setTimeout(() => {
+      a.classList.remove('flipped', 'wrong');
+      b.classList.remove('flipped', 'wrong');
+      flipped = []; locked = false;
+    }, 950);
+  }
+}
+
+function onClear() {
+  stopTimer();
+  const total = DATA[curGrade].units[curUnitIdx].pairs.length;
+  saveBest(curGrade, curUnitIdx, moves);
+  const best = getBest(curGrade, curUnitIdx);
+  const ratio = moves / total;
+  let stars, msg;
+  if      (ratio <= 1.2) { stars = '⭐⭐⭐'; msg = '완벽한 기억력!'; }
+  else if (ratio <= 1.8) { stars = '⭐⭐';   msg = '훌륭합니다!'; }
+  else                   { stars = '⭐';     msg = '한 번 더 도전!'; }
+
+  document.getElementById('m-stars').textContent = stars;
+  document.getElementById('m-msg').textContent   = msg;
+  document.getElementById('m-moves').textContent = `🖱 시도 횟수: ${moves}회`;
+  document.getElementById('m-time').textContent  = `⏱ 소요 시간: ${seconds}초`;
+  document.getElementById('m-best').textContent  = best === moves ? '🏆 신기록 달성!' : `📌 최고 기록: ${best}회`;
+  document.getElementById('modal').hidden = false;
+}
+
+function restartGame() {
+  document.getElementById('modal').hidden = true;
+  startGame();
+}
+
+// ════════════════════════════════════════
+//  TIMER
+// ════════════════════════════════════════
+function startTimer() {
+  timerID = setInterval(() => {
+    seconds++;
+    document.getElementById('v-time').textContent = seconds;
+  }, 1000);
+}
+function stopTimer() { clearInterval(timerID); timerID = null; }
+
+// ════════════════════════════════════════
+//  BEST SCORE (localStorage)
+// ════════════════════════════════════════
+function bKey(g, u) { return `mj_g${g}_u${u}`; }
+function getBest(g, u) { const v = localStorage.getItem(bKey(g, u)); return v !== null ? parseInt(v) : null; }
+function saveBest(g, u, m) { const cur = getBest(g, u); if (cur === null || m < cur) localStorage.setItem(bKey(g, u), m); }
+</script>
+</body>
+</html>
