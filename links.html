@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔗 전체 링크 모음 | MathGameBox</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: linear-gradient(160deg, #eceff1 0%, #e3f2fd 100%);
+  min-height: 100vh;
+  font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+  color: #37474f;
+  padding: 40px 20px;
+}
+.wrap { max-width: 720px; margin: 0 auto; }
+
+header { text-align: center; margin-bottom: 40px; }
+header h1 { font-size: 1.8rem; font-weight: 900; color: #37474f; margin-bottom: 6px; }
+header p  { font-size: .88rem; color: #90a4ae; }
+header .url { display: inline-block; margin-top: 10px; background: #fff; border-radius: 10px; padding: 6px 16px; font-size: .82rem; color: #546e7a; border: 1px solid #cfd8dc; }
+
+.section { background: white; border-radius: 18px; padding: 22px 24px; margin-bottom: 20px; box-shadow: 0 2px 12px rgba(0,0,0,.06); }
+.section-head { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1.5px solid #eceff1; }
+.section-icon { font-size: 1.6rem; }
+.section-title { font-size: 1.1rem; font-weight: 900; }
+.section-path { font-size: .75rem; color: #b0bec5; margin-left: auto; font-family: monospace; background: #f5f5f5; padding: 3px 10px; border-radius: 6px; }
+
+.link-item {
+  display: flex; align-items: center;
+  padding: 11px 0; border-bottom: 1px solid #f5f5f5;
+  text-decoration: none; color: inherit;
+  transition: all .15s;
+  gap: 12px;
+}
+.link-item:last-child { border-bottom: none; }
+.link-item:hover .link-name { color: #1976d2; }
+.link-item:hover .link-arrow { opacity: 1; }
+.link-emoji { font-size: 1.4rem; flex-shrink: 0; }
+.link-info { flex: 1; }
+.link-name { font-size: .98rem; font-weight: 700; margin-bottom: 2px; }
+.link-desc { font-size: .78rem; color: #90a4ae; line-height: 1.5; }
+.link-url  { font-size: .72rem; color: #b0bec5; font-family: monospace; margin-top: 3px; }
+.link-arrow { font-size: .9rem; color: #b0bec5; opacity: 0; transition: opacity .15s; flex-shrink: 0; }
+.link-badge { font-size: .68rem; font-weight: 700; padding: 2px 8px; border-radius: 8px; flex-shrink: 0; }
+
+.badge-game { background: #e8f5e9; color: #2e7d32; }
+.badge-math { background: #fff3e0; color: #e65100; }
+.badge-hub  { background: #e3f2fd; color: #1565c0; }
+
+footer { text-align: center; margin-top: 30px; font-size: .76rem; color: #b0bec5; line-height: 1.8; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>🔗 전체 링크 모음</h1>
+  <p>MathGameBox에서 제공하는 모든 콘텐츠 링크입니다</p>
+  <div class="url">https://mathgamebox.netlify.app</div>
+</header>
+
+<!-- ── 게임 허브 ── -->
+<div class="section">
+  <div class="section-head">
+    <span class="section-icon">🎮</span>
+    <span class="section-title">게임 허브</span>
+    <span class="section-path">/</span>
+  </div>
+
+  <a class="link-item" href="https://mathgamebox.netlify.app/" target="_blank">
+    <span class="link-emoji">🏠</span>
+    <div class="link-info">
+      <div class="link-name">메인 허브</div>
+      <div class="link-desc">지렁이 게임 · 테트리스 연결 메뉴</div>
+      <div class="link-url">https://mathgamebox.netlify.app/</div>
+    </div>
+    <span class="link-badge badge-hub">허브</span>
+    <span class="link-arrow">→</span>
+  </a>
+
+  <a class="link-item" href="https://mathgamebox.netlify.app/snake_game.html" target="_blank">
+    <span class="link-emoji">🐍</span>
+    <div class="link-info">
+      <div class="link-name">지렁이 게임</div>
+      <div class="link-desc">먹이를 먹으며 몸이 길어지는 게임 · 레벨 시스템 · 모바일 지원</div>
+      <div class="link-url">https://mathgamebox.netlify.app/snake_game.html</div>
+    </div>
+    <span class="link-badge badge-game">1인용</span>
+    <span class="link-arrow">→</span>
+  </a>
+
+  <a class="link-item" href="https://mathgamebox.netlify.app/tetris_game.html" target="_blank">
+    <span class="link-emoji">🧩</span>
+    <div class="link-info">
+      <div class="link-name">테트리스</div>
+      <div class="link-desc">이름 등록 · 개인 최고 기록 · TOP 5 랭킹 · 고스트 블록</div>
+      <div class="link-url">https://mathgamebox.netlify.app/tetris_game.html</div>
+    </div>
+    <span class="link-badge badge-game">이름 등록</span>
+    <span class="link-arrow">→</span>
+  </a>
+</div>
+
+<!-- ── 수학 도구 ── -->
+<div class="section">
+  <div class="section-head">
+    <span class="section-icon">📐</span>
+    <span class="section-title">수학 도구</span>
+    <span class="section-path">/math/</span>
+  </div>
+
+  <a class="link-item" href="https://mathgamebox.netlify.app/math/" target="_blank">
+    <span class="link-emoji">🏫</span>
+    <div class="link-info">
+      <div class="link-name">수학 도구 허브</div>
+      <div class="link-desc">수학 관련 도구 모음 메뉴</div>
+      <div class="link-url">https://mathgamebox.netlify.app/math/</div>
+    </div>
+    <span class="link-badge badge-hub">허브</span>
+    <span class="link-arrow">→</span>
+  </a>
+
+  <a class="link-item" href="https://mathgamebox.netlify.app/math/math_card_game_middle.html" target="_blank">
+    <span class="link-emoji">🃏</span>
+    <div class="link-info">
+      <div class="link-name">수학 카드 뒤집기 게임</div>
+      <div class="link-desc">중1~중3 수학 용어 카드 게임 · 학년별 6개 단원 · 36쌍씩</div>
+      <div class="link-url">https://mathgamebox.netlify.app/math/math_card_game_middle.html</div>
+    </div>
+    <span class="link-badge badge-math">중1~중3</span>
+    <span class="link-arrow">→</span>
+  </a>
+
+  <a class="link-item" href="https://mathgamebox.netlify.app/math/linear_function.html" target="_blank">
+    <span class="link-emoji">📐</span>
+    <div class="link-info">
+      <div class="link-name">일차함수 활용 활동지</div>
+      <div class="link-desc">pp.108~110 · 수심/압력, 빗물통, 양초, 섭씨화씨 · 그래프 포함</div>
+      <div class="link-url">https://mathgamebox.netlify.app/math/linear_function.html</div>
+    </div>
+    <span class="link-badge badge-math">중2 수학</span>
+    <span class="link-arrow">→</span>
+  </a>
+</div>
+
+<footer>
+  MathGameBox · GitHub: github.com/kimi-128/math_game<br>
+  Netlify 자동 배포 · 링크는 영구적으로 유지됩니다
+</footer>
+
+</div>
+</body>
+</html>

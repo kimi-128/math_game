@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📐 수학 도구 모음</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: linear-gradient(160deg, #fff8e1 0%, #fff3e0 50%, #fce4ec 100%);
+  min-height: 100vh;
+  font-family: 'Malgun Gothic', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  user-select: none;
+}
+
+.back-link {
+  position: fixed;
+  top: 18px; left: 18px;
+}
+.back-link a {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 7px 16px;
+  background: rgba(255,255,255,.85);
+  border: 1.5px solid #ffcc80; border-radius: 20px;
+  color: #e65100; text-decoration: none;
+  font-size: .82rem; font-weight: 700;
+  transition: all .18s;
+}
+.back-link a:hover { background: #e65100; color: white; border-color: #e65100; }
+
+.hub-title {
+  font-size: 2.2rem;
+  font-weight: 900;
+  color: #e65100;
+  letter-spacing: 2px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+.hub-sub {
+  font-size: 0.9rem;
+  color: #f57c00;
+  margin-bottom: 44px;
+  text-align: center;
+  opacity: .8;
+}
+
+.game-grid {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.game-card {
+  width: 240px;
+  border-radius: 24px;
+  padding: 32px 24px 28px;
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+  transition: transform .22s, box-shadow .22s;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+.game-card::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(255,255,255,.4) 0%, transparent 70%);
+  pointer-events: none;
+}
+.game-card:hover { transform: translateY(-10px); }
+
+/* 카드 게임 */
+.card-vocab {
+  background: linear-gradient(145deg, #ffd180, #ffab40);
+  border: 2px solid #ff9800;
+  box-shadow: 0 8px 30px rgba(255,152,0,.28);
+}
+.card-vocab:hover { box-shadow: 0 16px 48px rgba(255,152,0,.45); }
+
+/* 일차함수 */
+.card-linear {
+  background: linear-gradient(145deg, #fff3e0, #ffe0b2);
+  border: 2px solid #ffb74d;
+  box-shadow: 0 8px 30px rgba(245,124,0,.22);
+}
+.card-linear:hover { box-shadow: 0 16px 48px rgba(245,124,0,.4); }
+
+.card-icon { font-size: 3.8rem; margin-bottom: 16px; display: block; }
+
+.card-title { font-size: 1.4rem; font-weight: 900; margin-bottom: 10px; }
+.card-vocab  .card-title { color: #bf360c; }
+.card-linear .card-title { color: #e65100; }
+
+.card-desc { font-size: 0.84rem; line-height: 1.7; margin-bottom: 22px; }
+.card-vocab  .card-desc { color: #d84315; }
+.card-linear .card-desc { color: #f57c00; }
+
+.play-btn {
+  display: inline-block; padding: 10px 30px;
+  border-radius: 24px; font-size: 1rem; font-weight: bold;
+  transition: transform .15s;
+}
+.game-card:hover .play-btn { transform: scale(1.07); }
+.card-vocab  .play-btn { background: #bf360c; color: #fff; box-shadow: 0 4px 14px rgba(191,54,12,.35); }
+.card-linear .play-btn { background: #e65100; color: #fff; box-shadow: 0 4px 14px rgba(230,81,0,.35); }
+
+.badge {
+  position: absolute; top: 14px; right: 16px;
+  font-size: 0.7rem; font-weight: bold;
+  padding: 3px 10px; border-radius: 10px;
+}
+.card-vocab  .badge { background: rgba(191,54,12,.15); color: #bf360c; }
+.card-linear .badge { background: rgba(230,81,0,.15);  color: #e65100; }
+
+.hint {
+  margin-top: 40px; font-size: 0.78rem;
+  color: #f0a060; text-align: center; line-height: 1.8;
+}
+</style>
+</head>
+<body>
+
+<div class="back-link"><a href="../index.html">← 게임 목록</a></div>
+
+<div class="hub-title">📐 수학 도구 모음</div>
+<div class="hub-sub">학습에 도움이 되는 수학 도구를 선택하세요!</div>
+
+<div class="game-grid">
+
+  <a class="game-card card-vocab" href="math_card_game_middle.html">
+    <span class="badge">중1~중3</span>
+    <span class="card-icon">🃏</span>
+    <div class="card-title">수학 카드 게임</div>
+    <div class="card-desc">
+      중학교 수학 용어를<br>
+      카드 뒤집기로 익혀요.<br>
+      학년별 단원 선택 가능!
+    </div>
+    <span class="play-btn">▶ 시작</span>
+  </a>
+
+  <a class="game-card card-linear" href="linear_function.html">
+    <span class="badge">중2 수학</span>
+    <span class="card-icon">📐</span>
+    <div class="card-title">일차함수 활용</div>
+    <div class="card-desc">
+      실생활 문제로<br>
+      일차함수를 탐구해요.<br>
+      그래프로 한눈에 확인!
+    </div>
+    <span class="play-btn">▶ 시작</span>
+  </a>
+
+</div>
+
+<div class="hint">
+  중학교 수학 교과서 연계 활동 자료
+</div>
+
+</body>
+</html>
