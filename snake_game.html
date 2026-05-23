@@ -8,14 +8,14 @@
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
 body {
-  background: radial-gradient(ellipse at top, #0b1a0d 0%, #060c07 100%);
+  background: linear-gradient(160deg, #e8f5e9 0%, #b2dfdb 50%, #c8e6c9 100%);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   font-family: 'Malgun Gothic', sans-serif;
-  color: #fff;
+  color: #1b5e20;
   user-select: none;
   overflow: hidden;
 }
@@ -23,10 +23,8 @@ body {
 h1 {
   font-size: 1.9rem;
   font-weight: 900;
-  background: linear-gradient(90deg, #00ff88, #00e5ff);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #2e7d32;
+  text-shadow: 0 2px 8px rgba(46,125,50,0.18);
   margin-bottom: 14px;
   letter-spacing: 2px;
 }
@@ -34,26 +32,34 @@ h1 {
 /* 상단 스탯 */
 .stats {
   display: flex;
-  gap: 32px;
+  gap: 16px;
   margin-bottom: 14px;
 }
-.stat { text-align: center; }
-.stat-val { font-size: 1.6rem; font-weight: bold; color: #00ff88; line-height: 1; }
-.stat-lbl { font-size: 0.7rem; color: #446644; margin-top: 3px; }
+.stat {
+  text-align: center;
+  background: #fff;
+  border-radius: 12px;
+  padding: 8px 20px;
+  box-shadow: 0 2px 10px rgba(46,125,50,0.12);
+  min-width: 70px;
+}
+.stat-val { font-size: 1.6rem; font-weight: bold; color: #2e7d32; line-height: 1; }
+.stat-lbl { font-size: 0.7rem; color: #81c784; margin-top: 3px; }
 
 /* 레벨 바 */
 .level-bar-wrap {
   width: min(400px, 90vw);
-  height: 5px;
-  background: rgba(255,255,255,0.08);
-  border-radius: 3px;
+  height: 8px;
+  background: rgba(255,255,255,0.6);
+  border-radius: 4px;
   margin-bottom: 10px;
   overflow: hidden;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.1);
 }
 .level-bar-fill {
   height: 100%;
-  border-radius: 3px;
-  background: linear-gradient(90deg, #00cc66, #00ff88);
+  border-radius: 4px;
+  background: linear-gradient(90deg, #43a047, #66bb6a);
   width: 0%;
   transition: width .3s ease;
 }
@@ -63,9 +69,9 @@ h1 {
   position: relative;
   width: min(400px, 90vw);
   aspect-ratio: 1;
-  border: 2px solid #1a3a1a;
-  border-radius: 10px;
-  box-shadow: 0 0 50px rgba(0,255,136,0.12), inset 0 0 30px rgba(0,0,0,0.4);
+  border: 3px solid #a5d6a7;
+  border-radius: 14px;
+  box-shadow: 0 8px 32px rgba(46,125,50,0.18), 0 2px 8px rgba(0,0,0,0.08);
   overflow: hidden;
 }
 
@@ -79,28 +85,28 @@ canvas { display: block; width: 100%; height: 100%; }
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background: rgba(0,0,0,0.82);
+  background: rgba(255,255,255,0.88);
   gap: 12px;
-  backdrop-filter: blur(2px);
+  backdrop-filter: blur(3px);
 }
 #overlay[hidden] { display: none; }
 
 .ov-icon  { font-size: 3rem; }
-.ov-title { font-size: 1.7rem; font-weight: bold; color: #00ff88; }
-.ov-msg   { font-size: 1rem; color: #88aa88; text-align: center; line-height: 1.6; }
-.ov-hint  { font-size: 0.78rem; color: #446644; }
+.ov-title { font-size: 1.7rem; font-weight: bold; color: #2e7d32; }
+.ov-msg   { font-size: 1rem; color: #558b2f; text-align: center; line-height: 1.6; }
+.ov-hint  { font-size: 0.78rem; color: #81c784; }
 
 .start-btn {
   margin-top: 6px;
   padding: 13px 38px;
   border: none; border-radius: 30px;
-  background: linear-gradient(90deg, #00bb55, #00ff88);
-  color: #001a00; font-size: 1.1rem; font-weight: 900;
+  background: linear-gradient(90deg, #43a047, #66bb6a);
+  color: #fff; font-size: 1.1rem; font-weight: 900;
   cursor: pointer; font-family: inherit;
-  box-shadow: 0 4px 20px rgba(0,255,136,0.35);
+  box-shadow: 0 4px 16px rgba(67,160,71,0.4);
   transition: transform .15s, box-shadow .15s;
 }
-.start-btn:hover { transform: scale(1.07); box-shadow: 0 6px 28px rgba(0,255,136,0.5); }
+.start-btn:hover { transform: scale(1.07); box-shadow: 0 6px 24px rgba(67,160,71,0.55); }
 
 /* 모바일 컨트롤 */
 .d-pad {
@@ -112,16 +118,17 @@ canvas { display: block; width: 100%; height: 100%; }
 }
 .d-btn {
   width: 52px; height: 52px;
-  border-radius: 10px;
-  border: 2px solid rgba(0,255,136,0.25);
-  background: rgba(0,255,136,0.07);
-  color: #00ff88; font-size: 1.3rem;
+  border-radius: 12px;
+  border: 2px solid #a5d6a7;
+  background: #fff;
+  color: #2e7d32; font-size: 1.3rem;
   cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  transition: background .1s;
+  box-shadow: 0 2px 8px rgba(46,125,50,0.12);
+  transition: background .1s, transform .1s;
   -webkit-tap-highlight-color: transparent;
 }
-.d-btn:active { background: rgba(0,255,136,0.25); }
+.d-btn:active { background: #c8e6c9; transform: scale(0.93); }
 .d-up    { grid-column:2; grid-row:1; }
 .d-left  { grid-column:1; grid-row:2; }
 .d-down  { grid-column:2; grid-row:2; }
@@ -279,12 +286,12 @@ function draw() {
   const W = canvas.width, H = canvas.height;
 
   // 배경
-  ctx.fillStyle = '#050e05';
+  ctx.fillStyle = '#f1f8e9';
   ctx.fillRect(0,0,W,H);
 
   // 격자
-  ctx.strokeStyle = 'rgba(0,255,100,0.04)';
-  ctx.lineWidth = 0.5;
+  ctx.strokeStyle = 'rgba(130,190,130,0.35)';
+  ctx.lineWidth = 0.7;
   for (let i=0;i<=COLS;i++){
     ctx.beginPath(); ctx.moveTo(i*CELL,0); ctx.lineTo(i*CELL,H); ctx.stroke();
   }
@@ -310,13 +317,12 @@ function draw() {
     const isHead = i === 0;
     const t = i / Math.max(snake.length - 1, 1);
 
-    // 색상: 머리=밝은 초록, 꼬리=어두운 초록
+    // 색상: 머리=진한 초록, 꼬리=연한 초록
     if (isHead) {
-      ctx.fillStyle = '#00ff88';
+      ctx.fillStyle = '#2e7d32';
     } else {
-      const g = Math.round(200 - t * 130);
-      const b = Math.round(60  - t * 50);
-      ctx.fillStyle = `rgb(0,${g},${b})`;
+      const g = Math.round(140 - t * 60);
+      ctx.fillStyle = `rgb(${Math.round(60+t*60)},${g+80},${Math.round(50+t*30)})`;
     }
 
     const pad  = isHead ? 1 : 2;
@@ -356,12 +362,12 @@ function drawEyes(head) {
   const e2 = {x: cx + ex*fwd - px*side, y: cy + ey*fwd - py*side};
 
   // 흰자
-  ctx.fillStyle = '#ccffcc';
+  ctx.fillStyle = '#ffffff';
   [e1,e2].forEach(e => {
     ctx.beginPath(); ctx.arc(e.x, e.y, r, 0, Math.PI*2); ctx.fill();
   });
   // 동공
-  ctx.fillStyle = '#003300';
+  ctx.fillStyle = '#1b5e20';
   [e1,e2].forEach(e => {
     ctx.beginPath(); ctx.arc(e.x + ex*0.8, e.y + ey*0.8, r*0.55, 0, Math.PI*2); ctx.fill();
   });
@@ -369,10 +375,10 @@ function drawEyes(head) {
 
 function drawIdle() {
   const W = canvas.width, H = canvas.height;
-  ctx.fillStyle = '#050e05';
+  ctx.fillStyle = '#f1f8e9';
   ctx.fillRect(0,0,W,H);
-  ctx.strokeStyle = 'rgba(0,255,100,0.04)';
-  ctx.lineWidth = 0.5;
+  ctx.strokeStyle = 'rgba(130,190,130,0.35)';
+  ctx.lineWidth = 0.7;
   for (let i=0;i<=COLS;i++){
     ctx.beginPath(); ctx.moveTo(i*CELL,0); ctx.lineTo(i*CELL,H); ctx.stroke();
   }
@@ -391,7 +397,7 @@ function gameOver() {
   let blink = 0;
   const flash = setInterval(() => {
     snake.forEach(s => {
-      ctx.fillStyle = blink % 2 === 0 ? '#ff2200' : '#880000';
+      ctx.fillStyle = blink % 2 === 0 ? '#e53935' : '#ffcdd2';
       ctx.beginPath();
       ctx.roundRect(s.x*CELL+2, s.y*CELL+2, CELL-4, CELL-4, 4);
       ctx.fill();
@@ -408,8 +414,8 @@ function showGameOver() {
   const isNew = score > 0 && score >= highScore;
   document.getElementById('ov-title').textContent = '💀 게임 오버!';
   document.getElementById('ov-msg').innerHTML =
-    `점수: <strong style="color:#ffd200;font-size:1.3em">${score}</strong>점 · 길이: ${snake.length}<br>` +
-    (isNew ? '🏆 <span style="color:#ffd200">신기록 달성!</span>' : `최고 점수: ${highScore}점`);
+    `점수: <strong style="color:#e65100;font-size:1.3em">${score}</strong>점 · 길이: ${snake.length}<br>` +
+    (isNew ? '🏆 <span style="color:#e65100">신기록 달성!</span>' : `최고 점수: ${highScore}점`);
   document.getElementById('start-btn').textContent = '다시 시작';
   document.getElementById('overlay').hidden = false;
 }
