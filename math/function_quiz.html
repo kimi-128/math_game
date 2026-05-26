@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>함수 퀴즈 게임 | 중2 수학</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+:root {
+  --bg: #0d1b2a;
+  --panel: #112240;
+  --accent: #64ffda;
+  --accent2: #f7b731;
+  --p1: #4fc3f7;
+  --p2: #ef9a9a;
+  --text: #ccd6f6;
+  --muted: #8892b0;
+  --correct: #00e676;
+  --wrong: #ff5252;
+  --border: rgba(100,255,218,.15);
+}
+
+body {
+  background: var(--bg);
+  min-height: 100vh;
+  font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.screen { display: none; width: 100vw; min-height: 100vh; }
+.screen.active { display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+/* ── 공통 버튼 ── */
+.btn {
+  display: inline-block; padding: 14px 36px; border-radius: 12px;
+  font-size: 1.05rem; font-weight: 800; cursor: pointer; border: none;
+  transition: transform .15s, box-shadow .15s; user-select: none;
+}
+.btn:hover { transform: translateY(-3px); }
+.btn-accent { background: var(--accent); color: #0d1b2a; box-shadow: 0 4px 20px rgba(100,255,218,.3); }
+.btn-accent:hover { box-shadow: 0 8px 32px rgba(100,255,218,.5); }
+.btn-gold { background: var(--accent2); color: #0d1b2a; box-shadow: 0 4px 20px rgba(247,183,49,.3); }
+.btn-gold:hover { box-shadow: 0 8px 32px rgba(247,183,49,.5); }
+.btn-outline { background: transparent; border: 2px solid var(--border); color: var(--muted); }
+.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+.btn-sm { padding: 9px 22px; font-size: .88rem; }
+
+/* ── TITLE ── */
+#screen-title { gap: 32px; padding: 40px 20px; }
+.title-badge { font-size: .8rem; letter-spacing: 3px; color: var(--accent); text-transform: uppercase; margin-bottom: -16px; }
+.title-main { font-size: clamp(2rem, 6vw, 3.2rem); font-weight: 900; letter-spacing: 2px; text-align: center; }
+.title-main span { color: var(--accent); }
+.title-sub { color: var(--muted); font-size: .92rem; text-align: center; line-height: 1.8; }
+.mode-cards { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; }
+.mode-card {
+  width: 220px; border: 2px solid var(--border); border-radius: 20px;
+  padding: 32px 24px; text-align: center; cursor: pointer; transition: all .2s;
+  background: var(--panel);
+}
+.mode-card:hover { border-color: var(--accent); transform: translateY(-6px); box-shadow: 0 12px 40px rgba(100,255,218,.15); }
+.mode-icon { font-size: 3rem; margin-bottom: 14px; }
+.mode-title { font-size: 1.15rem; font-weight: 900; margin-bottom: 8px; }
+.mode-desc { font-size: .78rem; color: var(--muted); line-height: 1.6; }
+.back-fixed { position: fixed; top: 18px; left: 18px; z-index: 100; }
+.back-fixed a {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 7px 16px; border-radius: 20px;
+  background: rgba(17,34,64,.9); border: 1.5px solid var(--border);
+  color: var(--muted); text-decoration: none; font-size: .8rem; font-weight: 700;
+  transition: all .18s;
+}
+.back-fixed a:hover { color: var(--accent); border-color: var(--accent); }
+
+/* ── SOLO SETUP ── */
+#screen-solo-setup { gap: 28px; padding: 40px 20px; }
+.setup-title { font-size: 1.6rem; font-weight: 900; }
+.setup-title span { color: var(--accent); }
+.setup-info {
+  background: var(--panel); border: 1px solid var(--border); border-radius: 16px;
+  padding: 24px 32px; text-align: center; line-height: 2;
+}
+.setup-info p { color: var(--muted); font-size: .9rem; }
+.setup-info strong { color: var(--text); }
+.btn-row { display: flex; gap: 14px; flex-wrap: wrap; justify-content: center; }
+
+/* ── BATTLE SETUP ── */
+#screen-battle-setup { gap: 28px; padding: 40px 20px; }
+.player-inputs { display: flex; gap: 32px; flex-wrap: wrap; justify-content: center; }
+.player-box {
+  background: var(--panel); border: 2px solid var(--border); border-radius: 16px;
+  padding: 24px 28px; text-align: center; width: 220px;
+}
+.player-box.p1 { border-color: var(--p1); }
+.player-box.p2 { border-color: var(--p2); }
+.player-label { font-size: 1.1rem; font-weight: 900; margin-bottom: 12px; }
+.p1 .player-label { color: var(--p1); }
+.p2 .player-label { color: var(--p2); }
+.player-key-hint { font-size: .75rem; color: var(--muted); margin-top: 8px; }
+.player-name-input {
+  width: 100%; padding: 10px 14px; border-radius: 10px;
+  background: rgba(255,255,255,.07); border: 1.5px solid var(--border);
+  color: var(--text); font-size: 1rem; text-align: center; outline: none;
+}
+.player-name-input:focus { border-color: var(--accent); }
+
+/* ── QUIZ SCREEN ── */
+#screen-quiz { padding: 20px; gap: 0; }
+.quiz-header {
+  width: 100%; max-width: 800px; display: flex; align-items: center;
+  justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
+}
+.quiz-score-block { display: flex; gap: 20px; }
+.score-chip {
+  background: var(--panel); border: 1px solid var(--border);
+  border-radius: 10px; padding: 8px 18px; font-size: .88rem;
+  font-weight: 700; text-align: center;
+}
+.score-chip .val { font-size: 1.4rem; display: block; }
+.q-counter { color: var(--muted); font-size: .88rem; }
+.timer-bar-wrap { width: 100%; max-width: 800px; height: 8px; background: rgba(255,255,255,.07); border-radius: 4px; margin-bottom: 24px; overflow: hidden; }
+.timer-bar { height: 100%; border-radius: 4px; background: var(--accent); transition: width .1s linear, background .3s; }
+
+.quiz-card {
+  width: 100%; max-width: 800px; background: var(--panel);
+  border: 1.5px solid var(--border); border-radius: 20px;
+  padding: 32px 36px; margin-bottom: 22px;
+}
+.level-tag {
+  display: inline-block; font-size: .7rem; font-weight: 800; padding: 3px 12px;
+  border-radius: 8px; margin-bottom: 14px; letter-spacing: 1px;
+}
+.level-하 { background: rgba(100,255,218,.15); color: var(--accent); }
+.level-중 { background: rgba(247,183,49,.15); color: var(--accent2); }
+.level-상 { background: rgba(255,82,82,.15); color: var(--wrong); }
+.q-text { font-size: clamp(1rem, 2.5vw, 1.25rem); line-height: 1.8; white-space: pre-wrap; }
+
+.choices-grid { width: 100%; max-width: 800px; display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.choice-btn {
+  background: var(--panel); border: 2px solid var(--border); border-radius: 14px;
+  padding: 18px 22px; font-size: .98rem; font-weight: 700; cursor: pointer;
+  text-align: left; color: var(--text); transition: all .15s;
+  display: flex; align-items: center; gap: 12px; outline: none;
+}
+.choice-btn:hover:not(:disabled) { border-color: var(--accent); background: rgba(100,255,218,.07); }
+.choice-btn .key-badge {
+  font-size: .72rem; font-weight: 900; width: 26px; height: 26px; border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(255,255,255,.1); flex-shrink: 0;
+}
+.choice-btn.correct { border-color: var(--correct); background: rgba(0,230,118,.12); }
+.choice-btn.wrong   { border-color: var(--wrong);   background: rgba(255,82,82,.12); }
+.choice-btn:disabled { cursor: default; }
+
+/* solo key hints */
+.solo-key-hint {
+  display: flex; gap: 8px; font-size: .75rem; color: var(--muted); margin-top: -8px; margin-bottom: 8px;
+}
+.solo-key-hint span { background: var(--panel); border: 1px solid var(--border); border-radius: 6px; padding: 3px 10px; }
+
+/* ── BATTLE LAYOUT ── */
+#screen-battle { padding: 16px; gap: 0; }
+.battle-layout { display: flex; gap: 20px; width: 100%; max-width: 1100px; align-items: flex-start; flex-wrap: wrap; justify-content: center; }
+.battle-sidebar { width: 200px; display: flex; flex-direction: column; gap: 14px; }
+.battle-player-info { background: var(--panel); border-radius: 14px; padding: 18px 16px; text-align: center; border: 2px solid; }
+.battle-player-info.p1 { border-color: var(--p1); }
+.battle-player-info.p2 { border-color: var(--p2); }
+.bp-name { font-size: 1.05rem; font-weight: 900; margin-bottom: 6px; }
+.p1 .bp-name { color: var(--p1); }
+.p2 .bp-name { color: var(--p2); }
+.bp-score { font-size: 2rem; font-weight: 900; }
+.bp-key-hint { font-size: .7rem; color: var(--muted); margin-top: 4px; }
+.bp-lock { font-size: .75rem; color: var(--wrong); margin-top: 6px; min-height: 18px; }
+.battle-center { flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 14px; }
+.battle-q-num { text-align: center; color: var(--muted); font-size: .85rem; }
+.battle-quiz-card { background: var(--panel); border: 1.5px solid var(--border); border-radius: 18px; padding: 24px 28px; }
+.battle-choices { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.battle-choice {
+  background: rgba(255,255,255,.04); border: 1.5px solid var(--border); border-radius: 12px;
+  padding: 14px 16px; font-size: .88rem; font-weight: 700; color: var(--text);
+  display: flex; align-items: center; gap: 10px;
+}
+.battle-choice .key-badge { background: rgba(255,255,255,.12); }
+.battle-choice.correct { border-color: var(--correct); background: rgba(0,230,118,.12); }
+.battle-choice.wrong-p1 { border-color: var(--p1); background: rgba(79,195,247,.1); }
+.battle-choice.wrong-p2 { border-color: var(--p2); background: rgba(239,154,154,.1); }
+
+/* Territory grid */
+.territory-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 6px; margin-top: 4px;
+}
+.territory-cell {
+  aspect-ratio: 1; border-radius: 8px; border: 2px solid var(--border);
+  background: rgba(255,255,255,.04); transition: all .3s;
+  display: flex; align-items: center; justify-content: center; font-size: 1.1rem;
+}
+.territory-cell.p1 { background: rgba(79,195,247,.3); border-color: var(--p1); }
+.territory-cell.p2 { background: rgba(239,154,154,.3); border-color: var(--p2); }
+.territory-cell.current { box-shadow: 0 0 0 3px var(--accent2); }
+
+/* ── OVERLAY ── */
+.overlay {
+  position: fixed; inset: 0; z-index: 200;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(13,27,42,.85); backdrop-filter: blur(6px);
+}
+.overlay.hidden { display: none; }
+.overlay-box {
+  background: var(--panel); border: 2px solid var(--border); border-radius: 24px;
+  padding: 48px 56px; text-align: center; max-width: 380px;
+}
+.overlay-icon { font-size: 4rem; margin-bottom: 16px; }
+.overlay-title { font-size: 1.8rem; font-weight: 900; margin-bottom: 8px; }
+.overlay-sub { color: var(--muted); font-size: .92rem; }
+
+/* ── RESULT ── */
+#screen-result { padding: 40px 20px; gap: 24px; overflow-y: auto; }
+.result-title { font-size: 1.8rem; font-weight: 900; text-align: center; }
+.result-title span { color: var(--accent); }
+.result-score-big { font-size: 3.5rem; font-weight: 900; color: var(--accent); text-align: center; line-height: 1; }
+.result-score-big small { font-size: 1rem; color: var(--muted); }
+.result-breakdown {
+  display: flex; gap: 16px; flex-wrap: wrap; justify-content: center;
+}
+.breakdown-chip {
+  background: var(--panel); border: 1px solid var(--border); border-radius: 14px;
+  padding: 18px 24px; text-align: center; min-width: 130px;
+}
+.breakdown-chip .bc-level { font-size: .75rem; font-weight: 800; margin-bottom: 6px; letter-spacing: 1px; }
+.breakdown-chip .bc-score { font-size: 1.5rem; font-weight: 900; }
+.result-list { width: 100%; max-width: 700px; display: flex; flex-direction: column; gap: 10px; }
+.result-item {
+  background: var(--panel); border-radius: 12px; border-left: 4px solid;
+  padding: 14px 18px;
+}
+.result-item.ok  { border-color: var(--correct); }
+.result-item.bad { border-color: var(--wrong); }
+.ri-q { font-size: .88rem; margin-bottom: 4px; white-space: pre-wrap; }
+.ri-meta { font-size: .75rem; color: var(--muted); }
+
+/* ── BATTLE RESULT ── */
+.battle-result-wrap { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; }
+.battle-result-card { background: var(--panel); border: 2px solid; border-radius: 20px; padding: 32px 40px; text-align: center; }
+.battle-result-card.p1 { border-color: var(--p1); }
+.battle-result-card.p2 { border-color: var(--p2); }
+.brc-name { font-size: 1rem; font-weight: 700; margin-bottom: 8px; }
+.brc-cells { font-size: 3rem; font-weight: 900; }
+.brc-pts { font-size: 1rem; color: var(--muted); }
+.winner-banner { font-size: 2rem; font-weight: 900; text-align: center; color: var(--accent2); }
+
+/* responsive */
+@media (max-width: 600px) {
+  .choices-grid { grid-template-columns: 1fr; }
+  .battle-choices { grid-template-columns: 1fr; }
+  .battle-layout { flex-direction: column; align-items: center; }
+  .battle-sidebar { width: 100%; flex-direction: row; }
+  .battle-player-info { flex: 1; }
+}
+</style>
+</head>
+<body>
+
+<!-- ── BACK LINK ── -->
+<div class="back-fixed"><a href="index.html">← 수학 목록</a></div>
+
+<!-- ────────────── TITLE ────────────── -->
+<div id="screen-title" class="screen active">
+  <div class="title-badge">중2 수학 · 함수 단원 1차시</div>
+  <div class="title-main">함수 <span>&</span> 일차함수<br>퀴즈 게임</div>
+  <div class="title-sub">
+    하(1점) × 8문항 &nbsp;|&nbsp; 중(2점) × 8문항 &nbsp;|&nbsp; 상(3점) × 4문항<br>
+    총 20문항 · 최고 40점
+  </div>
+  <div class="mode-cards">
+    <div class="mode-card" onclick="startSoloSetup()">
+      <div class="mode-icon">🧑‍💻</div>
+      <div class="mode-title">혼자서 풀기</div>
+      <div class="mode-desc">타이머 안에 정답 선택<br>난이도별 제한시간<br>최종 점수 확인</div>
+    </div>
+    <div class="mode-card" onclick="startBattleSetup()">
+      <div class="mode-icon">⚔️</div>
+      <div class="mode-title">땅따먹기 대결</div>
+      <div class="mode-desc">1:1 키보드 대결<br>5×4 땅따먹기<br>P1: Q/W/E/R &nbsp; P2: U/I/O/P</div>
+    </div>
+  </div>
+</div>
+
+<!-- ────────────── SOLO SETUP ────────────── -->
+<div id="screen-solo-setup" class="screen">
+  <div class="setup-title"><span>혼자서</span> 풀기</div>
+  <div class="setup-info">
+    <p><strong>하(1점)</strong> 8문항 — 제한시간 30초</p>
+    <p><strong>중(2점)</strong> 8문항 — 제한시간 40초</p>
+    <p><strong>상(3점)</strong> 4문항 — 제한시간 50초</p>
+    <p style="margin-top:12px">키보드 <strong>1/2/3/4</strong> 또는 마우스로 선택</p>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-accent" onclick="startSolo()">▶ 시작</button>
+    <button class="btn btn-outline" onclick="showScreen('screen-title')">← 뒤로</button>
+  </div>
+</div>
+
+<!-- ────────────── BATTLE SETUP ────────────── -->
+<div id="screen-battle-setup" class="screen">
+  <div class="setup-title"><span>땅따먹기</span> 대결 설정</div>
+  <div class="player-inputs">
+    <div class="player-box p1">
+      <div class="player-label">🔵 Player 1</div>
+      <input class="player-name-input" id="p1-name" placeholder="이름 입력" maxlength="8" value="P1">
+      <div class="player-key-hint">키: Q / W / E / R</div>
+    </div>
+    <div class="player-box p2">
+      <div class="player-label">🔴 Player 2</div>
+      <input class="player-name-input" id="p2-name" placeholder="이름 입력" maxlength="8" value="P2">
+      <div class="player-key-hint">키: U / I / O / P</div>
+    </div>
+  </div>
+  <div class="setup-info" style="max-width:440px; text-align:left">
+    <p>• 문제 1개당 제한시간 <strong>20초</strong></p>
+    <p>• 먼저 정답 누른 플레이어가 땅 획득</p>
+    <p>• 오답 시 <strong>3초 잠금</strong></p>
+    <p>• 20문항 → 20칸, 더 많은 땅 차지한 쪽 승리</p>
+  </div>
+  <div class="btn-row">
+    <button class="btn btn-gold" onclick="startBattle()">⚔️ 대결 시작</button>
+    <button class="btn btn-outline" onclick="showScreen('screen-title')">← 뒤로</button>
+  </div>
+</div>
+
+<!-- ────────────── SOLO QUIZ ────────────── -->
+<div id="screen-quiz" class="screen">
+  <div class="quiz-header">
+    <div class="quiz-score-block">
+      <div class="score-chip">
+        <span class="val" id="solo-score">0</span>점
+      </div>
+      <div class="score-chip">
+        <span class="val" id="solo-timer">30</span>초
+      </div>
+    </div>
+    <div class="q-counter" id="solo-q-counter">1 / 20</div>
+  </div>
+  <div class="timer-bar-wrap"><div class="timer-bar" id="solo-timer-bar"></div></div>
+
+  <div class="quiz-card">
+    <span class="level-tag" id="solo-level-tag">하</span>
+    <div class="q-text" id="solo-q-text">문제</div>
+  </div>
+
+  <div class="solo-key-hint">
+    <span>1 → ①</span><span>2 → ②</span><span>3 → ③</span><span>4 → ④</span>
+  </div>
+
+  <div class="choices-grid" id="solo-choices"></div>
+</div>
+
+<!-- ────────────── BATTLE ────────────── -->
+<div id="screen-battle" class="screen">
+  <div class="battle-layout">
+    <!-- P1 sidebar -->
+    <div class="battle-sidebar">
+      <div class="battle-player-info p1">
+        <div class="bp-name" id="bp1-name">P1</div>
+        <div class="bp-score" id="bp1-score" style="color:var(--p1)">0</div>
+        <div class="bp-key-hint">Q / W / E / R</div>
+        <div class="bp-lock" id="bp1-lock"></div>
+      </div>
+      <!-- territory grid -->
+      <div class="territory-grid" id="territory-grid"></div>
+    </div>
+
+    <!-- center -->
+    <div class="battle-center">
+      <div class="battle-q-num" id="battle-q-counter">문제 1 / 20</div>
+      <div class="timer-bar-wrap"><div class="timer-bar" id="battle-timer-bar"></div></div>
+      <div class="battle-quiz-card">
+        <span class="level-tag" id="battle-level-tag">하</span>
+        <div class="q-text" id="battle-q-text"></div>
+      </div>
+      <div class="battle-choices" id="battle-choices"></div>
+    </div>
+
+    <!-- P2 sidebar -->
+    <div class="battle-sidebar">
+      <div class="battle-player-info p2">
+        <div class="bp-name" id="bp2-name">P2</div>
+        <div class="bp-score" id="bp2-score" style="color:var(--p2)">0</div>
+        <div class="bp-key-hint">U / I / O / P</div>
+        <div class="bp-lock" id="bp2-lock"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ────────────── RESULT (SOLO) ────────────── -->
+<div id="screen-result" class="screen">
+  <div class="result-title">결과 <span>발표</span></div>
+  <div class="result-score-big" id="result-total">0<small>점</small></div>
+  <div class="result-breakdown" id="result-breakdown"></div>
+  <div class="result-list" id="result-list"></div>
+  <div class="btn-row" style="margin-top:8px">
+    <button class="btn btn-accent btn-sm" onclick="startSolo()">다시 풀기</button>
+    <button class="btn btn-outline btn-sm" onclick="showScreen('screen-title')">처음으로</button>
+  </div>
+</div>
+
+<!-- ────────────── RESULT (BATTLE) ────────────── -->
+<div id="screen-battle-result" class="screen">
+  <div class="winner-banner" id="battle-winner-text"></div>
+  <div class="battle-result-wrap" id="battle-result-wrap"></div>
+  <!-- final territory -->
+  <div class="territory-grid" id="final-territory" style="max-width:300px; width:100%; margin:0 auto;"></div>
+  <div class="btn-row" style="margin-top:16px">
+    <button class="btn btn-gold btn-sm" onclick="startBattle()">다시 대결</button>
+    <button class="btn btn-outline btn-sm" onclick="showScreen('screen-title')">처음으로</button>
+  </div>
+</div>
+
+<!-- ────────────── OVERLAY ────────────── -->
+<div class="overlay hidden" id="overlay">
+  <div class="overlay-box">
+    <div class="overlay-icon" id="overlay-icon"></div>
+    <div class="overlay-title" id="overlay-title"></div>
+    <div class="overlay-sub" id="overlay-sub"></div>
+  </div>
+</div>
+
+<script>
+/* ──────────────────────────────
+   QUESTION DATA
+────────────────────────────── */
+const RAW_Q = [
+  // ── 하 (1점) × 8 ──
+  { level:'하', points:1, q:'f(x) = 2x + 1일 때,  f(3)의 값은?',
+    choices:['5','6','7','8'], answer:2 },
+  { level:'하', points:1, q:'f(x) = −x + 4일 때,  f(0)의 값은?',
+    choices:['0','2','4','−4'], answer:2 },
+  { level:'하', points:1, q:'y = 3x − 2에서  x = 2일 때  y의 값은?',
+    choices:['2','4','6','8'], answer:1 },
+  { level:'하', points:1, q:'다음 중 일차함수인 것은?',
+    choices:['y = x²','y = 2/x','y = −3x + 1','y = x² + x'], answer:2 },
+  { level:'하', points:1, q:'f(x) = 5x에서  f(−1)의 값은?',
+    choices:['−5','−1','1','5'], answer:0 },
+  { level:'하', points:1, q:'x의 각 값에 대하여 y의 값이 하나씩 정해질 때,\ny를 x의 무엇이라 하는가?',
+    choices:['역함수','함수','역수','정의역'], answer:1 },
+  { level:'하', points:1, q:'f(x) = 4x − 3일 때,  f(1)의 값은?',
+    choices:['−1','0','1','2'], answer:2 },
+  { level:'하', points:1, q:'다음 중 일차함수가 아닌 것은?',
+    choices:['y = x + 1','y = −2x','y = 1/x','y = 3x − 4'], answer:2 },
+
+  // ── 중 (2점) × 8 ──
+  { level:'중', points:2, q:'f(x) = 2x − 1일 때,  f(a) = 7이면  a의 값은?',
+    choices:['3','4','5','6'], answer:1 },
+  { level:'중', points:2, q:'f(x) = (3x + 1) ÷ 2일 때,  f(3)의 값은?',
+    choices:['4','5','5.5','10'], answer:1 },
+  { level:'중', points:2, q:'다음 중 y가 x의 함수가 아닌 것은?',
+    choices:['y = 2x − 1','y = x²','자연수 x의 약수 y','y = −x + 3'], answer:2 },
+  { level:'중', points:2, q:'f(x) = ax + 2에서  f(3) = 8일 때,  a의 값은?',
+    choices:['1','2','3','4'], answer:1 },
+  { level:'중', points:2, q:'f(x) = −2x + 5일 때,\nf(−1) + f(2)의 값은?',
+    choices:['5','6','7','8'], answer:3 },
+  { level:'중', points:2, q:'y = ax + b가 일차함수가 되려면?',
+    choices:['a = 0','a ≠ 0','b = 0','b ≠ 0'], answer:1 },
+  { level:'중', points:2, q:'f(x) = 3x − 1일 때,  f(2a) = 11이면  a의 값은?',
+    choices:['1','2','3','4'], answer:1 },
+  { level:'중', points:2, q:'다음 중 일차함수인 것을 모두 고른 것은?\nㄱ. y = x²−x  ㄴ. y = 2(x−1)\nㄷ. y = 3  ㄹ. y = −x + 4',
+    choices:['ㄴ, ㄹ','ㄱ, ㄴ','ㄴ, ㄷ','ㄱ, ㄹ'], answer:0 },
+
+  // ── 상 (3점) × 4 ──
+  { level:'상', points:3, q:'f(x) = ax + b에서\nf(1) = 5,  f(−1) = −1일 때,  f(3)의 값은?',
+    choices:['9','10','11','12'], answer:2 },
+  { level:'상', points:3, q:'f(2x − 1) = 4x − 5일 때,  f(3)의 값은?',
+    choices:['1','2','3','4'], answer:2 },
+  { level:'상', points:3, q:'f(x) = 2x + 1,  g(x) = −x + 4에서\nf(a) = g(a)를 만족하는  a의 값은?',
+    choices:['0','1','−1','2'], answer:1 },
+  { level:'상', points:3, q:'f(x) = 3x − 1일 때,\nf(k) − f(k−1)의 값은?  (k는 임의의 수)',
+    choices:['1','2','3','4'], answer:2 },
+];
+
+const TIME_LIMIT = { '하':30, '중':40, '상':50 };
+const BATTLE_TIME = 20;
+const KEYS_P1 = { q:0, w:1, e:2, r:3 };
+const KEYS_P2 = { u:0, i:1, o:2, p:3 };
+
+/* ──────────────────────────────
+   HELPERS
+────────────────────────────── */
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length-1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i+1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+function showOverlay(icon, title, sub, duration) {
+  const ov = document.getElementById('overlay');
+  document.getElementById('overlay-icon').textContent = icon;
+  document.getElementById('overlay-title').textContent = title;
+  document.getElementById('overlay-sub').textContent = sub;
+  ov.classList.remove('hidden');
+  if (duration) setTimeout(() => ov.classList.add('hidden'), duration);
+}
+
+function hideOverlay() { document.getElementById('overlay').classList.add('hidden'); }
+
+/* ──────────────────────────────
+   SOLO MODE
+────────────────────────────── */
+let soloState = null;
+
+function startSoloSetup() { showScreen('screen-solo-setup'); }
+function startBattleSetup() { showScreen('screen-battle-setup'); }
+
+function startSolo() {
+  soloState = {
+    questions: shuffle(RAW_Q),
+    idx: 0,
+    score: 0,
+    results: [],
+    timerInterval: null,
+    timeLeft: 0,
+    answered: false,
+  };
+  showScreen('screen-quiz');
+  renderSoloQ();
+}
+
+function renderSoloQ() {
+  const s = soloState;
+  const q = s.questions[s.idx];
+  s.answered = false;
+
+  document.getElementById('solo-q-counter').textContent = `${s.idx+1} / 20`;
+  document.getElementById('solo-score').textContent = s.score;
+
+  const tag = document.getElementById('solo-level-tag');
+  tag.textContent = `${q.level} (${q.points}점)`;
+  tag.className = `level-tag level-${q.level}`;
+  document.getElementById('solo-q-text').textContent = q.q;
+
+  const grid = document.getElementById('solo-choices');
+  grid.innerHTML = '';
+  const keys = ['1','2','3','4'];
+  q.choices.forEach((c, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'choice-btn';
+    btn.innerHTML = `<span class="key-badge">${keys[i]}</span>${c}`;
+    btn.onclick = () => soloAnswer(i);
+    grid.appendChild(btn);
+  });
+
+  // timer
+  clearInterval(s.timerInterval);
+  s.timeLeft = TIME_LIMIT[q.level];
+  updateSoloTimer();
+  s.timerInterval = setInterval(() => {
+    s.timeLeft -= 0.1;
+    updateSoloTimer();
+    if (s.timeLeft <= 0) { clearInterval(s.timerInterval); soloTimeUp(); }
+  }, 100);
+}
+
+function updateSoloTimer() {
+  const s = soloState;
+  const q = s.questions[s.idx];
+  const max = TIME_LIMIT[q.level];
+  const pct = Math.max(0, s.timeLeft / max * 100);
+  const bar = document.getElementById('solo-timer-bar');
+  bar.style.width = pct + '%';
+  bar.style.background = pct > 50 ? 'var(--accent)' : pct > 20 ? 'var(--accent2)' : 'var(--wrong)';
+  document.getElementById('solo-timer').textContent = Math.ceil(Math.max(0, s.timeLeft));
+}
+
+function soloTimeUp() {
+  if (soloState.answered) return;
+  soloState.answered = true;
+  const q = soloState.questions[soloState.idx];
+  highlightAnswer(-1, q.answer);
+  soloState.results.push({ q, chosen: -1, ok: false });
+  setTimeout(nextSoloQ, 1200);
+}
+
+function soloAnswer(i) {
+  const s = soloState;
+  if (s.answered) return;
+  s.answered = true;
+  clearInterval(s.timerInterval);
+  const q = s.questions[s.idx];
+  const ok = i === q.answer;
+  highlightAnswer(i, q.answer);
+  if (ok) s.score += q.points;
+  document.getElementById('solo-score').textContent = s.score;
+  s.results.push({ q, chosen: i, ok });
+  setTimeout(nextSoloQ, 900);
+}
+
+function highlightAnswer(chosen, correct) {
+  const btns = document.querySelectorAll('#solo-choices .choice-btn');
+  btns.forEach((b, i) => {
+    b.disabled = true;
+    if (i === correct) b.classList.add('correct');
+    else if (i === chosen) b.classList.add('wrong');
+  });
+}
+
+function nextSoloQ() {
+  soloState.idx++;
+  if (soloState.idx >= 20) { showSoloResult(); return; }
+  renderSoloQ();
+}
+
+function showSoloResult() {
+  showScreen('screen-result');
+  const s = soloState;
+  document.getElementById('result-total').innerHTML = `${s.score}<small>점</small>`;
+
+  const levels = ['하','중','상'];
+  const bd = document.getElementById('result-breakdown');
+  bd.innerHTML = '';
+  levels.forEach(lv => {
+    const qs = s.results.filter(r => r.q.level === lv);
+    const got = qs.filter(r => r.ok).reduce((a,r) => a + r.q.points, 0);
+    const max = qs.reduce((a,r) => a + r.q.points, 0);
+    const chip = document.createElement('div');
+    chip.className = 'breakdown-chip';
+    chip.innerHTML = `<div class="bc-level level-${lv}">${lv}</div>
+      <div class="bc-score">${got}<small style="font-size:.8rem">/${max}</small></div>
+      <div style="font-size:.7rem;color:var(--muted)">${qs.filter(r=>r.ok).length}/${qs.length}문항</div>`;
+    bd.appendChild(chip);
+  });
+
+  const list = document.getElementById('result-list');
+  list.innerHTML = '';
+  s.results.forEach((r, i) => {
+    const item = document.createElement('div');
+    item.className = `result-item ${r.ok ? 'ok' : 'bad'}`;
+    const chosenText = r.chosen === -1 ? '시간 초과' : r.q.choices[r.chosen];
+    item.innerHTML = `<div class="ri-q">${i+1}. ${r.q.q}</div>
+      <div class="ri-meta">
+        ${r.ok ? '✅ 정답' : `❌ 오답 (선택: ${chosenText} → 정답: ${r.q.choices[r.q.answer]})`}
+        &nbsp;|&nbsp; ${r.q.level} ${r.q.points}점
+      </div>`;
+    list.appendChild(item);
+  });
+}
+
+/* ──────────────────────────────
+   BATTLE MODE
+────────────────────────────── */
+let battleState = null;
+
+function startBattle() {
+  const p1Name = document.getElementById('p1-name')?.value.trim() || 'P1';
+  const p2Name = document.getElementById('p2-name')?.value.trim() || 'P2';
+
+  battleState = {
+    questions: shuffle(RAW_Q),
+    idx: 0,
+    territory: new Array(20).fill(0), // 0=none 1=p1 2=p2
+    cells: [0, 0],
+    points: [0, 0],
+    names: [p1Name, p2Name],
+    lockUntil: [0, 0],
+    timerInterval: null,
+    timeLeft: BATTLE_TIME,
+    answered: false,
+    keyEnabled: true,
+  };
+
+  document.getElementById('bp1-name').textContent = p1Name;
+  document.getElementById('bp2-name').textContent = p2Name;
+  document.getElementById('bp1-score').textContent = 0;
+  document.getElementById('bp2-score').textContent = 0;
+  document.getElementById('bp1-lock').textContent = '';
+  document.getElementById('bp2-lock').textContent = '';
+
+  buildTerritoryGrid();
+  showScreen('screen-battle');
+  renderBattleQ();
+}
+
+function buildTerritoryGrid() {
+  const grid = document.getElementById('territory-grid');
+  grid.innerHTML = '';
+  for (let i = 0; i < 20; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'territory-cell';
+    cell.id = `tc-${i}`;
+    grid.appendChild(cell);
+  }
+}
+
+function updateTerritoryUI() {
+  const t = battleState.territory;
+  for (let i = 0; i < 20; i++) {
+    const cell = document.getElementById(`tc-${i}`);
+    cell.className = 'territory-cell' +
+      (t[i] === 1 ? ' p1' : t[i] === 2 ? ' p2' : '') +
+      (i === battleState.idx ? ' current' : '');
+    cell.textContent = t[i] === 1 ? '🔵' : t[i] === 2 ? '🔴' : '';
+  }
+}
+
+function renderBattleQ() {
+  const s = battleState;
+  const q = s.questions[s.idx];
+  s.answered = false;
+
+  document.getElementById('battle-q-counter').textContent = `문제 ${s.idx+1} / 20`;
+  const tag = document.getElementById('battle-level-tag');
+  tag.textContent = `${q.level} (${q.points}점)`;
+  tag.className = `level-tag level-${q.level}`;
+  document.getElementById('battle-q-text').textContent = q.q;
+
+  const grid = document.getElementById('battle-choices');
+  grid.innerHTML = '';
+  const keysLabel = ['Q/U','W/I','E/O','R/P'];
+  q.choices.forEach((c, i) => {
+    const div = document.createElement('div');
+    div.className = 'battle-choice';
+    div.id = `bc-${i}`;
+    div.innerHTML = `<span class="key-badge">${keysLabel[i]}</span>${c}`;
+    grid.appendChild(div);
+  });
+
+  updateTerritoryUI();
+
+  clearInterval(s.timerInterval);
+  s.timeLeft = BATTLE_TIME;
+  const bar = document.getElementById('battle-timer-bar');
+  bar.style.width = '100%';
+  bar.style.background = 'var(--accent)';
+
+  s.timerInterval = setInterval(() => {
+    s.timeLeft -= 0.1;
+    const pct = Math.max(0, s.timeLeft / BATTLE_TIME * 100);
+    bar.style.width = pct + '%';
+    bar.style.background = pct > 50 ? 'var(--accent)' : pct > 20 ? 'var(--accent2)' : 'var(--wrong)';
+    if (s.timeLeft <= 0) { clearInterval(s.timerInterval); battleTimeUp(); }
+  }, 100);
+}
+
+function battleTimeUp() {
+  const s = battleState;
+  if (s.answered) return;
+  s.answered = true;
+  // no one gets the cell
+  const q = s.questions[s.idx];
+  highlightBattleAnswer(-1, q.answer, -1);
+  setTimeout(nextBattleQ, 1000);
+}
+
+function battleAnswer(player, choice) {
+  const s = battleState;
+  if (s.answered) return;
+  const now = Date.now();
+  if (now < s.lockUntil[player]) return;
+
+  const q = s.questions[s.idx];
+  if (choice === q.answer) {
+    s.answered = true;
+    clearInterval(s.timerInterval);
+    s.territory[s.idx] = player + 1;
+    s.cells[player]++;
+    s.points[player] += q.points;
+    document.getElementById(`bp${player+1}-score`).textContent = s.cells[player];
+    highlightBattleAnswer(choice, q.answer, player);
+    setTimeout(nextBattleQ, 900);
+  } else {
+    // wrong — lock for 3s
+    s.lockUntil[player] = now + 3000;
+    const lockEl = document.getElementById(`bp${player+1}-lock`);
+    lockEl.textContent = '⏳ 3초 잠금';
+    // highlight wrong choice for this player
+    const choiceEl = document.getElementById(`bc-${choice}`);
+    if (choiceEl) choiceEl.classList.add(player === 0 ? 'wrong-p1' : 'wrong-p2');
+    setTimeout(() => { lockEl.textContent = ''; }, 3000);
+  }
+}
+
+function highlightBattleAnswer(chosen, correct, winner) {
+  for (let i = 0; i < 4; i++) {
+    const el = document.getElementById(`bc-${i}`);
+    if (!el) continue;
+    if (i === correct) el.classList.add('correct');
+  }
+}
+
+function nextBattleQ() {
+  battleState.idx++;
+  if (battleState.idx >= 20) { showBattleResult(); return; }
+  renderBattleQ();
+}
+
+function showBattleResult() {
+  const s = battleState;
+  const t = s.territory;
+
+  // build final territory display
+  const ft = document.getElementById('final-territory');
+  ft.innerHTML = '';
+  for (let i = 0; i < 20; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'territory-cell' + (t[i]===1?' p1':t[i]===2?' p2':'');
+    cell.textContent = t[i]===1?'🔵':t[i]===2?'🔴':'';
+    ft.appendChild(cell);
+  }
+
+  const p1c = s.cells[0], p2c = s.cells[1];
+  let winnerText;
+  if (p1c > p2c) winnerText = `🏆 ${s.names[0]} 승리!`;
+  else if (p2c > p1c) winnerText = `🏆 ${s.names[1]} 승리!`;
+  else winnerText = `🤝 무승부!`;
+
+  document.getElementById('battle-winner-text').textContent = winnerText;
+
+  const wrap = document.getElementById('battle-result-wrap');
+  wrap.innerHTML = `
+    <div class="battle-result-card p1">
+      <div class="brc-name">${s.names[0]}</div>
+      <div class="brc-cells" style="color:var(--p1)">${p1c}</div>
+      <div class="brc-pts">칸 획득</div>
+    </div>
+    <div class="battle-result-card p2">
+      <div class="brc-name">${s.names[1]}</div>
+      <div class="brc-cells" style="color:var(--p2)">${p2c}</div>
+      <div class="brc-pts">칸 획득</div>
+    </div>`;
+
+  showScreen('screen-battle-result');
+}
+
+/* ──────────────────────────────
+   KEYBOARD HANDLERS
+────────────────────────────── */
+document.addEventListener('keydown', e => {
+  const key = e.key.toLowerCase();
+
+  // solo mode
+  const soloScreen = document.getElementById('screen-quiz');
+  if (soloScreen.classList.contains('active') && soloState) {
+    const map = { '1':0, '2':1, '3':2, '4':3 };
+    if (map[key] !== undefined) soloAnswer(map[key]);
+  }
+
+  // battle mode
+  const battleScreen = document.getElementById('screen-battle');
+  if (battleScreen.classList.contains('active') && battleState) {
+    if (KEYS_P1[key] !== undefined) battleAnswer(0, KEYS_P1[key]);
+    else if (KEYS_P2[key] !== undefined) battleAnswer(1, KEYS_P2[key]);
+  }
+});
+</script>
+</body>
+</html>
