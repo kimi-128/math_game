@@ -219,6 +219,22 @@ body {
 .overlay-title { font-size: 1.8rem; font-weight: 900; margin-bottom: 8px; }
 .overlay-sub { color: var(--muted); font-size: .92rem; }
 
+/* ── FEEDBACK BANNER ── */
+.feedback-banner {
+  width: 100%; max-width: 800px; border-radius: 14px;
+  padding: 16px 24px; margin-top: 12px; min-height: 64px;
+  display: flex; align-items: center; gap: 16px;
+  font-size: 1.05rem; font-weight: 800; transition: opacity .15s;
+  border: 2px solid transparent;
+}
+.feedback-banner.fb-hidden { opacity: 0; pointer-events: none; }
+.feedback-banner.fb-correct { background: rgba(0,230,118,.12); border-color: var(--correct); color: var(--correct); }
+.feedback-banner.fb-wrong   { background: rgba(255,82,82,.1);  border-color: var(--wrong);   color: var(--wrong); }
+.feedback-banner.fb-timeout { background: rgba(247,183,49,.1); border-color: var(--accent2); color: var(--accent2); }
+.fb-icon { font-size: 2rem; flex-shrink: 0; line-height: 1; }
+.fb-msg  { flex: 1; }
+.fb-answer { font-size: .85rem; color: var(--text); font-weight: 600; margin-top: 4px; opacity: .9; }
+
 /* ── RESULT ── */
 #screen-result { padding: 40px 20px; gap: 24px; overflow-y: auto; }
 .result-title { font-size: 1.8rem; font-weight: 900; text-align: center; }
@@ -241,8 +257,20 @@ body {
 }
 .result-item.ok  { border-color: var(--correct); }
 .result-item.bad { border-color: var(--wrong); }
-.ri-q { font-size: .88rem; margin-bottom: 4px; white-space: pre-wrap; }
-.ri-meta { font-size: .75rem; color: var(--muted); }
+.ri-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.ri-num { font-size: .72rem; font-weight: 900; background: rgba(255,255,255,.08); border-radius: 6px; padding: 2px 8px; color: var(--muted); }
+.ri-status { font-size: .85rem; font-weight: 800; }
+.ri-level { font-size: .7rem; font-weight: 700; margin-left: auto; padding: 2px 10px; border-radius: 8px; }
+.ri-q { font-size: .9rem; margin-bottom: 6px; white-space: pre-wrap; line-height: 1.6; }
+.ri-wrong-detail {
+  display: flex; align-items: center; gap: 8px; flex-wrap: wrap;
+  background: rgba(0,0,0,.2); border-radius: 8px; padding: 8px 12px; margin-top: 4px;
+  font-size: .82rem;
+}
+.ri-chosen { color: var(--wrong); font-weight: 700; }
+.ri-arrow  { color: var(--muted); }
+.ri-correct { color: var(--correct); font-weight: 800; }
+.btn-retry { background: rgba(255,82,82,.15); border: 2px solid var(--wrong); color: var(--wrong); }
 
 /* ── BATTLE RESULT ── */
 .battle-result-wrap { display: flex; gap: 24px; flex-wrap: wrap; justify-content: center; }
@@ -443,6 +471,7 @@ body {
   </div>
 
   <div class="choices-grid" id="solo-choices"></div>
+  <div id="solo-feedback" class="feedback-banner fb-hidden"></div>
 </div>
 
 <!-- ────────────── BATTLE ────────────── -->
@@ -485,11 +514,11 @@ body {
 
 <!-- ────────────── RESULT (SOLO) ────────────── -->
 <div id="screen-result" class="screen">
-  <div class="result-title">결과 <span>발표</span></div>
+  <div class="result-title" id="result-title-text">결과 <span>발표</span></div>
   <div class="result-score-big" id="result-total">0<small>점</small></div>
   <div class="result-breakdown" id="result-breakdown"></div>
   <div class="result-list" id="result-list"></div>
-  <div class="btn-row" style="margin-top:8px">
+  <div class="btn-row" style="margin-top:8px" id="result-btn-row">
     <button class="btn btn-accent btn-sm" onclick="startSolo()">다시 풀기</button>
     <button class="btn btn-outline btn-sm" onclick="showScreen('screen-title')">처음으로</button>
   </div>
@@ -691,11 +720,13 @@ function hideOverlay() { document.getElementById('overlay').classList.add('hidde
    SOLO MODE
 ────────────────────────────── */
 let soloState = null;
+let isRetry = false;
 
 function startSoloSetup() { showScreen('screen-solo-setup'); }
 function startBattleSetup() { showScreen('screen-battle-setup'); }
 
 function startSolo() {
+  isRetry = false;
   soloState = {
     questions: shuffle(RAW_Q),
     idx: 0,
@@ -709,12 +740,47 @@ function startSolo() {
   renderSoloQ();
 }
 
+function startRetry() {
+  const wrongs = soloState.results.filter(r => !r.ok).map(r => r.q);
+  if (wrongs.length === 0) return;
+  isRetry = true;
+  soloState = {
+    questions: wrongs,
+    idx: 0, score: 0, results: [],
+    timerInterval: null, timeLeft: 0, answered: false,
+  };
+  showScreen('screen-quiz');
+  renderSoloQ();
+}
+
+function showFeedback(ok, chosenIdx, correctIdx, q) {
+  const banner = document.getElementById('solo-feedback');
+  if (!banner) return;
+  if (ok) {
+    banner.className = 'feedback-banner fb-correct';
+    banner.innerHTML = `<span class="fb-icon">⭕</span><div class="fb-msg"><div>정답입니다!</div></div>`;
+  } else if (chosenIdx === -1) {
+    banner.className = 'feedback-banner fb-timeout';
+    banner.innerHTML = `<span class="fb-icon">⏰</span><div class="fb-msg"><div>시간 초과!</div><div class="fb-answer">✓ 정답: ${q.choices[correctIdx]}</div></div>`;
+  } else {
+    banner.className = 'feedback-banner fb-wrong';
+    banner.innerHTML = `<span class="fb-icon">❌</span><div class="fb-msg"><div>오답입니다</div><div class="fb-answer">내 선택: ${q.choices[chosenIdx]} &nbsp;→&nbsp; ✓ 정답: ${q.choices[correctIdx]}</div></div>`;
+  }
+}
+
+function hideFeedback() {
+  const banner = document.getElementById('solo-feedback');
+  if (banner) banner.className = 'feedback-banner fb-hidden';
+}
+
 function renderSoloQ() {
   const s = soloState;
   const q = s.questions[s.idx];
   s.answered = false;
 
-  document.getElementById('solo-q-counter').textContent = `${s.idx+1} / 20`;
+  document.getElementById('solo-q-counter').textContent = isRetry
+    ? `오답 ${s.idx+1} / ${s.questions.length}`
+    : `${s.idx+1} / ${s.questions.length}`;
   document.getElementById('solo-score').textContent = s.score;
 
   const tag = document.getElementById('solo-level-tag');
@@ -760,8 +826,9 @@ function soloTimeUp() {
   soloState.answered = true;
   const q = soloState.questions[soloState.idx];
   highlightAnswer(-1, q.answer);
+  showFeedback(false, -1, q.answer, q);
   soloState.results.push({ q, chosen: -1, ok: false });
-  setTimeout(nextSoloQ, 1200);
+  setTimeout(() => { hideFeedback(); nextSoloQ(); }, 1800);
 }
 
 function soloAnswer(i) {
@@ -772,10 +839,11 @@ function soloAnswer(i) {
   const q = s.questions[s.idx];
   const ok = i === q.answer;
   highlightAnswer(i, q.answer);
+  showFeedback(ok, i, q.answer, q);
   if (ok) s.score += q.points;
   document.getElementById('solo-score').textContent = s.score;
   s.results.push({ q, chosen: i, ok });
-  setTimeout(nextSoloQ, 900);
+  setTimeout(() => { hideFeedback(); nextSoloQ(); }, ok ? 1000 : 1800);
 }
 
 function highlightAnswer(chosen, correct) {
@@ -789,43 +857,88 @@ function highlightAnswer(chosen, correct) {
 
 function nextSoloQ() {
   soloState.idx++;
-  if (soloState.idx >= 20) { showSoloResult(); return; }
+  if (soloState.idx >= soloState.questions.length) { showSoloResult(); return; }
   renderSoloQ();
 }
 
 function showSoloResult() {
   showScreen('screen-result');
   const s = soloState;
-  document.getElementById('result-total').innerHTML = `${s.score}<small>점</small>`;
+  const wrongCount = s.results.filter(r => !r.ok).length;
+  const okCount = s.results.filter(r => r.ok).length;
 
-  const levels = ['하','중','상'];
+  // 타이틀
+  document.getElementById('result-title-text').innerHTML = isRetry
+    ? `오답 재도전 <span>결과</span>`
+    : `결과 <span>발표</span>`;
+
+  // 점수
+  document.getElementById('result-total').innerHTML = isRetry
+    ? `${okCount}<small style="font-size:1.1rem;color:var(--muted)"> / ${s.results.length}문항</small>`
+    : `${s.score}<small>점</small>`;
+
+  // 난이도별 분석 (첫 풀기만)
   const bd = document.getElementById('result-breakdown');
   bd.innerHTML = '';
-  levels.forEach(lv => {
-    const qs = s.results.filter(r => r.q.level === lv);
-    const got = qs.filter(r => r.ok).reduce((a,r) => a + r.q.points, 0);
-    const max = qs.reduce((a,r) => a + r.q.points, 0);
-    const chip = document.createElement('div');
-    chip.className = 'breakdown-chip';
-    chip.innerHTML = `<div class="bc-level level-${lv}">${lv}</div>
-      <div class="bc-score">${got}<small style="font-size:.8rem">/${max}</small></div>
-      <div style="font-size:.7rem;color:var(--muted)">${qs.filter(r=>r.ok).length}/${qs.length}문항</div>`;
-    bd.appendChild(chip);
-  });
+  if (!isRetry) {
+    ['하','중','상'].forEach(lv => {
+      const qs = s.results.filter(r => r.q.level === lv);
+      const got = qs.filter(r => r.ok).reduce((a,r) => a + r.q.points, 0);
+      const max = qs.reduce((a,r) => a + r.q.points, 0);
+      const chip = document.createElement('div');
+      chip.className = 'breakdown-chip';
+      chip.innerHTML = `<div class="bc-level level-${lv}">${lv}</div>
+        <div class="bc-score">${got}<small style="font-size:.8rem">/${max}</small></div>
+        <div style="font-size:.7rem;color:var(--muted)">${qs.filter(r=>r.ok).length}/${qs.length}문항</div>`;
+      bd.appendChild(chip);
+    });
+  } else {
+    bd.innerHTML = `<div style="font-size:.85rem;color:var(--muted)">오답 ${s.results.length}문항 재도전 결과</div>`;
+  }
 
+  // 문항별 목록
   const list = document.getElementById('result-list');
   list.innerHTML = '';
   s.results.forEach((r, i) => {
     const item = document.createElement('div');
     item.className = `result-item ${r.ok ? 'ok' : 'bad'}`;
-    const chosenText = r.chosen === -1 ? '시간 초과' : r.q.choices[r.chosen];
-    item.innerHTML = `<div class="ri-q">${i+1}. ${r.q.q}</div>
-      <div class="ri-meta">
-        ${r.ok ? '✅ 정답' : `❌ 오답 (선택: ${chosenText} → 정답: ${r.q.choices[r.q.answer]})`}
-        &nbsp;|&nbsp; ${r.q.level} ${r.q.points}점
-      </div>`;
+    const chosenText = r.chosen === -1 ? '⏰ 시간 초과' : r.q.choices[r.chosen];
+    item.innerHTML = `
+      <div class="ri-header">
+        <span class="ri-num">${i+1}번</span>
+        <span class="ri-status">${r.ok ? '✅ 정답' : '❌ 오답'}</span>
+        <span class="ri-level level-${r.q.level}">${r.q.level} ${r.q.points}점</span>
+      </div>
+      <div class="ri-q">${r.q.q}</div>
+      ${!r.ok ? `
+        <div class="ri-wrong-detail">
+          <span class="ri-chosen">내 답: ${chosenText}</span>
+          <span class="ri-arrow">→</span>
+          <span class="ri-correct">✓ 정답: ${r.q.choices[r.q.answer]}</span>
+        </div>` : ''}`;
     list.appendChild(item);
   });
+
+  // 버튼 구성
+  const btnRow = document.getElementById('result-btn-row');
+  btnRow.innerHTML = '';
+  if (wrongCount > 0 && !isRetry) {
+    const retryBtn = document.createElement('button');
+    retryBtn.className = 'btn btn-retry btn-sm';
+    retryBtn.textContent = `❌ 오답 ${wrongCount}문항 다시 풀기`;
+    retryBtn.onclick = startRetry;
+    btnRow.appendChild(retryBtn);
+  }
+  const againBtn = document.createElement('button');
+  againBtn.className = 'btn btn-accent btn-sm';
+  againBtn.textContent = isRetry ? '처음부터 다시 풀기' : '다시 풀기';
+  againBtn.onclick = () => { isRetry = false; startSolo(); };
+  btnRow.appendChild(againBtn);
+  const homeBtn = document.createElement('button');
+  homeBtn.className = 'btn btn-outline btn-sm';
+  homeBtn.textContent = '처음으로';
+  homeBtn.onclick = () => { isRetry = false; showScreen('screen-title'); };
+  btnRow.appendChild(homeBtn);
 }
 
 /* ──────────────────────────────
