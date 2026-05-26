@@ -236,7 +236,7 @@ body {
 .fb-answer { font-size: .85rem; color: var(--text); font-weight: 600; margin-top: 4px; opacity: .9; }
 
 /* ── RESULT ── */
-#screen-result { padding: 40px 20px; gap: 24px; overflow-y: auto; }
+#screen-result { padding: 40px 20px; gap: 24px; overflow-y: auto; justify-content: flex-start; height: 100vh; }
 .result-title { font-size: 1.8rem; font-weight: 900; text-align: center; }
 .result-title span { color: var(--accent); }
 .result-score-big { font-size: 3.5rem; font-weight: 900; color: var(--accent); text-align: center; line-height: 1; }
@@ -828,7 +828,7 @@ function soloTimeUp() {
   highlightAnswer(-1, q.answer);
   showFeedback(false, -1, q.answer, q);
   soloState.results.push({ q, chosen: -1, ok: false });
-  setTimeout(() => { hideFeedback(); nextSoloQ(); }, 1800);
+  setTimeout(() => { hideFeedback(); nextSoloQ(); }, 1000);
 }
 
 function soloAnswer(i) {
@@ -843,7 +843,7 @@ function soloAnswer(i) {
   if (ok) s.score += q.points;
   document.getElementById('solo-score').textContent = s.score;
   s.results.push({ q, chosen: i, ok });
-  setTimeout(() => { hideFeedback(); nextSoloQ(); }, ok ? 1000 : 1800);
+  setTimeout(() => { hideFeedback(); nextSoloQ(); }, 1000);
 }
 
 function highlightAnswer(chosen, correct) {
