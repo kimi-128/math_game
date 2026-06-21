@@ -34,9 +34,7 @@ body { background:var(--bg); min-height:100vh; font-family:'Malgun Gothic','Appl
 .mode-icon { font-size:3rem; margin-bottom:14px; }
 .mode-title { font-size:1.15rem; font-weight:900; margin-bottom:8px; }
 .mode-desc { font-size:.78rem; color:var(--muted); line-height:1.6; }
-.back-fixed { position:fixed; top:18px; left:18px; z-index:100; }
-.back-fixed a { display:inline-flex; align-items:center; gap:5px; padding:7px 16px; border-radius:20px; background:rgba(17,34,64,.9); border:1.5px solid var(--border); color:var(--muted); text-decoration:none; font-size:.8rem; font-weight:700; transition:all .18s; }
-.back-fixed a:hover { color:var(--accent); border-color:var(--accent); }
+
 #screen-solo-setup,#screen-battle-setup { gap:28px; padding:40px 20px; }
 .setup-title { font-size:1.6rem; font-weight:900; }
 .setup-title span { color:var(--accent); }
@@ -149,8 +147,6 @@ body { background:var(--bg); min-height:100vh; font-family:'Malgun Gothic','Appl
 </style>
 </head>
 <body>
-<div class="back-fixed"><a href="index.html">← 수학 목록</a></div>
-
 <div id="screen-title" class="screen active">
   <div class="title-badge">중2 수학 · 2차시</div>
   <div class="title-main">x절편·y절편 <span>&</span> 기울기</div>

@@ -21,6 +21,7 @@ body{background:var(--bg);min-height:100vh;font-family:'Malgun Gothic','Apple SD
 .mode-cards{display:flex;gap:24px;flex-wrap:wrap;justify-content:center;}
 .mode-card{width:220px;border:2px solid var(--border);border-radius:20px;padding:32px 24px;text-align:center;cursor:pointer;transition:all .2s;background:var(--panel);}.mode-card:hover{border-color:var(--accent);transform:translateY(-6px);box-shadow:0 12px 40px rgba(100,255,218,.15);}
 .mode-icon{font-size:3rem;margin-bottom:14px;}.mode-title{font-size:1.15rem;font-weight:900;margin-bottom:8px;}.mode-desc{font-size:.78rem;color:var(--muted);line-height:1.6;}
+.back-fixed{position:fixed;top:18px;left:18px;z-index:100;}.back-fixed a{display:inline-flex;align-items:center;gap:5px;padding:7px 16px;border-radius:20px;background:rgba(17,34,64,.9);border:1.5px solid var(--border);color:var(--muted);text-decoration:none;font-size:.8rem;font-weight:700;transition:all .18s;}.back-fixed a:hover{color:var(--accent);border-color:var(--accent);}
 #screen-solo-setup,#screen-battle-setup{gap:28px;padding:40px 20px;}
 .setup-title{font-size:1.6rem;font-weight:900;}.setup-title span{color:var(--accent);}
 .setup-info{background:var(--panel);border:1px solid var(--border);border-radius:16px;padding:24px 32px;text-align:center;line-height:2;}.setup-info p{color:var(--muted);font-size:.9rem;}.setup-info strong{color:var(--text);}
@@ -94,6 +95,8 @@ body{background:var(--bg);min-height:100vh;font-family:'Malgun Gothic','Apple SD
 </style>
 </head>
 <body>
+<div class="back-fixed"><a href="index.html">← 수학 목록</a></div>
+
 <div id="screen-title" class="screen active">
   <div class="title-badge">중2 수학 · 4차시</div>
   <div class="title-main">일차함수 <span>&</span> 연립방정식</div>
