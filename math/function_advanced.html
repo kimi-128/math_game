@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📐 함수 심화학습 | 중학교 2학년</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: linear-gradient(160deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  min-height: 100vh;
+  font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+  color: #e0e0e0;
+  padding: 20px;
+}
+.inner { max-width: 880px; margin: 0 auto; }
+
+/* 헤더 */
+header {
+  background: linear-gradient(135deg, #533483, #e94560, #0f3460);
+  border-radius: 22px;
+  padding: 36px 28px; margin: 8px 0 28px;
+  text-align: center;
+  box-shadow: 0 8px 40px rgba(233,69,96,.4);
+  position: relative; overflow: hidden;
+}
+header::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse at 30% 50%, rgba(255,255,255,.08) 0%, transparent 60%);
+}
+header h1 { font-size: 2rem; font-weight: 900; color: white; margin-bottom: 8px; position: relative; }
+header .sub { font-size: .9rem; color: rgba(255,255,255,.75); position: relative; }
+header .tags { margin-top: 14px; display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; position: relative; }
+header .tag {
+  background: rgba(255,255,255,.15); color: white;
+  border-radius: 20px; padding: 4px 14px; font-size: .76rem; font-weight: 700;
+  border: 1px solid rgba(255,255,255,.25);
+}
+
+/* 목차 */
+.nav-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 10px; margin-bottom: 30px;
+}
+.nav-item {
+  background: rgba(255,255,255,.06); border-radius: 14px; padding: 12px 14px;
+  text-decoration: none; color: #e0e0e0;
+  border: 1px solid rgba(255,255,255,.1);
+  display: flex; align-items: center; gap: 10px;
+  font-size: .86rem; font-weight: 700;
+  transition: all .2s;
+}
+.nav-item:hover { background: rgba(233,69,96,.2); border-color: #e94560; color: white; transform: translateY(-2px); }
+.nav-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .78rem; font-weight: 900; color: white; flex-shrink: 0;
+}
+
+/* 섹션 카드 */
+.card {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 20px; padding: 28px 26px 24px;
+  margin-bottom: 28px; scroll-margin-top: 20px;
+  backdrop-filter: blur(4px);
+}
+.card-head { display: flex; align-items: center; gap: 12px; margin-bottom: 22px; }
+.badge {
+  font-size: .74rem; font-weight: 900; padding: 5px 14px; border-radius: 10px;
+  white-space: nowrap; color: white;
+}
+.b-pink   { background: linear-gradient(135deg,#e94560,#c2185b); }
+.b-purple { background: linear-gradient(135deg,#7c4dff,#4527a0); }
+.b-cyan   { background: linear-gradient(135deg,#00bcd4,#006064); }
+.b-amber  { background: linear-gradient(135deg,#ffa000,#e65100); }
+.card-title { font-size: 1.18rem; font-weight: 900; color: white; flex: 1; }
+
+/* 개념 박스 */
+.concept {
+  border-radius: 14px; padding: 16px 20px; margin-bottom: 16px;
+  font-size: .92rem; line-height: 1.85;
+}
+.concept.pink   { background: rgba(233,69,96,.12); border: 1px solid rgba(233,69,96,.35); }
+.concept.purple { background: rgba(124,77,255,.12); border: 1px solid rgba(124,77,255,.35); }
+.concept.cyan   { background: rgba(0,188,212,.12); border: 1px solid rgba(0,188,212,.35); }
+.concept.amber  { background: rgba(255,160,0,.12); border: 1px solid rgba(255,160,0,.35); }
+.clabel {
+  font-size: .72rem; font-weight: 900; letter-spacing: .6px; display: block; margin-bottom: 8px;
+}
+.clabel.pink   { color: #f48fb1; }
+.clabel.purple { color: #b39ddb; }
+.clabel.cyan   { color: #80deea; }
+.clabel.amber  { color: #ffd54f; }
+
+/* 수식 강조 */
+.formula {
+  border-radius: 12px; padding: 13px 20px; margin-bottom: 16px;
+  text-align: center; font-size: 1.25rem; font-weight: 900; letter-spacing: 1px;
+}
+.formula.pink   { background: rgba(233,69,96,.18); border: 2px solid rgba(233,69,96,.5); color: #f48fb1; }
+.formula.purple { background: rgba(124,77,255,.18); border: 2px solid rgba(124,77,255,.5); color: #ce93d8; }
+.formula.cyan   { background: rgba(0,188,212,.18); border: 2px solid rgba(0,188,212,.5); color: #80deea; }
+.formula.amber  { background: rgba(255,160,0,.18); border: 2px solid rgba(255,160,0,.5); color: #ffd54f; }
+
+/* 요점 리스트 */
+.plist { list-style: none; margin-bottom: 16px; }
+.plist li {
+  padding: 9px 12px 9px 36px; position: relative;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  font-size: .9rem; line-height: 1.7; color: #cfd8dc;
+}
+.plist li:last-child { border-bottom: none; }
+.plist li::before {
+  content: '▶'; position: absolute; left: 12px; top: 10px;
+  font-size: .65rem;
+}
+.plist.pink   li::before { color: #e94560; }
+.plist.purple li::before { color: #7c4dff; }
+.plist.cyan   li::before { color: #00bcd4; }
+.plist.amber  li::before { color: #ffa000; }
+
+/* 표 */
+.tbl { width: 100%; border-collapse: collapse; font-size: .87rem; margin-bottom: 16px; }
+.tbl th { padding: 10px 13px; text-align: center; font-weight: 900; color: white; }
+.tbl td { padding: 10px 13px; text-align: center; border-bottom: 1px solid rgba(255,255,255,.07); color: #cfd8dc; }
+.tbl tr:hover td { background: rgba(255,255,255,.04); }
+.th-pink   { background: rgba(233,69,96,.6); }
+.th-purple { background: rgba(124,77,255,.6); }
+.th-cyan   { background: rgba(0,188,212,.6); }
+.th-amber  { background: rgba(255,160,0,.6); }
+
+/* 문제 박스 */
+.qwrap { margin-bottom: 14px; }
+.qlevel {
+  display: inline-block; font-size: .68rem; font-weight: 900;
+  padding: 2px 10px; border-radius: 6px; margin-bottom: 8px;
+}
+.lv-basic   { background: rgba(76,175,80,.25); color: #a5d6a7; border: 1px solid rgba(76,175,80,.4); }
+.lv-mid     { background: rgba(255,160,0,.25); color: #ffd54f; border: 1px solid rgba(255,160,0,.4); }
+.lv-adv     { background: rgba(233,69,96,.25); color: #f48fb1; border: 1px solid rgba(233,69,96,.4); }
+
+.qbox {
+  border-radius: 12px; padding: 14px 18px;
+  font-size: .92rem; line-height: 1.85; color: #e0e0e0;
+}
+.qbox.pink   { background: rgba(233,69,96,.1); border-left: 4px solid #e94560; }
+.qbox.purple { background: rgba(124,77,255,.1); border-left: 4px solid #7c4dff; }
+.qbox.cyan   { background: rgba(0,188,212,.1); border-left: 4px solid #00bcd4; }
+.qbox.amber  { background: rgba(255,160,0,.1); border-left: 4px solid #ffa000; }
+
+/* 정답 버튼 */
+.ans-btn {
+  border-radius: 20px; padding: 8px 22px;
+  font-weight: 700; font-size: .86rem;
+  cursor: pointer; transition: all .2s; margin: 8px 0;
+  background: transparent;
+}
+.ans-btn.pink   { border: 1.5px solid #e94560; color: #f48fb1; }
+.ans-btn.pink:hover { background: #e94560; color: white; }
+.ans-btn.purple { border: 1.5px solid #7c4dff; color: #b39ddb; }
+.ans-btn.purple:hover { background: #7c4dff; color: white; }
+.ans-btn.cyan   { border: 1.5px solid #00bcd4; color: #80deea; }
+.ans-btn.cyan:hover { background: #00bcd4; color: #0d1b2a; }
+.ans-btn.amber  { border: 1.5px solid #ffa000; color: #ffd54f; }
+.ans-btn.amber:hover { background: #ffa000; color: #0d1b2a; }
+
+.ans-box {
+  display: none; border-radius: 12px; padding: 16px 20px;
+  font-size: .9rem; line-height: 1.9; color: #cfd8dc;
+  margin-bottom: 6px;
+}
+.ans-box.show { display: block; }
+.ans-box.pink   { background: rgba(233,69,96,.1); border: 1px solid rgba(233,69,96,.3); }
+.ans-box.purple { background: rgba(124,77,255,.1); border: 1px solid rgba(124,77,255,.3); }
+.ans-box.cyan   { background: rgba(0,188,212,.1); border: 1px solid rgba(0,188,212,.3); }
+.ans-box.amber  { background: rgba(255,160,0,.1); border: 1px solid rgba(255,160,0,.3); }
+.ans-result {
+  margin-top: 12px; text-align: center; font-size: 1.05rem; font-weight: 900;
+  padding: 10px; border-radius: 10px; background: rgba(255,255,255,.06);
+}
+.ans-result.pink   { color: #f48fb1; }
+.ans-result.purple { color: #ce93d8; }
+.ans-result.cyan   { color: #80deea; }
+.ans-result.amber  { color: #ffd54f; }
+
+/* 그래프 SVG */
+.graph-wrap {
+  max-width: 460px; margin: 0 auto 18px;
+  border-radius: 14px; overflow: hidden;
+  border: 1px solid rgba(255,255,255,.12);
+}
+
+/* 구분선 */
+.divider {
+  border: none; border-top: 1px solid rgba(255,255,255,.08);
+  margin: 20px 0;
+}
+
+/* 핵심 요약 */
+.key-box {
+  border-radius: 14px; padding: 16px 20px; margin-top: 16px;
+  font-size: .9rem; line-height: 1.85;
+}
+.key-box.amber { background: rgba(255,160,0,.1); border: 1px solid rgba(255,160,0,.3); }
+.key-box .key-title { font-size: .78rem; font-weight: 900; color: #ffd54f; margin-bottom: 10px; letter-spacing: .5px; }
+.key-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 6px; }
+.key-icon { color: #ffd54f; flex-shrink: 0; }
+
+/* 단계 흐름 */
+.steps { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+.step {
+  flex: 1; min-width: 100px; text-align: center;
+  padding: 9px 8px; border-radius: 10px;
+  font-size: .78rem; font-weight: 700; color: white;
+}
+.step.pink   { background: rgba(233,69,96,.5); border: 1px solid rgba(233,69,96,.6); }
+.step.purple { background: rgba(124,77,255,.5); border: 1px solid rgba(124,77,255,.6); }
+.step.cyan   { background: rgba(0,188,212,.5); border: 1px solid rgba(0,188,212,.6); }
+
+/* 경우 카드 그리드 */
+.case-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 14px; margin-bottom: 16px;
+}
+.case-card {
+  border-radius: 14px; padding: 14px;
+}
+.case-card.purple { background: rgba(124,77,255,.1); border: 1px solid rgba(124,77,255,.3); }
+.case-card.pink   { background: rgba(233,69,96,.1); border: 1px solid rgba(233,69,96,.3); }
+.case-card.cyan   { background: rgba(0,188,212,.1); border: 1px solid rgba(0,188,212,.3); }
+.case-label { font-size: .76rem; font-weight: 900; margin-bottom: 10px; }
+.case-label.purple { color: #b39ddb; }
+.case-label.pink   { color: #f48fb1; }
+.case-label.cyan   { color: #80deea; }
+
+/* 힌트 박스 */
+.hint-box {
+  border-radius: 10px; padding: 10px 15px; margin-top: 8px;
+  font-size: .82rem; color: #b0bec5;
+  background: rgba(255,255,255,.04); border: 1px solid rgba(255,255,255,.08);
+}
+.hint-box::before { content: '💡 힌트: '; color: #ffd54f; font-weight: 700; }
+
+footer { text-align: center; padding: 30px; color: #546e7a; font-size: .76rem; line-height: 2; }
+</style>
+</head>
+<body>
+<div class="inner">
+
+<header>
+  <h1>🔬 함수 심화학습</h1>
+  <div class="sub">개념을 넘어 깊이 탐구하는 함수 학습</div>
+  <div class="tags">
+    <span class="tag">함수와 함숫값</span>
+    <span class="tag">일차함수</span>
+    <span class="tag">연립방정식과의 관계</span>
+    <span class="tag">중학교 2학년</span>
+  </div>
+</header>
+
+<!-- 목차 -->
+<div class="nav-grid">
+  <a class="nav-item" href="#sec1">
+    <span class="nav-num" style="background:#e94560;">1</span>함수의 조건 탐구
+  </a>
+  <a class="nav-item" href="#sec2">
+    <span class="nav-num" style="background:#7c4dff;">2</span>함숫값 심화
+  </a>
+  <a class="nav-item" href="#sec3">
+    <span class="nav-num" style="background:#00bcd4;">3</span>일차함수 심화
+  </a>
+  <a class="nav-item" href="#sec4">
+    <span class="nav-num" style="background:#ffa000;">4</span>연립방정식 심화
+  </a>
+</div>
+
+
+<!-- ═══ 1. 함수 심화 ═══ -->
+<div class="card" id="sec1">
+  <div class="card-head">
+    <span class="badge b-pink">심화 1</span>
+    <span class="card-title">함수의 조건 심층 탐구</span>
+  </div>
+
+  <div class="concept pink">
+    <span class="clabel pink">🔍 핵심 원리</span>
+    함수의 핵심은 <strong style="color:#f48fb1;">일대일 대응이 아니라 일대다 금지</strong>다.<br>
+    x 하나에 y가 여러 개 → 함수 ✗<br>
+    y 하나에 x가 여러 개 → 함수 ✓ (허용됨!)
+  </div>
+
+  <div class="concept pink">
+    <span class="clabel pink">📌 그래프로 판별하는 방법 — 수직선 검사</span>
+    그래프 위에 <strong style="color:#f48fb1;">수직선(세로선)을 그었을 때 교점이 항상 1개 이하</strong>이면 함수.<br>
+    교점이 2개 이상인 x가 존재하면 함수가 아님.
+  </div>
+
+  <!-- SVG: 수직선 검사 예시 -->
+  <div class="graph-wrap">
+    <svg viewBox="0 0 420 200" style="background:#0d1117;">
+      <!-- 직선 y=x (함수 O) -->
+      <text x="15" y="18" font-size="11" fill="#80deea">y=x (함수 O)</text>
+      <line x1="10" y1="100" x2="200" y2="100" stroke="#334155" stroke-width="1"/>
+      <line x1="100" y1="10" x2="100" y2="190" stroke="#334155" stroke-width="1"/>
+      <line x1="10" y1="190" x2="190" y2="10" stroke="#00bcd4" stroke-width="2"/>
+      <!-- 수직선 검사: 교점 1개 -->
+      <line x1="130" y1="10" x2="130" y2="190" stroke="#ffd54f" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <circle cx="130" cy="70" r="5" fill="#4caf50"/>
+      <text x="135" y="65" font-size="10" fill="#4caf50">교점 1개 ✓</text>
+
+      <!-- 원 (함수 X) -->
+      <text x="230" y="18" font-size="11" fill="#f48fb1">원 (함수 X)</text>
+      <line x1="220" y1="100" x2="415" y2="100" stroke="#334155" stroke-width="1"/>
+      <line x1="315" y1="10" x2="315" y2="190" stroke="#334155" stroke-width="1"/>
+      <circle cx="315" cy="100" r="70" fill="none" stroke="#e94560" stroke-width="2"/>
+      <!-- 수직선 검사: 교점 2개 -->
+      <line x1="350" y1="10" x2="350" y2="190" stroke="#ffd54f" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <circle cx="350" cy="67" r="5" fill="#e94560"/>
+      <circle cx="350" cy="133" r="5" fill="#e94560"/>
+      <text x="356" y="63" font-size="10" fill="#e94560">교점</text>
+      <text x="356" y="129" font-size="10" fill="#e94560">2개 ✗</text>
+    </svg>
+  </div>
+
+  <hr class="divider">
+  <div style="font-size:.88rem; font-weight:900; color:#f48fb1; margin-bottom:12px;">📝 문제</div>
+
+  <!-- 기본 -->
+  <div class="qwrap">
+    <span class="qlevel lv-basic">기본</span>
+    <div class="qbox pink">
+      다음 중 y가 x의 함수인 것을 모두 고르시오.<br>
+      ① x의 배수 y &nbsp; ② x보다 작은 자연수 y &nbsp; ③ x의 제곱 y &nbsp; ④ x의 역수 y &nbsp; ⑤ x의 소인수 y
+    </div>
+    <button class="ans-btn pink" onclick="toggle('a1-1')">정답 보기 ▼</button>
+    <div id="a1-1" class="ans-box pink">
+      ① x=2이면 배수가 2,4,6,… → <strong style="color:#f48fb1;">함수 아님</strong><br>
+      ② x=5이면 1,2,3,4 → <strong style="color:#f48fb1;">함수 아님</strong><br>
+      ③ x 하나에 y=x² 하나 → <strong style="color:#4caf50;">함수 ✓</strong><br>
+      ④ x≠0이면 y=1/x 하나 → <strong style="color:#4caf50;">함수 ✓</strong><br>
+      ⑤ x=12이면 소인수가 2,3 → <strong style="color:#f48fb1;">함수 아님</strong>
+      <div class="ans-result pink">③, ④</div>
+    </div>
+  </div>
+
+  <!-- 심화 -->
+  <div class="qwrap">
+    <span class="qlevel lv-adv">심화</span>
+    <div class="qbox pink">
+      함수 f(x)에 대해 다음 조건이 성립할 때, 이 함수가 함수가 될 수 있는지 판단하고 이유를 설명하시오.<br><br>
+      • x = 1일 때 f(1) = 3<br>
+      • x = 2일 때 f(2) = 3<br>
+      • x = 3일 때 f(3) = 5
+    </div>
+    <button class="ans-btn pink" onclick="toggle('a1-2')">정답 보기 ▼</button>
+    <div id="a1-2" class="ans-box pink">
+      <strong>함수이다.</strong><br><br>
+      함수의 조건은 "x 하나에 y가 하나"이다.<br>
+      • x=1 → y=3 (1개) ✓<br>
+      • x=2 → y=3 (1개) ✓ &nbsp;<span style="color:#ffd54f;">(다른 x가 같은 y를 가지는 것은 허용!)</span><br>
+      • x=3 → y=5 (1개) ✓<br><br>
+      세 x값 모두 y가 정확히 하나씩 대응되므로 함수이다.
+      <div class="ans-result pink">함수이다. y값이 겹쳐도 x→y가 각각 하나면 OK.</div>
+    </div>
+  </div>
+
+  <!-- 최고난도 -->
+  <div class="qwrap">
+    <span class="qlevel lv-adv">최고난도</span>
+    <div class="qbox pink">
+      자연수 x에 대해 y = x를 나누었을 때의 나머지가 3 이하인 수의 개수 라 하자.<br>
+      예) x=7이면 7÷1=나머지0, 7÷2=나머지1, 7÷3=나머지1, 7÷4=나머지3, 7÷5=나머지2, 7÷6=나머지1, 7÷7=나머지0 → 나머지가 3 이하인 수: 7개 → y=7<br>
+      이 대응이 함수인지 판단하고, x=4일 때 y값을 구하시오.
+    </div>
+    <button class="ans-btn pink" onclick="toggle('a1-3')">정답 보기 ▼</button>
+    <div id="a1-3" class="ans-box pink">
+      x가 정해지면, x로 나눌 수 있는 자연수는 1~x이고<br>
+      각 나눗셈의 나머지는 오직 하나이므로 — y는 유일하게 정해진다. → <strong style="color:#4caf50;">함수이다.</strong><br><br>
+      <strong>x=4일 때:</strong><br>
+      4÷1 = 나머지 0 (3 이하) ✓<br>
+      4÷2 = 나머지 0 (3 이하) ✓<br>
+      4÷3 = 나머지 1 (3 이하) ✓<br>
+      4÷4 = 나머지 0 (3 이하) ✓<br>
+      → y = <strong>4</strong>
+      <div class="ans-result pink">함수이다. x=4일 때 y = 4</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══ 2. 함숫값 심화 ═══ -->
+<div class="card" id="sec2">
+  <div class="card-head">
+    <span class="badge b-purple">심화 2</span>
+    <span class="card-title">함숫값 심화 — 식의 변형과 활용</span>
+  </div>
+
+  <div class="concept purple">
+    <span class="clabel purple">🔍 핵심 테크닉</span>
+    함숫값 문제의 핵심은 <strong style="color:#ce93d8;">식 대입 → 정리 → 조건 활용</strong> 순서.<br>
+    f(a) + f(b), f(a+b), f(2a) 처럼 변형된 식도 같은 원리로 풀린다.
+  </div>
+
+  <div class="concept purple">
+    <span class="clabel purple">📌 자주 쓰이는 패턴</span>
+    <table class="tbl">
+      <thead><tr>
+        <th class="th-purple">패턴</th><th class="th-purple">의미</th><th class="th-purple">예 (f(x)=2x+1)</th>
+      </tr></thead>
+      <tbody>
+        <tr><td>f(a) + f(b)</td><td>각각 대입 후 합산</td><td>f(1)+f(2) = 3+5 = 8</td></tr>
+        <tr><td>f(a+b)</td><td>a+b를 한 번에 대입</td><td>f(1+2) = f(3) = 7</td></tr>
+        <tr><td>2·f(a)</td><td>함숫값에 2를 곱함</td><td>2·f(2) = 2×5 = 10</td></tr>
+        <tr><td>f(a) = k</td><td>방정식으로 a 구하기</td><td>2a+1=9 → a=4</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <hr class="divider">
+  <div style="font-size:.88rem; font-weight:900; color:#b39ddb; margin-bottom:12px;">📝 문제</div>
+
+  <div class="qwrap">
+    <span class="qlevel lv-basic">기본</span>
+    <div class="qbox purple">
+      f(x) = 4x − 3 일 때, 다음을 구하시오.<br>
+      ① f(−2) &nbsp;&nbsp; ② f(0) + f(1) &nbsp;&nbsp; ③ f(a) = 9 일 때 a의 값
+    </div>
+    <button class="ans-btn purple" onclick="toggle('a2-1')">정답 보기 ▼</button>
+    <div id="a2-1" class="ans-box purple">
+      ① f(−2) = 4×(−2)−3 = −8−3 = <strong style="color:#ce93d8;">−11</strong><br>
+      ② f(0)=−3, f(1)=1 → f(0)+f(1) = −3+1 = <strong style="color:#ce93d8;">−2</strong><br>
+      ③ 4a−3=9 → 4a=12 → a = <strong style="color:#ce93d8;">3</strong>
+      <div class="ans-result purple">① −11 &nbsp;&nbsp; ② −2 &nbsp;&nbsp; ③ a = 3</div>
+    </div>
+  </div>
+
+  <div class="qwrap">
+    <span class="qlevel lv-mid">중급</span>
+    <div class="qbox purple">
+      f(x) = ax + b 이고 f(1) = 5, f(3) = 11 일 때, a와 b의 값을 구하고 f(10)을 구하시오.
+    </div>
+    <div class="hint-box">f(1)=5, f(3)=11을 각각 a, b에 대한 식으로 놓으면 연립방정식이 만들어져요.</div>
+    <button class="ans-btn purple" onclick="toggle('a2-2')">정답 보기 ▼</button>
+    <div id="a2-2" class="ans-box purple">
+      f(1) = a + b = 5 &nbsp; ···①<br>
+      f(3) = 3a + b = 11 &nbsp; ···②<br>
+      ②−① : 2a = 6 → <strong style="color:#ce93d8;">a = 3</strong><br>
+      ①에 대입: 3 + b = 5 → <strong style="color:#ce93d8;">b = 2</strong><br><br>
+      f(x) = 3x + 2 이므로<br>
+      f(10) = 3×10 + 2 = <strong style="color:#ce93d8;">32</strong>
+      <div class="ans-result purple">a=3, b=2, f(10) = 32</div>
+    </div>
+  </div>
+
+  <div class="qwrap">
+    <span class="qlevel lv-adv">심화</span>
+    <div class="qbox purple">
+      두 함수 f(x) = 3x + 1, g(x) = −x + 9 에 대해 f(a) = g(a)인 a의 값을 구하고,
+      그 때의 함숫값을 구하시오.
+    </div>
+    <div class="hint-box">f(a) = g(a)는 두 함수의 값이 같아지는 x 를 찾는 문제예요.</div>
+    <button class="ans-btn purple" onclick="toggle('a2-3')">정답 보기 ▼</button>
+    <div id="a2-3" class="ans-box purple">
+      f(a) = g(a) 이므로<br>
+      3a + 1 = −a + 9<br>
+      4a = 8<br>
+      <strong style="color:#ce93d8;">a = 2</strong><br><br>
+      함숫값: f(2) = 3×2+1 = <strong style="color:#ce93d8;">7</strong> &nbsp;(g(2) = −2+9 = 7 으로 확인 ✓)
+      <div class="ans-result purple">a = 2, 공통 함숫값 = 7</div>
+    </div>
+  </div>
+
+  <div class="qwrap">
+    <span class="qlevel lv-adv">최고난도</span>
+    <div class="qbox purple">
+      f(x+1) = 2x + 5 일 때, f(x)를 구하고 f(7)의 값을 구하시오.
+    </div>
+    <div class="hint-box">x+1 = t 로 치환하면 x = t−1. 이걸 식에 대입해보세요.</div>
+    <button class="ans-btn purple" onclick="toggle('a2-4')">정답 보기 ▼</button>
+    <div id="a2-4" class="ans-box purple">
+      x+1 = t 로 놓으면 x = t−1<br>
+      f(t) = 2(t−1) + 5 = 2t − 2 + 5 = 2t + 3<br>
+      따라서 <strong style="color:#ce93d8;">f(x) = 2x + 3</strong><br><br>
+      f(7) = 2×7+3 = <strong style="color:#ce93d8;">17</strong><br><br>
+      <span style="font-size:.85rem; color:#90a4ae;">검증: f(x+1) = 2(x+1)+3 = 2x+5 ✓</span>
+      <div class="ans-result purple">f(x) = 2x + 3, f(7) = 17</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══ 3. 일차함수 심화 ═══ -->
+<div class="card" id="sec3">
+  <div class="card-head">
+    <span class="badge b-cyan">심화 3</span>
+    <span class="card-title">일차함수 심화 — 그래프와 식의 관계</span>
+  </div>
+
+  <div class="concept cyan">
+    <span class="clabel cyan">🔍 조건으로 식 구하기 — 4가지 경우</span>
+    <table class="tbl">
+      <thead><tr>
+        <th class="th-cyan">주어진 조건</th><th class="th-cyan">방법</th>
+      </tr></thead>
+      <tbody>
+        <tr><td>기울기 a, y절편 b</td><td>y = ax + b 에 바로 대입</td></tr>
+        <tr><td>기울기 a, 한 점 (x₁, y₁)</td><td>y − y₁ = a(x − x₁)</td></tr>
+        <tr><td>두 점 (x₁,y₁), (x₂,y₂)</td><td>기울기 = (y₂−y₁)/(x₂−x₁) 먼저 구함</td></tr>
+        <tr><td>x절편 p, y절편 q</td><td>두 점 (p,0), (0,q) 활용</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="concept cyan">
+    <span class="clabel cyan">📌 평행과 일치 조건</span>
+    y = ax+b 와 y = cx+d 에서<br>
+    • <strong style="color:#80deea;">평행:</strong> a = c 이고 b ≠ d<br>
+    • <strong style="color:#80deea;">일치:</strong> a = c 이고 b = d<br>
+    • <strong style="color:#80deea;">수직(직교):</strong> a × c = −1
+  </div>
+
+  <!-- 그래프: 두 점으로 식 구하기 -->
+  <div class="graph-wrap">
+    <svg viewBox="0 0 400 280" style="background:#0d1117;">
+      <!-- 격자 -->
+      <g stroke="#1e293b" stroke-width="0.8">
+        <line x1="40" y1="20" x2="40" y2="260"/><line x1="90" y1="20" x2="90" y2="260"/>
+        <line x1="140" y1="20" x2="140" y2="260"/><line x1="190" y1="20" x2="190" y2="260"/>
+        <line x1="240" y1="20" x2="240" y2="260"/><line x1="290" y1="20" x2="290" y2="260"/>
+        <line x1="340" y1="20" x2="340" y2="260"/>
+        <line x1="15" y1="40" x2="390" y2="40"/><line x1="15" y1="90" x2="390" y2="90"/>
+        <line x1="15" y1="140" x2="390" y2="140"/><line x1="15" y1="190" x2="390" y2="190"/>
+        <line x1="15" y1="240" x2="390" y2="240"/>
+      </g>
+      <!-- 축 -->
+      <line x1="15" y1="140" x2="388" y2="140" stroke="#475569" stroke-width="1.5"/>
+      <line x1="190" y1="12" x2="190" y2="268" stroke="#475569" stroke-width="1.5"/>
+      <polygon points="390,137 382,133 382,147" fill="#475569"/>
+      <polygon points="190,10 186,19 194,19" fill="#475569"/>
+      <text x="386" y="134" font-size="10" fill="#64748b">x</text>
+      <text x="194" y="9" font-size="10" fill="#64748b">y</text>
+      <!-- 눈금 -->
+      <text x="182" y="94" font-size="9" fill="#475569" text-anchor="end">2</text>
+      <text x="182" y="44" font-size="9" fill="#475569" text-anchor="end">4</text>
+      <text x="182" y="194" font-size="9" fill="#475569" text-anchor="end">-2</text>
+      <text x="238" y="153" font-size="9" fill="#475569">1</text>
+      <text x="138" y="153" font-size="9" fill="#475569">-1</text>
+      <text x="288" y="153" font-size="9" fill="#475569">2</text>
+      <!-- 직선 y = (3/2)x + 1 : scale=50, origin=(190,140) -->
+      <!-- x=-2: 90, y=-2: 240 / x=2: 290, y=4: 40-->
+      <line x1="40" y1="265" x2="340" y2="40" stroke="#00bcd4" stroke-width="2.5"/>
+      <text x="344" y="40" font-size="11" fill="#00bcd4" font-weight="bold">y=³⁄₂x+1</text>
+      <!-- 두 점 표시 -->
+      <circle cx="90" cy="215" r="6" fill="#ffd54f" stroke="#0d1117" stroke-width="1.5"/>
+      <text x="96" y="228" font-size="10" fill="#ffd54f" font-weight="bold">(−2,−2)</text>
+      <circle cx="290" cy="65" r="6" fill="#ffd54f" stroke="#0d1117" stroke-width="1.5"/>
+      <text x="296" y="62" font-size="10" fill="#ffd54f" font-weight="bold">(2,3)</text>
+      <!-- 기울기 표시 화살표 -->
+      <line x1="90" y1="215" x2="190" y2="215" stroke="#f48fb1" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <line x1="190" y1="215" x2="190" y2="65" stroke="#f48fb1" stroke-width="1.5" stroke-dasharray="4,3"/>
+      <text x="130" y="230" font-size="10" fill="#f48fb1">x +2</text>
+      <text x="194" y="148" font-size="10" fill="#f48fb1">y +5?</text>
+    </svg>
+  </div>
+
+  <hr class="divider">
+  <div style="font-size:.88rem; font-weight:900; color:#80deea; margin-bottom:12px;">📝 문제</div>
+
+  <div class="qwrap">
+    <span class="qlevel lv-basic">기본</span>
+    <div class="qbox cyan">
+      두 점 (1, 3)과 (3, 7)을 지나는 일차함수의 식을 구하시오.
+    </div>
+    <button class="ans-btn cyan" onclick="toggle('a3-1')">정답 보기 ▼</button>
+    <div id="a3-1" class="ans-box cyan">
+      기울기 = (7−3)/(3−1) = 4/2 = <strong style="color:#80deea;">2</strong><br>
+      y = 2x + b 에 (1, 3) 대입: 3 = 2+b → b = 1
+      <div class="ans-result cyan">y = 2x + 1</div>
+    </div>
+  </div>
+
+  <div class="qwrap">
+    <span class="qlevel lv-mid">중급</span>
+    <div class="qbox cyan">
+      일차함수 y = ax + 3 의 그래프가 점 (2, b)를 지나고, y = 2x + b 와 평행할 때 a, b의 값을 구하시오.
+    </div>
+    <div class="hint-box">평행하면 기울기가 같아요. 먼저 a를 구하고 점 (2,b)를 대입하세요.</div>
+    <button class="ans-btn cyan" onclick="toggle('a3-2')">정답 보기 ▼</button>
+    <div id="a3-2" class="ans-box cyan">
+      y = 2x+b 와 평행 → 기울기 같음 → <strong style="color:#80deea;">a = 2</strong><br>
+      y = 2x+3 이 (2, b)를 지남 → b = 2×2+3 = <strong style="color:#80deea;">7</strong><br>
+      (y절편이 3 ≠ 7이므로 평행 조건도 만족 ✓)
+      <div class="ans-result cyan">a = 2, b = 7</div>
+    </div>
+  </div>
+
+  <div class="qwrap">
+    <span class="qlevel lv-mid">중급</span>
+    <div class="qbox cyan">
+      일차함수 y = −2x + k 의 x절편과 y절편의 합이 9일 때, k의 값을 구하시오.
+    </div>
+    <div class="hint-box">x절편은 y=0, y절편은 x=0을 대입해서 구해요.</div>
+    <button class="ans-btn cyan" onclick="toggle('a3-3')">정답 보기 ▼</button>
+    <div id="a3-3" class="ans-box cyan">
+      y절편: x=0 → y = k<br>
+      x절편: 0 = −2x+k → x = k/2<br>
+      합: k/2 + k = 9 → 3k/2 = 9 → k = <strong style="color:#80deea;">6</strong>
+      <div class="ans-result cyan">k = 6</div>
+    </div>
+  </div>
+
+  <div class="qwrap">
+    <span class="qlevel lv-adv">심화</span>
+    <div class="qbox cyan">
+      세 점 A(1, 2), B(3, 6), C(k, 10)이 한 직선 위에 있을 때, k의 값을 구하시오.
+    </div>
+    <div class="hint-box">A, B를 지나는 직선의 식을 구한 뒤, C를 대입하세요.</div>
+    <button class="ans-btn cyan" onclick="toggle('a3-4')">정답 보기 ▼</button>
+    <div id="a3-4" class="ans-box cyan">
+      A(1,2), B(3,6) → 기울기 = (6−2)/(3−1) = 2<br>
+      y = 2x + b에 (1,2) 대입: b = 0 → y = 2x<br>
+      C(k,10) 대입: 10 = 2k → k = <strong style="color:#80deea;">5</strong>
+      <div class="ans-result cyan">k = 5</div>
+    </div>
+  </div>
+
+  <div class="qwrap">
+    <span class="qlevel lv-adv">최고난도</span>
+    <div class="qbox cyan">
+      일차함수 y = (a−1)x + (2a+3) 의 그래프가 x축과 y축 모두 양의 방향을 가로지를 때
+      (즉, x절편 > 0, y절편 > 0, 기울기 > 0), a의 범위를 구하시오.
+    </div>
+    <div class="hint-box">세 조건을 각각 부등식으로 표현한 뒤 모두 만족하는 a를 찾으세요.</div>
+    <button class="ans-btn cyan" onclick="toggle('a3-5')">정답 보기 ▼</button>
+    <div id="a3-5" class="ans-box cyan">
+      기울기 > 0: a−1 > 0 → <strong>a > 1</strong><br>
+      y절편 > 0: 2a+3 > 0 → a > −3/2<br>
+      x절편 > 0: 0 = (a−1)x+(2a+3) → x = −(2a+3)/(a−1) > 0<br>
+      a > 1 이면 (a−1) > 0 → −(2a+3) > 0 → 2a+3 < 0 → a < −3/2<br>
+      ∴ a > 1 이면서 a < −3/2 는 불가능<br><br>
+      다시 검토: 기울기 < 0인 경우도 확인해야 하나, 문제 조건(기울기 > 0)에서 이미 a > 1.<br>
+      그런데 y절편 = 2a+3 > 0 (a > 1이면 항상 성립), x절편 = −(2a+3)/(a−1)은 a>1이면 음수.<br>
+      → <strong style="color:#f48fb1;">세 조건을 동시에 만족하는 a는 존재하지 않는다.</strong>
+      <div class="ans-result cyan">해 없음 — 기울기 > 0이면 x절편이 반드시 음수가 됨</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══ 4. 연립방정식 심화 ═══ -->
+<div class="card" id="sec4">
+  <div class="card-head">
+    <span class="badge b-amber">심화 4</span>
+    <span class="card-title">일차함수와 연립방정식 — 해의 개수 심화</span>
+  </div>
+
+  <div class="concept amber">
+    <span class="clabel amber">🔍 해의 개수 판별 완전 정리</span>
+    연립방정식 { a₁x + b₁y = c₁ / a₂x + b₂y = c₂ } 에서<br>
+    각각 y = m₁x + n₁, y = m₂x + n₂ 로 변환하면:
+  </div>
+
+  <div class="case-grid">
+    <div class="case-card purple">
+      <div class="case-label purple">해가 1개 (교점 1개)</div>
+      <div class="formula purple" style="font-size:1rem; padding:8px 12px;">m₁ ≠ m₂</div>
+      <div style="font-size:.82rem; color:#b0bec5; line-height:1.7;">기울기 다름 → 한 점에서 교차<br>a₁/a₂ ≠ b₁/b₂</div>
+    </div>
+    <div class="case-card pink">
+      <div class="case-label pink">해가 없음 (평행)</div>
+      <div class="formula pink" style="font-size:1rem; padding:8px 12px;">m₁ = m₂, n₁ ≠ n₂</div>
+      <div style="font-size:.82rem; color:#b0bec5; line-height:1.7;">기울기 같고 y절편 다름<br>a₁/a₂ = b₁/b₂ ≠ c₁/c₂</div>
+    </div>
+    <div class="case-card cyan">
+      <div class="case-label cyan">해가 무수히 많음 (일치)</div>
+      <div class="formula cyan" style="font-size:1rem; padding:8px 12px;">m₁ = m₂, n₁ = n₂</div>
+      <div style="font-size:.82rem; color:#b0bec5; line-height:1.7;">기울기·절편 모두 같음<br>a₁/a₂ = b₁/b₂ = c₁/c₂</div>
+    </div>
+  </div>
+
+  <hr class="divider">
+  <div style="font-size:.88rem; font-weight:900; color:#ffd54f; margin-bottom:12px;">📝 문제</div>
+
+  <div class="qwrap">
+    <span class="qlevel lv-basic">기본</span>
+    <div class="qbox amber">
+      다음 연립방정식의 해의 개수를 판별하시오.<br>
+      ① { 2x − y = 1 / 4x − 2y = 3 } &nbsp;&nbsp;&nbsp;
+      ② { x + 2y = 4 / 3x + 6y = 12 }
+    </div>
+    <button class="ans-btn amber" onclick="toggle('a4-1')">정답 보기 ▼</button>
+    <div id="a4-1" class="ans-box amber">
+      ① 2x−y=1 → y=2x−1 &nbsp;/&nbsp; 4x−2y=3 → y=2x−3/2<br>
+      기울기 같고(2=2) y절편 다름(−1 ≠ −3/2) → <strong style="color:#ffd54f;">해가 없음 (평행)</strong><br><br>
+      ② x+2y=4 → y=−x/2+2 &nbsp;/&nbsp; 3x+6y=12 → y=−x/2+2<br>
+      완전히 같음 → <strong style="color:#ffd54f;">해가 무수히 많음 (일치)</strong>
+      <div class="ans-result amber">① 해 없음 &nbsp;&nbsp;&nbsp; ② 해 무수히 많음</div>
+    </div>
+  </div>
+
+  <div class="qwrap">
+    <span class="qlevel lv-mid">중급</span>
+    <div class="qbox amber">
+      연립방정식 { ax + 3y = 6 / 2x − y = b } 의 해가 없으려면 a, b에 대한 조건을 구하시오.
+    </div>
+    <div class="hint-box">두 직선이 평행 → 기울기 같고 y절편 달라야 해요.</div>
+    <button class="ans-btn amber" onclick="toggle('a4-2')">정답 보기 ▼</button>
+    <div id="a4-2" class="ans-box amber">
+      ax+3y=6 → y = −(a/3)x + 2<br>
+      2x−y=b → y = 2x − b<br>
+      평행 조건: 기울기 같음 → −a/3 = 2 → <strong style="color:#ffd54f;">a = −6</strong><br>
+      y절편 달라야 함: 2 ≠ −b → <strong style="color:#ffd54f;">b ≠ −2</strong>
+      <div class="ans-result amber">a = −6 이고 b ≠ −2</div>
+    </div>
+  </div>
+
+  <div class="qwrap">
+    <span class="qlevel lv-mid">중급</span>
+    <div class="qbox amber">
+      일차함수 y = 2x + 1 과 y = −x + 7 의 그래프의 교점을 구하고,
+      그 점이 y = kx − 1 위에 있을 때 k의 값을 구하시오.
+    </div>
+    <button class="ans-btn amber" onclick="toggle('a4-3')">정답 보기 ▼</button>
+    <div id="a4-3" class="ans-box amber">
+      교점: 2x+1 = −x+7 → 3x=6 → x=2, y=5 → 교점 <strong style="color:#ffd54f;">(2, 5)</strong><br>
+      (2,5)를 y=kx−1에 대입: 5 = 2k−1 → 2k=6 → <strong style="color:#ffd54f;">k = 3</strong>
+      <div class="ans-result amber">교점 (2, 5), k = 3</div>
+    </div>
+  </div>
+
+  <div class="qwrap">
+    <span class="qlevel lv-adv">심화</span>
+    <div class="qbox amber">
+      연립방정식 { 2x + ay = 4 / bx + 3y = 6 } 의 해가 무수히 많을 때, ab의 값을 구하시오.
+    </div>
+    <div class="hint-box">해가 무수히 많다 → 두 직선이 완전히 일치 → 계수비가 모두 같아요.</div>
+    <button class="ans-btn amber" onclick="toggle('a4-4')">정답 보기 ▼</button>
+    <div id="a4-4" class="ans-box amber">
+      두 직선이 일치: <br>
+      2/b = a/3 = 4/6 = 2/3<br>
+      2/b = 2/3 → <strong style="color:#ffd54f;">b = 3</strong><br>
+      a/3 = 2/3 → <strong style="color:#ffd54f;">a = 2</strong><br>
+      ab = 2 × 3 = <strong style="color:#ffd54f;">6</strong>
+      <div class="ans-result amber">ab = 6</div>
+    </div>
+  </div>
+
+  <div class="qwrap">
+    <span class="qlevel lv-adv">최고난도</span>
+    <div class="qbox amber">
+      세 직선 y = 2x + 1, y = −x + 7, y = kx + 3 이 한 점에서 만날 때(삼선공점), k의 값을 구하시오.
+    </div>
+    <div class="hint-box">먼저 두 직선의 교점을 구하고, 세 번째 직선도 그 점을 지나야 해요.</div>
+    <button class="ans-btn amber" onclick="toggle('a4-5')">정답 보기 ▼</button>
+    <div id="a4-5" class="ans-box amber">
+      y=2x+1, y=−x+7 의 교점: 2x+1=−x+7 → x=2, y=5 → <strong>(2, 5)</strong><br>
+      y=kx+3 이 (2,5)를 지남: 5 = 2k+3 → 2k=2 → <strong style="color:#ffd54f;">k = 1</strong>
+      <div class="ans-result amber">k = 1</div>
+    </div>
+  </div>
+
+  <!-- 전략 요약 -->
+  <div class="key-box amber" style="margin-top:20px;">
+    <div class="key-title">📌 연립방정식 해 판별 전략 정리</div>
+    <div class="key-row"><span class="key-icon">①</span><span>두 방정식을 모두 y = mx + n 꼴로 변환</span></div>
+    <div class="key-row"><span class="key-icon">②</span><span>기울기 비교 → 다르면 해 1개</span></div>
+    <div class="key-row"><span class="key-icon">③</span><span>기울기 같으면 y절편 비교 → 다르면 해 없음 / 같으면 무수히 많음</span></div>
+    <div class="key-row"><span class="key-icon">④</span><span>교점 좌표 = 연립방정식의 해 → 연립하여 x, y를 구하면 됨</span></div>
+  </div>
+</div>
+
+<footer>
+  중학교 2학년 수학 · 함수 심화학습 자료<br>
+  기본 → 중급 → 심화 → 최고난도 순으로 도전해보세요!
+</footer>
+
+</div>
+
+<script>
+function toggle(id) {
+  const box = document.getElementById(id);
+  box.classList.toggle('show');
+  const btn = box.previousElementSibling;
+  if (btn.tagName === 'BUTTON') {
+    btn.textContent = box.classList.contains('show') ? '정답 닫기 ▲' : '정답 보기 ▼';
+  }
+}
+</script>
+</body>
+</html>
