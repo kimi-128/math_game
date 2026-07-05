@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📐 선분으로 그림 그리기 | 중학교 2학년 일차함수</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; }
+body {
+  background: linear-gradient(160deg, #fff8e1 0%, #fff3e0 55%, #fce4ec 100%);
+  font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+  color: #37474f;
+  overflow: hidden;
+}
+
+.deck {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* 진행바 */
+.progress-track {
+  height: 6px; background: rgba(230,81,0,.12); flex-shrink: 0;
+}
+.progress-fill {
+  height: 100%; background: linear-gradient(90deg, #ff8f00, #e65100);
+  width: 0%; transition: width .3s;
+}
+
+.stage {
+  flex: 1; position: relative; overflow: hidden;
+}
+
+.slide {
+  position: absolute; inset: 0;
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 22px 90px;
+  overflow-y: auto;
+}
+.slide.active { display: flex; animation: fadeIn .35s ease; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+.card {
+  background: white; border-radius: 26px; padding: 38px 40px;
+  max-width: 780px; width: 100%;
+  box-shadow: 0 10px 40px rgba(0,0,0,.08);
+  border: 1.5px solid #ffe0b2;
+}
+
+.slide-icon { font-size: 3.2rem; text-align: center; margin-bottom: 10px; }
+.slide-eyebrow {
+  text-align: center; font-size: .78rem; font-weight: 900; letter-spacing: 1.5px;
+  color: #f57c00; margin-bottom: 6px; text-transform: uppercase;
+}
+.slide-title {
+  text-align: center; font-size: 1.55rem; font-weight: 900; color: #e65100;
+  margin-bottom: 18px; line-height: 1.4;
+}
+.slide-title small { display:block; font-size: .68rem; font-weight:700; color:#ff9800; margin-top:6px; }
+
+.lead {
+  text-align: center; font-size: 1rem; line-height: 1.9; color: #546e7a; margin-bottom: 6px;
+}
+
+/* 타이틀 슬라이드 */
+.title-slide .card { background: linear-gradient(135deg, #ff8f00, #f57c00, #e65100); color: white; text-align: center; border: none; }
+.title-slide .slide-icon { font-size: 4rem; }
+.title-slide h1 { font-size: 2rem; font-weight: 900; margin: 10px 0 14px; }
+.title-slide .badge2 { display:inline-block; background: rgba(255,255,255,.22); border-radius: 20px; padding: 6px 18px; font-size: .85rem; font-weight: 700; margin-bottom: 18px; }
+.title-slide p { font-size: .95rem; opacity: .92; line-height: 1.8; }
+
+/* 체크리스트 */
+.check-list { list-style: none; margin: 8px 0; }
+.check-list li {
+  display: flex; align-items: flex-start; gap: 10px;
+  padding: 10px 4px; border-bottom: 1px solid #f5f5f5;
+  font-size: .92rem; line-height: 1.6;
+}
+.check-list li:last-child { border-bottom: none; }
+.check-mark {
+  flex-shrink: 0; width: 24px; height: 24px; border-radius: 50%;
+  background: #fff3e0; color: #e65100; font-size: .78rem; font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+}
+
+/* 단계 스텝 */
+.steps { display: flex; flex-direction: column; gap: 14px; margin-top: 6px; }
+.step {
+  display: flex; gap: 14px; align-items: flex-start;
+  background: #fff8e1; border-radius: 14px; padding: 14px 18px;
+  border: 1.5px solid #ffe082;
+}
+.step-num {
+  flex-shrink: 0; width: 30px; height: 30px; border-radius: 50%;
+  background: #e65100; color: white; font-weight: 900; font-size: .9rem;
+  display: flex; align-items: center; justify-content: center;
+}
+.step-text { font-size: .92rem; line-height: 1.6; }
+.step-text b { color: #e65100; }
+
+/* 예시 방정식 표 */
+table.eq-table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: .84rem; }
+table.eq-table th, table.eq-table td { border: 1px solid #ffe0b2; padding: 8px 10px; text-align: center; }
+table.eq-table th { background: #fff3e0; color: #e65100; font-weight: 900; }
+
+/* 예시코드 */
+.code-box {
+  background: #263238; color: #64ffda; border-radius: 12px;
+  padding: 14px 18px; font-family: 'Consolas', monospace; font-size: .95rem;
+  text-align: center; margin: 14px 0; letter-spacing: .5px;
+}
+
+/* 강조 박스 */
+.note-box {
+  background: #e3f2fd; border: 1.5px solid #90caf9; border-radius: 14px;
+  padding: 14px 18px; font-size: .85rem; line-height: 1.7; color: #1565c0; margin-top: 14px;
+}
+.note-box b { color: #0d47a1; }
+
+.fill-box {
+  background: #fce4ec; border: 2px dashed #f48fb1; border-radius: 14px;
+  padding: 14px 18px; font-size: .9rem; line-height: 1.7; color: #ad1457; margin-top: 14px; font-weight: 700; text-align: center;
+}
+
+/* 조건 그리드 */
+.cond-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 10px; }
+.cond-item {
+  background: #fff3e0; border: 1.5px solid #ffcc80; border-radius: 12px;
+  padding: 12px 14px; font-size: .84rem; line-height: 1.6; text-align: center; font-weight: 700; color: #e65100;
+}
+
+/* 네비게이션 */
+.nav-bar {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  height: 78px; background: rgba(255,255,255,.92); backdrop-filter: blur(6px);
+  border-top: 1.5px solid #ffe0b2;
+  display: flex; align-items: center; justify-content: center; gap: 20px;
+  padding: 0 20px;
+}
+.nav-btn {
+  border: none; border-radius: 50px; padding: 12px 26px; font-size: .95rem; font-weight: 800;
+  cursor: pointer; background: #e65100; color: white; box-shadow: 0 4px 14px rgba(230,81,0,.35);
+  transition: transform .15s, opacity .15s;
+}
+.nav-btn:hover { transform: translateY(-2px); }
+.nav-btn:disabled { opacity: .3; cursor: default; transform: none; }
+.nav-btn.ghost { background: white; color: #e65100; border: 1.5px solid #e65100; box-shadow: none; }
+
+.dots { display: flex; gap: 6px; }
+.dot { width: 8px; height: 8px; border-radius: 50%; background: #ffcc80; }
+.dot.active { background: #e65100; width: 22px; border-radius: 6px; transition: all .25s; }
+
+.slide-counter { font-size: .78rem; color: #90a4ae; font-weight: 700; min-width: 50px; text-align:center; }
+
+@media (max-width: 640px) {
+  .card { padding: 26px 20px; }
+  .slide-title { font-size: 1.25rem; }
+  .cond-grid { grid-template-columns: 1fr; }
+  .nav-bar { gap: 10px; }
+  .nav-btn { padding: 10px 16px; font-size: .85rem; }
+}
+</style>
+</head>
+<body>
+
+<div class="deck">
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="stage" id="stage">
+
+    <!-- 1. 타이틀 -->
+    <section class="slide title-slide active">
+      <div class="card">
+        <div class="slide-icon">📐✏️</div>
+        <div class="badge2">중2 수학 · 일차함수 단원 마무리 활동</div>
+        <h1>선분 10개로<br>그림 그리기</h1>
+        <p>알지오매쓰를 이용해서<br>일차함수 식으로 나만의 그림을 완성해봅시다!</p>
+      </div>
+    </section>
+
+    <!-- 2. 오늘의 미션 -->
+    <section class="slide">
+      <div class="card">
+        <div class="slide-icon">🎯</div>
+        <div class="slide-eyebrow">오늘의 미션</div>
+        <div class="slide-title">일차함수 10개 이상으로<br>그림 완성하기</div>
+        <p class="lead">기울기와 y절편을 이용해 <b>직선의 방정식</b>을 세우고,<br>
+        <b>정의역을 제한</b>해서 원하는 길이의 <b>선분</b>으로 잘라 그림을 그립니다.</p>
+        <div class="note-box"><b>준비물</b> · 크롬북/PC · 알지오매쓰 접속 · 활동지 · 필기구(스케치용)</div>
+      </div>
+    </section>
+
+    <!-- 3. 알지오매쓰 접속 -->
+    <section class="slide">
+      <div class="card">
+        <div class="slide-icon">💻</div>
+        <div class="slide-eyebrow">Step 0</div>
+        <div class="slide-title">알지오매쓰 접속하기</div>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-text">아래 주소로 접속합니다.</div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-text"><b>함수</b> 또는 <b>대수(그래프)</b> 도구를 선택합니다.</div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-text">빈 좌표평면이 나오면 준비 완료!</div></div>
+        </div>
+        <div class="fill-box">🔗 접속 주소: 선생님이 안내한 링크로 접속하세요</div>
+      </div>
+    </section>
+
+    <!-- 4. 개념 복습 -->
+    <section class="slide">
+      <div class="card">
+        <div class="slide-icon">🧠</div>
+        <div class="slide-eyebrow">개념 복습</div>
+        <div class="slide-title">일차함수 y = ax + b</div>
+        <div class="code-box">y = ax + b</div>
+        <ul class="check-list">
+          <li><span class="check-mark">a</span> 기울기 — 직선의 <b>기울어진 정도</b>. 클수록 가파르고, 음수면 오른쪽 아래로 내려가요.</li>
+          <li><span class="check-mark">b</span> y절편 — 직선이 <b>y축과 만나는 점</b>의 y값</li>
+        </ul>
+        <div class="note-box">예) <b>y = 2x + 1</b> → 기울기 2, y절편 1인 직선</div>
+      </div>
+    </section>
+
+    <!-- 5. 핵심 스킬: 선분 만들기 -->
+    <section class="slide">
+      <div class="card">
+        <div class="slide-icon">✂️</div>
+        <div class="slide-eyebrow">핵심 스킬</div>
+        <div class="slide-title">직선을 '선분'으로 자르기</div>
+        <p class="lead">그림을 그리려면 <b>끝없는 직선</b>이 아니라<br><b>일정한 구간만 있는 선분</b>이 필요해요.</p>
+        <div class="code-box">y = 2x + 1 , 0 ≤ x ≤ 3</div>
+        <div class="note-box">알지오매쓰 입력창에 방정식 뒤에 <b>x의 범위(정의역)</b>를 함께 입력하면,<br>
+        그 구간에서만 선이 그려져서 <b>선분</b>이 됩니다.</div>
+      </div>
+    </section>
+
+    <!-- 6. 미션 조건 체크리스트 -->
+    <section class="slide">
+      <div class="card">
+        <div class="slide-icon">✅</div>
+        <div class="slide-eyebrow">미션 조건</div>
+        <div class="slide-title">이 조건들을 모두 채워보세요</div>
+        <div class="cond-grid">
+          <div class="cond-item">선분 10개 이상</div>
+          <div class="cond-item">기울기 양수 2개 이상</div>
+          <div class="cond-item">기울기 음수 2개 이상</div>
+          <div class="cond-item">수직선 x=k 1개</div>
+          <div class="cond-item">수평선 y=k 1개</div>
+          <div class="cond-item">평행한 선분 한 쌍</div>
+          <div class="cond-item">수직인 선분 한 쌍</div>
+          <div class="cond-item">(도전) 절댓값 함수 1개</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. 예시 작품 -->
+    <section class="slide">
+      <div class="card">
+        <div class="slide-icon">🏠</div>
+        <div class="slide-eyebrow">예시 작품 — 집 모양</div>
+        <div class="slide-title">방정식으로 표현하면?</div>
+        <table class="eq-table">
+          <tr><th>번호</th><th>방정식</th><th>표현 부분</th></tr>
+          <tr><td>1</td><td>y = x + 2 , 0≤x≤2</td><td>지붕 왼쪽</td></tr>
+          <tr><td>2</td><td>y = -x + 6 , 2≤x≤4</td><td>지붕 오른쪽</td></tr>
+          <tr><td>3</td><td>x = 0 , 0≤y≤2</td><td>벽 왼쪽</td></tr>
+          <tr><td>4</td><td>x = 4 , 0≤y≤2</td><td>벽 오른쪽</td></tr>
+          <tr><td>5</td><td>y = 0 , 0≤x≤4</td><td>바닥</td></tr>
+        </table>
+        <div class="note-box">이렇게 <b>변 하나하나를 방정식 + 정의역</b>으로 표현하면 그림이 완성돼요!</div>
+      </div>
+    </section>
+
+    <!-- 8. 활동 순서 -->
+    <section class="slide">
+      <div class="card">
+        <div class="slide-icon">🚀</div>
+        <div class="slide-eyebrow">활동 순서</div>
+        <div class="slide-title">4단계로 진행해요</div>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-text"><b>스케치</b> — 무엇을 그릴지 종이/모눈에 밑그림을 그리고, 각 변의 기울기·절편을 미리 계산</div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-text"><b>제작</b> — 알지오매쓰에서 방정식 + 정의역을 입력해 실제로 구현</div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-text"><b>활동지 작성</b> — 사용한 방정식을 모두 표에 기록</div></div>
+          <div class="step"><div class="step-num">4</div><div class="step-text"><b>제출</b> — 화면 캡처와 활동지를 함께 제출</div></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. 활동지 양식 -->
+    <section class="slide">
+      <div class="card">
+        <div class="slide-icon">📝</div>
+        <div class="slide-eyebrow">활동지 작성법</div>
+        <div class="slide-title">방정식을 이렇게 기록하세요</div>
+        <table class="eq-table">
+          <tr><th>번호</th><th>방정식(정의역 포함)</th><th>기울기</th><th>y절편</th><th>표현 부분</th></tr>
+          <tr><td>1</td><td>y = 2x+1, 0≤x≤3</td><td>2</td><td>1</td><td>지붕 왼쪽</td></tr>
+          <tr><td>...</td><td></td><td></td><td></td><td></td></tr>
+        </table>
+        <div class="note-box">다 채운 뒤 <b>조건 체크리스트</b>(6번 슬라이드)를 다시 보고 스스로 확인하세요!</div>
+      </div>
+    </section>
+
+    <!-- 10. 평가기준 -->
+    <section class="slide">
+      <div class="card">
+        <div class="slide-icon">🏆</div>
+        <div class="slide-eyebrow">평가 기준</div>
+        <div class="slide-title">이렇게 평가해요</div>
+        <ul class="check-list">
+          <li><span class="check-mark">40</span> 방정식이 그래프와 정확히 일치하는가</li>
+          <li><span class="check-mark">30</span> 미션 조건(개수·평행·수직 등)을 모두 충족했는가</li>
+          <li><span class="check-mark">20</span> 그림의 창의성과 완성도</li>
+          <li><span class="check-mark">10</span> 활동지 작성 및 제출 성실도</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- 11. 제출 방법 -->
+    <section class="slide">
+      <div class="card">
+        <div class="slide-icon">📤</div>
+        <div class="slide-eyebrow">제출 방법</div>
+        <div class="slide-title">완성했다면 제출하세요</div>
+        <div class="steps">
+          <div class="step"><div class="step-num">1</div><div class="step-text">알지오매쓰 화면을 <b>캡처(스크린샷)</b>합니다.</div></div>
+          <div class="step"><div class="step-num">2</div><div class="step-text">작성한 <b>활동지</b>를 함께 준비합니다.</div></div>
+          <div class="step"><div class="step-num">3</div><div class="step-text">선생님이 안내한 방법으로 제출합니다.</div></div>
+        </div>
+        <div class="fill-box">📮 제출 장소: 선생님이 안내한 곳으로 제출하세요</div>
+      </div>
+    </section>
+
+    <!-- 12. 마무리 -->
+    <section class="slide">
+      <div class="card">
+        <div class="slide-icon">🎉</div>
+        <div class="slide-title">한 학기 동안 배운<br>일차함수, 그림으로 완성!</div>
+        <p class="lead">기울기와 y절편만으로도<br>멋진 작품을 그릴 수 있어요.<br><b>나만의 그림</b>을 자유롭게 만들어보세요!</p>
+      </div>
+    </section>
+
+  </div>
+
+  <div class="nav-bar">
+    <button class="nav-btn ghost" id="prevBtn">◀ 이전</button>
+    <div class="dots" id="dots"></div>
+    <span class="slide-counter" id="counter">1 / 12</span>
+    <button class="nav-btn" id="nextBtn">다음 ▶</button>
+  </div>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+let idx = 0;
+
+const dotsEl = document.getElementById('dots');
+slides.forEach((_, i) => {
+  const d = document.createElement('div');
+  d.className = 'dot' + (i === 0 ? ' active' : '');
+  dotsEl.appendChild(d);
+});
+const dots = document.querySelectorAll('.dot');
+
+function render() {
+  slides.forEach((s, i) => s.classList.toggle('active', i === idx));
+  dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+  document.getElementById('counter').textContent = (idx + 1) + ' / ' + total;
+  document.getElementById('progressFill').style.width = ((idx + 1) / total * 100) + '%';
+  document.getElementById('prevBtn').disabled = idx === 0;
+  document.getElementById('nextBtn').textContent = idx === total - 1 ? '처음으로' : '다음 ▶';
+}
+
+function go(n) {
+  idx = Math.max(0, Math.min(total - 1, n));
+  render();
+}
+
+document.getElementById('prevBtn').addEventListener('click', () => go(idx - 1));
+document.getElementById('nextBtn').addEventListener('click', () => {
+  if (idx === total - 1) { go(0); } else { go(idx + 1); }
+});
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === ' ') go(idx + 1);
+  if (e.key === 'ArrowLeft') go(idx - 1);
+});
+
+let touchX = 0;
+document.addEventListener('touchstart', (e) => { touchX = e.touches[0].clientX; });
+document.addEventListener('touchend', (e) => {
+  const dx = e.changedTouches[0].clientX - touchX;
+  if (dx > 50) go(idx - 1);
+  if (dx < -50) go(idx + 1);
+});
+
+render();
+</script>
+
+</body>
+</html>
