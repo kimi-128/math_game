@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📐 함수 보충학습 | 중학교 2학년</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: linear-gradient(160deg, #fff8e1 0%, #fff3e0 60%, #fce4ec 100%);
+  min-height: 100vh;
+  font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+  color: #37474f;
+  padding: 20px;
+}
+.inner { max-width: 860px; margin: 0 auto; }
+
+/* 뒤로가기 버튼 */
+.back-btn a {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 8px 18px;
+  background: rgba(255,255,255,.85);
+  border: 1.5px solid #ffcc80; border-radius: 20px;
+  color: #e65100; text-decoration: none;
+  font-size: .88rem; font-weight: 700;
+  transition: all .18s;
+}
+.back-btn a:hover { background: #e65100; color: white; border-color: #e65100; }
+
+/* 헤더 */
+header {
+  background: linear-gradient(135deg, #ff8f00, #f57c00, #e65100);
+  color: white; border-radius: 22px;
+  padding: 34px 28px; margin: 18px 0 28px;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(245,124,0,.35);
+}
+header h1 { font-size: 1.9rem; font-weight: 900; margin-bottom: 8px; }
+header .sub { font-size: .9rem; opacity: .88; }
+header .ch {
+  display: inline-block; background: rgba(255,255,255,.2);
+  border-radius: 12px; padding: 4px 14px; font-size: .8rem; margin-top: 10px;
+}
+
+/* 학습 목표 */
+.goal-box {
+  background: white; border: 1.5px solid #ffcc80;
+  border-radius: 16px; padding: 16px 22px; margin-bottom: 26px;
+  font-size: .9rem; line-height: 1.9;
+}
+.goal-box strong { color: #e65100; font-size: .8rem; letter-spacing: .4px; display: block; margin-bottom: 5px; }
+
+/* 목차 네비게이션 */
+.nav-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 12px; margin-bottom: 30px;
+}
+.nav-item {
+  background: white; border-radius: 14px; padding: 14px 16px;
+  text-decoration: none; color: #37474f;
+  border: 1.5px solid #ffe082;
+  display: flex; align-items: center; gap: 10px;
+  font-size: .88rem; font-weight: 700;
+  transition: all .18s;
+  box-shadow: 0 2px 8px rgba(0,0,0,.05);
+}
+.nav-item:hover { border-color: #f57c00; color: #e65100; transform: translateY(-2px); box-shadow: 0 6px 18px rgba(245,124,0,.2); }
+.nav-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .8rem; font-weight: 900; color: white; flex-shrink: 0;
+}
+
+/* 카드 */
+.card {
+  background: white; border-radius: 20px;
+  padding: 26px 26px 22px; margin-bottom: 26px;
+  box-shadow: 0 4px 18px rgba(245,124,0,.1);
+  border: 1.5px solid #ffe082;
+  scroll-margin-top: 20px;
+}
+.card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+.badge {
+  color: white; font-size: .76rem; font-weight: 900;
+  padding: 5px 13px; border-radius: 10px; white-space: nowrap;
+}
+.b-orange { background: linear-gradient(135deg,#ff8f00,#f57c00); }
+.b-blue   { background: linear-gradient(135deg,#1976d2,#0d47a1); }
+.b-purple { background: linear-gradient(135deg,#8e24aa,#6a1b9a); }
+.b-green  { background: linear-gradient(135deg,#2e7d32,#1b5e20); }
+.card-title { font-size: 1.18rem; font-weight: 900; color: #37474f; flex: 1; }
+
+/* 개념 정의 박스 */
+.def-box {
+  background: linear-gradient(135deg,#fff8e1,#fff3e0);
+  border: 2px solid #ffe082; border-radius: 14px;
+  padding: 16px 20px; margin-bottom: 18px;
+  font-size: .92rem; line-height: 1.85;
+}
+.def-box.blue   { background: linear-gradient(135deg,#e3f2fd,#e8eaf6); border-color: #90caf9; }
+.def-box.purple { background: linear-gradient(135deg,#f3e5f5,#ede7f6); border-color: #ce93d8; }
+.def-box.green  { background: linear-gradient(135deg,#e8f5e9,#f1f8e9); border-color: #a5d6a7; }
+.def-label {
+  font-size: .74rem; font-weight: 900; letter-spacing: .6px;
+  margin-bottom: 8px; display: block;
+}
+.def-label.orange { color: #e65100; }
+.def-label.blue   { color: #1565c0; }
+.def-label.purple { color: #6a1b9a; }
+.def-label.green  { color: #2e7d32; }
+
+/* 수식 박스 */
+.formula {
+  background: white; border: 2px solid #ffe082;
+  border-radius: 12px; padding: 12px 20px;
+  text-align: center; font-size: 1.3rem; font-weight: 900;
+  color: #e65100; margin-bottom: 16px; letter-spacing: 1px;
+}
+.formula.blue   { border-color: #90caf9; color: #1565c0; }
+.formula.purple { border-color: #ce93d8; color: #6a1b9a; }
+
+/* 핵심 포인트 */
+.point-list { list-style: none; margin-bottom: 16px; }
+.point-list li {
+  padding: 9px 12px 9px 38px; position: relative;
+  border-bottom: 1px solid #fff3e0; font-size: .9rem; line-height: 1.7;
+}
+.point-list li:last-child { border-bottom: none; }
+.point-list li::before {
+  content: '▶'; position: absolute; left: 12px; top: 10px;
+  color: #f57c00; font-size: .7rem;
+}
+.point-list.blue li::before  { color: #1976d2; }
+.point-list.blue li { border-color: #e3f2fd; }
+.point-list.purple li::before { color: #8e24aa; }
+.point-list.purple li { border-color: #f3e5f5; }
+.point-list.green li::before  { color: #2e7d32; }
+.point-list.green li { border-color: #e8f5e9; }
+
+/* 예제 영역 */
+.ex-wrap {
+  background: #fafafa; border-radius: 14px;
+  padding: 16px 18px; margin-bottom: 14px;
+  border: 1px solid #eceff1;
+}
+.ex-label {
+  font-size: .74rem; font-weight: 900; letter-spacing: .5px;
+  margin-bottom: 10px; display: block;
+}
+.ex-label.orange { color: #e65100; }
+.ex-label.blue   { color: #1565c0; }
+.ex-label.purple { color: #6a1b9a; }
+.ex-label.green  { color: #2e7d32; }
+
+/* 그래프 SVG */
+.graph-wrap {
+  width: 100%; max-width: 460px; margin: 0 auto 18px;
+  border-radius: 14px; overflow: hidden;
+  border: 2px solid #ffe082; background: #fafafa;
+}
+.graph-wrap.blue   { border-color: #90caf9; }
+.graph-wrap.purple { border-color: #ce93d8; }
+.graph-wrap.green  { border-color: #a5d6a7; }
+svg { display: block; width: 100%; }
+
+/* 연습문제 */
+.qbox {
+  background: #fff3e0; border-left: 4px solid #f57c00;
+  border-radius: 0 12px 12px 0;
+  padding: 13px 16px; margin-bottom: 10px;
+  font-size: .92rem; line-height: 1.8;
+}
+.qbox.blue   { background: #e3f2fd; border-color: #1976d2; }
+.qbox.purple { background: #f3e5f5; border-color: #8e24aa; }
+.qbox.green  { background: #e8f5e9; border-color: #2e7d32; }
+.qlabel { font-size: .74rem; font-weight: 900; margin-bottom: 6px; letter-spacing: .4px; }
+.qlabel.orange { color: #e65100; }
+.qlabel.blue   { color: #1565c0; }
+.qlabel.purple { color: #6a1b9a; }
+.qlabel.green  { color: #2e7d32; }
+
+/* 정답 버튼 & 박스 */
+.ans-btn {
+  border: 2px solid #f57c00; border-radius: 20px;
+  padding: 8px 22px; background: white; color: #e65100;
+  font-weight: 700; font-size: .88rem;
+  cursor: pointer; transition: all .18s; margin-bottom: 8px;
+}
+.ans-btn:hover { background: #f57c00; color: white; }
+.ans-btn.blue   { border-color: #1976d2; color: #1565c0; }
+.ans-btn.blue:hover { background: #1976d2; color: white; }
+.ans-btn.purple { border-color: #8e24aa; color: #6a1b9a; }
+.ans-btn.purple:hover { background: #8e24aa; color: white; }
+.ans-btn.green  { border-color: #2e7d32; color: #2e7d32; }
+.ans-btn.green:hover { background: #2e7d32; color: white; }
+
+.ans-box {
+  display: none; border-radius: 12px; padding: 14px 18px;
+  font-size: .9rem; line-height: 1.85;
+  border: 2px solid #ffe082; background: #fff8e1;
+}
+.ans-box.show { display: block; }
+.ans-box.blue   { border-color: #90caf9; background: #e3f2fd; }
+.ans-box.purple { border-color: #ce93d8; background: #f3e5f5; }
+.ans-box.green  { border-color: #a5d6a7; background: #e8f5e9; }
+.ans-result {
+  text-align: center; font-size: 1.05rem; font-weight: 900;
+  padding: 10px; margin-top: 10px; border-radius: 10px;
+  background: white; border: 1.5px solid #ffe082;
+}
+.ans-result.blue   { border-color: #90caf9; color: #1565c0; }
+.ans-result.orange { color: #e65100; }
+.ans-result.purple { border-color: #ce93d8; color: #6a1b9a; }
+.ans-result.green  { border-color: #a5d6a7; color: #2e7d32; }
+
+/* 비교 표 */
+.cmp-table { width: 100%; border-collapse: collapse; font-size: .88rem; margin-bottom: 16px; }
+.cmp-table th { padding: 10px 14px; text-align: center; font-weight: 900; color: white; }
+.cmp-table td { padding: 10px 14px; text-align: center; border-bottom: 1px solid #ffe082; }
+.cmp-table tr:nth-child(even) td { background: #fff8e1; }
+.th-orange { background: #f57c00; }
+.th-blue   { background: #1976d2; }
+.th-purple { background: #8e24aa; }
+
+/* 요점 정리 박스 */
+.summary-box {
+  background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+  border: 2px solid #a5d6a7; border-radius: 16px;
+  padding: 18px 22px; margin-top: 14px;
+}
+.summary-title { font-size: .82rem; font-weight: 900; color: #2e7d32; margin-bottom: 10px; letter-spacing: .4px; }
+.summary-item { font-size: .9rem; line-height: 1.9; padding-left: 18px; position: relative; }
+.summary-item::before { content: '✔'; position: absolute; left: 0; color: #4caf50; }
+
+/* 칩 태그 (기울기, 절편 등) */
+.tag {
+  display: inline-block; border-radius: 8px;
+  padding: 2px 10px; font-size: .78rem; font-weight: 700; margin: 0 2px;
+}
+.tag.orange { background: #fff3e0; color: #e65100; border: 1px solid #ffcc80; }
+.tag.blue   { background: #e3f2fd; color: #1565c0; border: 1px solid #90caf9; }
+.tag.purple { background: #f3e5f5; color: #6a1b9a; border: 1px solid #ce93d8; }
+.tag.red    { background: #ffebee; color: #c62828; border: 1px solid #ef9a9a; }
+
+/* 단계 흐름 */
+.steps { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
+.step {
+  flex: 1; min-width: 100px; text-align: center;
+  padding: 9px 8px; border-radius: 10px;
+  font-size: .78rem; font-weight: 700;
+  background: #e65100; color: white;
+}
+.step.blue   { background: #1976d2; }
+.step.purple { background: #8e24aa; }
+
+/* 주의 박스 */
+.warn-box {
+  background: #fff8e1; border: 1.5px solid #ffd54f;
+  border-radius: 12px; padding: 12px 16px;
+  font-size: .88rem; line-height: 1.75; margin-bottom: 14px;
+}
+.warn-box::before { content: '⚠️ '; }
+
+footer { text-align: center; padding: 28px; color: #bdbdbd; font-size: .76rem; line-height: 2; }
+</style>
+</head>
+<body>
+<div class="inner">
+
+<div class="back-btn"><a href="index.html">← 수학 목록</a></div>
+
+<header>
+  <h1>📐 함수 핵심 정리</h1>
+  <div class="sub">함수 · 함숫값 · 일차함수 · 연립방정식 관계</div>
+  <div class="ch">중학교 2학년 · 보충학습</div>
+</header>
+
+<div class="goal-box">
+  <strong>📌 학습 목표</strong>
+  • 함수의 뜻을 이해하고, 함숫값을 구할 수 있다.<br>
+  • 일차함수 y = ax + b의 기울기와 y절편을 구하고 그래프를 그릴 수 있다.<br>
+  • 연립방정식의 해와 두 일차함수 그래프의 교점 관계를 설명할 수 있다.
+</div>
+
+<!-- 목차 네비게이션 -->
+<div class="nav-grid">
+  <a class="nav-item" href="#sec1">
+    <span class="nav-num" style="background:#f57c00;">1</span>함수란?
+  </a>
+  <a class="nav-item" href="#sec2">
+    <span class="nav-num" style="background:#f9a825;">2</span>함숫값
+  </a>
+  <a class="nav-item" href="#sec3">
+    <span class="nav-num" style="background:#1976d2;">3</span>일차함수
+  </a>
+  <a class="nav-item" href="#sec4">
+    <span class="nav-num" style="background:#8e24aa;">4</span>연립방정식과의 관계
+  </a>
+</div>
+
+
+<!-- ═══════════════ 1. 함수 ═══════════════ -->
+<div class="card" id="sec1">
+  <div class="card-head">
+    <span class="badge b-orange">개념 1</span>
+    <span class="card-title">함수 (Function)</span>
+  </div>
+
+  <div class="def-box">
+    <span class="def-label orange">📖 정의</span>
+    두 변수 <strong>x</strong>와 <strong>y</strong>에 대해<br>
+    <strong>x의 값이 정해지면 y의 값이 오직 하나로 정해질 때</strong>,<br>
+    "y는 x의 <strong>함수</strong>이다"라고 하고 <strong>y = f(x)</strong> 로 나타낸다.
+  </div>
+
+  <ul class="point-list">
+    <li><strong>핵심 조건:</strong> x 하나에 y가 반드시 <em>하나만</em> 대응해야 함 (두 개 이상이면 함수가 아님)</li>
+    <li><strong>독립변수:</strong> 값을 자유롭게 정하는 변수 → <strong>x</strong></li>
+    <li><strong>종속변수:</strong> x에 따라 결정되는 변수 → <strong>y</strong></li>
+    <li><strong>표기:</strong> f(x), g(x), h(x) 등으로 씀</li>
+  </ul>
+
+  <div class="ex-wrap">
+    <span class="ex-label orange">📋 함수 O / X 판별</span>
+    <table class="cmp-table">
+      <thead><tr>
+        <th class="th-orange">대응 관계</th>
+        <th class="th-orange">함수?</th>
+        <th class="th-orange">이유</th>
+      </tr></thead>
+      <tbody>
+        <tr><td>한 학생의 키 x → 몸무게 y</td><td>✅ O</td><td>x 하나에 y 하나</td></tr>
+        <tr><td>자연수 x → x의 약수 y</td><td>❌ X</td><td>약수가 여러 개</td></tr>
+        <tr><td>변의 길이 x → 정사각형 넓이 y</td><td>✅ O</td><td>y = x² 로 하나</td></tr>
+        <tr><td>넓이 x → 직사각형 가로 y</td><td>❌ X</td><td>가로 값이 여러 개</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="warn-box">
+    x의 한 값에 y의 값이 <strong>여러 개</strong> 대응되면 함수가 아니에요!
+  </div>
+</div>
+
+
+<!-- ═══════════════ 2. 함숫값 ═══════════════ -->
+<div class="card" id="sec2">
+  <div class="card-head">
+    <span class="badge b-orange">개념 2</span>
+    <span class="card-title">함숫값 (Function Value)</span>
+  </div>
+
+  <div class="def-box">
+    <span class="def-label orange">📖 정의</span>
+    함수 f(x)에서 <strong>x = a</strong> 일 때의 함수의 값을<br>
+    <strong>f(a)</strong> 라고 쓰고, 이를 <strong>함숫값</strong>이라 한다.
+  </div>
+
+  <div class="formula">f(a) = f(x)에서 x 대신 a를 대입한 값</div>
+
+  <div class="steps">
+    <div class="step">① f(x) 식 확인</div>
+    <div class="step">② x에 a 대입</div>
+    <div class="step">③ 계산하여 답</div>
+  </div>
+
+  <div class="ex-wrap">
+    <span class="ex-label orange">📋 예제</span>
+    <strong>f(x) = 3x − 2</strong> 일 때, 아래 함숫값을 구하시오.
+    <br><br>
+    <table class="cmp-table">
+      <thead><tr>
+        <th class="th-orange">구하는 값</th>
+        <th class="th-orange">대입 과정</th>
+        <th class="th-orange">답</th>
+      </tr></thead>
+      <tbody>
+        <tr><td><strong>f(1)</strong></td><td>3 × 1 − 2 = 3 − 2</td><td><strong>1</strong></td></tr>
+        <tr><td><strong>f(3)</strong></td><td>3 × 3 − 2 = 9 − 2</td><td><strong>7</strong></td></tr>
+        <tr><td><strong>f(−2)</strong></td><td>3 × (−2) − 2 = −6 − 2</td><td><strong>−8</strong></td></tr>
+        <tr><td><strong>f(0)</strong></td><td>3 × 0 − 2 = 0 − 2</td><td><strong>−2</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="qbox">
+    <div class="qlabel orange">✏️ 연습</div>
+    <strong>f(x) = −2x + 5</strong> 일 때, f(4)와 f(−1)을 구하시오.
+  </div>
+  <button class="ans-btn" onclick="toggle('q2')">정답 보기 ▼</button>
+  <div id="q2" class="ans-box">
+    <strong>f(4)</strong> = −2 × 4 + 5 = −8 + 5 = <strong>−3</strong><br>
+    <strong>f(−1)</strong> = −2 × (−1) + 5 = 2 + 5 = <strong>7</strong>
+    <div class="ans-result orange">f(4) = −3 &nbsp;,&nbsp; f(−1) = 7</div>
+  </div>
+</div>
+
+
+<!-- ═══════════════ 3. 일차함수 ═══════════════ -->
+<div class="card" id="sec3">
+  <div class="card-head">
+    <span class="badge b-blue">개념 3</span>
+    <span class="card-title">일차함수 (Linear Function)</span>
+  </div>
+
+  <div class="def-box blue">
+    <span class="def-label blue">📖 정의</span>
+    <strong>y = ax + b</strong> (a, b는 상수, <strong>a ≠ 0</strong>) 꼴로 나타낼 수 있을 때<br>
+    "y는 x의 <strong>일차함수</strong>이다"라고 한다.
+  </div>
+
+  <div class="formula blue">y = <span style="color:#c62828;">a</span>x + <span style="color:#2e7d32;">b</span></div>
+
+  <div style="display:flex; gap:10px; margin-bottom:16px; flex-wrap:wrap;">
+    <div class="def-box blue" style="flex:1; min-width:160px; margin-bottom:0;">
+      <span class="def-label blue" style="font-size:.78rem;">🔺 기울기 (a)</span>
+      x가 1 증가할 때 y의 증가량<br>
+      <span style="font-size:1.1rem; font-weight:900; color:#c62828;">a = <sup>y의 증가량</sup>/<sub>x의 증가량</sub></span>
+    </div>
+    <div class="def-box blue" style="flex:1; min-width:160px; margin-bottom:0;">
+      <span class="def-label blue" style="font-size:.78rem;">📍 y절편 (b)</span>
+      그래프가 y축과 만나는 점의 y좌표<br>
+      즉, <strong>x = 0 일 때의 y값</strong> = <span style="font-size:1.1rem; font-weight:900; color:#2e7d32;">b</span>
+    </div>
+  </div>
+
+  <ul class="point-list blue">
+    <li><strong>기울기 양수 (a &gt; 0):</strong> 오른쪽 위로 올라가는 직선 ↗</li>
+    <li><strong>기울기 음수 (a &lt; 0):</strong> 오른쪽 아래로 내려가는 직선 ↘</li>
+    <li><strong>기울기 절댓값이 클수록</strong> 더 가파른 직선</li>
+    <li>x절편 = <span style="font-weight:700;">−b/a</span> &nbsp;(y = 0 으로 놓고 x를 구한 값)</li>
+  </ul>
+
+  <!-- SVG 그래프: y=2x+1 vs y=−x+3 -->
+  <div class="graph-wrap blue">
+    <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" style="background:#f8f9fa;">
+      <!-- 격자 -->
+      <g stroke="#e0e0e0" stroke-width="0.8">
+        <line x1="40" y1="30" x2="40" y2="270"/>
+        <line x1="90" y1="30" x2="90" y2="270"/>
+        <line x1="140" y1="30" x2="140" y2="270"/>
+        <line x1="190" y1="30" x2="190" y2="270"/>
+        <line x1="240" y1="30" x2="240" y2="270"/>
+        <line x1="290" y1="30" x2="290" y2="270"/>
+        <line x1="340" y1="30" x2="340" y2="270"/>
+        <line x1="390" y1="30" x2="390" y2="270"/>
+        <line x1="20" y1="50" x2="395" y2="50"/>
+        <line x1="20" y1="100" x2="395" y2="100"/>
+        <line x1="20" y1="150" x2="395" y2="150"/>
+        <line x1="20" y1="200" x2="395" y2="200"/>
+        <line x1="20" y1="250" x2="395" y2="250"/>
+      </g>
+      <!-- 축 -->
+      <line x1="20" y1="150" x2="395" y2="150" stroke="#9e9e9e" stroke-width="1.5"/>
+      <line x1="190" y1="20" x2="190" y2="285" stroke="#9e9e9e" stroke-width="1.5"/>
+      <!-- 화살표 -->
+      <polygon points="395,147 388,143 388,157" fill="#9e9e9e"/>
+      <polygon points="190,18 186,26 194,26" fill="#9e9e9e"/>
+      <!-- 축 레이블 -->
+      <text x="392" y="144" font-size="11" fill="#757575" font-family="Arial">x</text>
+      <text x="196" y="16" font-size="11" fill="#757575" font-family="Arial">y</text>
+      <!-- 눈금 숫자 -->
+      <text x="182" y="104" font-size="10" fill="#9e9e9e" text-anchor="middle">2</text>
+      <text x="182" y="54"  font-size="10" fill="#9e9e9e" text-anchor="middle">4</text>
+      <text x="182" y="204" font-size="10" fill="#9e9e9e" text-anchor="middle">-2</text>
+      <text x="182" y="254" font-size="10" fill="#9e9e9e" text-anchor="middle">-4</text>
+      <text x="238" y="163" font-size="10" fill="#9e9e9e" text-anchor="middle">1</text>
+      <text x="288" y="163" font-size="10" fill="#9e9e9e" text-anchor="middle">2</text>
+      <text x="140" y="163" font-size="10" fill="#9e9e9e" text-anchor="middle">-1</text>
+      <text x="90"  y="163" font-size="10" fill="#9e9e9e" text-anchor="middle">-2</text>
+      <!-- y = 2x + 1  (origin offset: x=190, y=150, scale=50) -->
+      <!-- x=-2: 190-100=90, y=1-4=-3 → 150+150=300 (out)  -->
+      <!-- x=-1: 140, y=-1 → 150+50=200 -->
+      <!-- x=2:  290, y=5  → 150-250=-100 (out) -->
+      <!-- clip: x=90(−2),y=300  →  x=315(2.5), y=25  -->
+      <line x1="85" y1="305" x2="315" y2="15"
+            stroke="#1976d2" stroke-width="2.5" stroke-linecap="round"/>
+      <text x="318" y="18" font-size="12" fill="#1976d2" font-weight="bold">y=2x+1</text>
+
+      <!-- y = −x + 3  -->
+      <!-- x=-2: 90, y=5 → 150-250=-100 (clip) -->
+      <!-- x=3:  340, y=0 → 150 -->
+      <!-- x=-1: 140, y=4 → 50 -->
+      <!-- x=4:  390, y=-1 → 200 -->
+      <line x1="40" y1="0" x2="390" y2="250"
+            stroke="#c62828" stroke-width="2.5" stroke-linecap="round"/>
+      <text x="60" y="13" font-size="12" fill="#c62828" font-weight="bold">y=−x+3</text>
+
+      <!-- y절편 점 y=2x+1: (0,1) → (190, 100) -->
+      <circle cx="190" cy="100" r="5" fill="#1976d2"/>
+      <!-- y절편 점 y=−x+3: (0,3) → (190, 0) -->
+      <circle cx="190" cy="0" r="5" fill="#c62828"/>
+    </svg>
+  </div>
+
+  <div class="ex-wrap">
+    <span class="ex-label blue">📋 예제: 기울기와 y절편 구하기</span>
+    <table class="cmp-table">
+      <thead><tr>
+        <th class="th-blue">식</th>
+        <th class="th-blue">기울기 a</th>
+        <th class="th-blue">y절편 b</th>
+      </tr></thead>
+      <tbody>
+        <tr><td><strong>y = 3x + 2</strong></td><td>3</td><td>2</td></tr>
+        <tr><td><strong>y = −½x − 4</strong></td><td>−½</td><td>−4</td></tr>
+        <tr><td><strong>y = x</strong></td><td>1</td><td>0</td></tr>
+        <tr><td><strong>2y = 4x + 6</strong></td><td colspan="2">→ y = 2x + 3 변환 후: 기울기 2, y절편 3</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="qbox blue">
+    <div class="qlabel blue">✏️ 연습</div>
+    일차함수 <strong>y = −3x + 6</strong> 에 대해 답하시오.<br>
+    ① 기울기와 y절편을 구하시오.<br>
+    ② x절편을 구하시오.<br>
+    ③ f(2)의 값을 구하시오.
+  </div>
+  <button class="ans-btn blue" onclick="toggle('q3')">정답 보기 ▼</button>
+  <div id="q3" class="ans-box blue">
+    ① 기울기 = <strong>−3</strong> &nbsp;,&nbsp; y절편 = <strong>6</strong><br>
+    ② y = 0 대입: 0 = −3x + 6 &nbsp;→&nbsp; 3x = 6 &nbsp;→&nbsp; x = <strong>2</strong><br>
+    ③ f(2) = −3 × 2 + 6 = −6 + 6 = <strong>0</strong>
+    <div class="ans-result blue">① 기울기 −3, y절편 6 &nbsp;&nbsp; ② x절편 2 &nbsp;&nbsp; ③ f(2) = 0</div>
+  </div>
+</div>
+
+
+<!-- ═══════════════ 4. 연립방정식과의 관계 ═══════════════ -->
+<div class="card" id="sec4">
+  <div class="card-head">
+    <span class="badge b-purple">개념 4</span>
+    <span class="card-title">일차함수와 연립방정식의 관계</span>
+  </div>
+
+  <div class="def-box purple">
+    <span class="def-label purple">📖 핵심 원리</span>
+    연립방정식 <strong>{ ax + by = c / dx + ey = f }</strong> 에서<br>
+    각 방정식을 <strong>y = ...</strong> 꼴로 바꾸면 두 일차함수의 식이 된다.<br><br>
+    ✨ <strong>연립방정식의 해</strong> = 두 일차함수 <strong>그래프의 교점의 좌표 (x, y)</strong>
+  </div>
+
+  <!-- 3가지 경우 비교 -->
+  <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:14px; margin-bottom:18px;">
+
+    <!-- 경우 1: 해가 하나 -->
+    <div style="background:#f3e5f5; border-radius:14px; padding:14px; border:1.5px solid #ce93d8;">
+      <div style="font-size:.78rem; font-weight:900; color:#6a1b9a; margin-bottom:8px;">경우 1 — 해가 하나</div>
+      <div class="graph-wrap purple" style="margin:0 0 10px; border:none;">
+        <svg viewBox="0 0 200 160" style="background:#fafafa; border-radius:10px;">
+          <line x1="10" y1="80" x2="192" y2="80" stroke="#ccc" stroke-width="1"/>
+          <line x1="100" y1="5" x2="100" y2="155" stroke="#ccc" stroke-width="1"/>
+          <!-- 두 직선 교차 -->
+          <line x1="10" y1="130" x2="190" y2="20" stroke="#8e24aa" stroke-width="2"/>
+          <line x1="10" y1="30" x2="190" y2="130" stroke="#e65100" stroke-width="2"/>
+          <!-- 교점 -->
+          <circle cx="100" cy="80" r="5" fill="#2e7d32"/>
+          <text x="108" y="76" font-size="10" fill="#2e7d32" font-weight="bold">교점</text>
+        </svg>
+      </div>
+      <div style="font-size:.82rem; line-height:1.7; color:#37474f;">
+        두 직선이 <strong>한 점에서 교차</strong><br>
+        → 해가 <strong>1개</strong> 존재
+      </div>
+    </div>
+
+    <!-- 경우 2: 해가 없음 -->
+    <div style="background:#fff3e0; border-radius:14px; padding:14px; border:1.5px solid #ffcc80;">
+      <div style="font-size:.78rem; font-weight:900; color:#e65100; margin-bottom:8px;">경우 2 — 해가 없음</div>
+      <div class="graph-wrap" style="margin:0 0 10px; border:none;">
+        <svg viewBox="0 0 200 160" style="background:#fafafa; border-radius:10px;">
+          <line x1="10" y1="80" x2="192" y2="80" stroke="#ccc" stroke-width="1"/>
+          <line x1="100" y1="5" x2="100" y2="155" stroke="#ccc" stroke-width="1"/>
+          <!-- 평행한 두 직선 -->
+          <line x1="10" y1="60" x2="190" y2="40" stroke="#8e24aa" stroke-width="2"/>
+          <line x1="10" y1="110" x2="190" y2="90" stroke="#e65100" stroke-width="2"/>
+        </svg>
+      </div>
+      <div style="font-size:.82rem; line-height:1.7; color:#37474f;">
+        두 직선이 <strong>평행</strong> (기울기 같고 y절편 다름)<br>
+        → 해가 <strong>없음</strong>
+      </div>
+    </div>
+
+    <!-- 경우 3: 해가 무수히 많음 -->
+    <div style="background:#e8f5e9; border-radius:14px; padding:14px; border:1.5px solid #a5d6a7;">
+      <div style="font-size:.78rem; font-weight:900; color:#2e7d32; margin-bottom:8px;">경우 3 — 해가 무수히 많음</div>
+      <div class="graph-wrap green" style="margin:0 0 10px; border:none;">
+        <svg viewBox="0 0 200 160" style="background:#fafafa; border-radius:10px;">
+          <line x1="10" y1="80" x2="192" y2="80" stroke="#ccc" stroke-width="1"/>
+          <line x1="100" y1="5" x2="100" y2="155" stroke="#ccc" stroke-width="1"/>
+          <!-- 완전히 일치하는 직선 (두꺼운 선으로 표현) -->
+          <line x1="10" y1="120" x2="190" y2="30" stroke="#8e24aa" stroke-width="5" stroke-opacity="0.4"/>
+          <line x1="10" y1="120" x2="190" y2="30" stroke="#2e7d32" stroke-width="2"/>
+          <text x="140" y="42" font-size="9" fill="#8e24aa" font-weight="bold">두 직선 일치</text>
+        </svg>
+      </div>
+      <div style="font-size:.82rem; line-height:1.7; color:#37474f;">
+        두 직선이 <strong>완전히 일치</strong> (기울기, y절편 모두 같음)<br>
+        → 해가 <strong>무수히 많음</strong>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 요약 표 -->
+  <div class="ex-wrap" style="margin-bottom:18px;">
+    <span class="ex-label purple">📋 경우 비교표</span>
+    <table class="cmp-table">
+      <thead><tr>
+        <th class="th-purple">그래프 모양</th>
+        <th class="th-purple">기울기</th>
+        <th class="th-purple">y절편</th>
+        <th class="th-purple">해의 개수</th>
+      </tr></thead>
+      <tbody>
+        <tr><td>한 점에서 교차</td><td>다르다</td><td>—</td><td><strong>1개</strong></td></tr>
+        <tr><td>평행 (만나지 않음)</td><td>같다</td><td>다르다</td><td><strong>없음</strong></td></tr>
+        <tr><td>완전히 일치</td><td>같다</td><td>같다</td><td><strong>무수히 많음</strong></td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- 풀이 예제 -->
+  <div class="ex-wrap">
+    <span class="ex-label purple">📋 예제: 연립방정식을 그래프로 풀기</span>
+    <strong>연립방정식 { y = x + 1 / y = −x + 3 } 의 해를 구하시오.</strong><br><br>
+
+    <div class="steps">
+      <div class="step purple">① 두 식을 그래프로</div>
+      <div class="step purple">② 교점의 좌표 찾기</div>
+      <div class="step purple">③ 해 확인</div>
+    </div>
+
+    <!-- SVG: 교점 그래프 -->
+    <div class="graph-wrap purple" style="max-width:400px; margin:0 auto 14px;">
+      <svg viewBox="0 0 380 280" style="background:#fafafa;">
+        <!-- 격자 -->
+        <g stroke="#e0e0e0" stroke-width="0.8">
+          <line x1="38" y1="20" x2="38" y2="260"/>
+          <line x1="88" y1="20" x2="88" y2="260"/>
+          <line x1="138" y1="20" x2="138" y2="260"/>
+          <line x1="188" y1="20" x2="188" y2="260"/>
+          <line x1="238" y1="20" x2="238" y2="260"/>
+          <line x1="288" y1="20" x2="288" y2="260"/>
+          <line x1="338" y1="20" x2="338" y2="260"/>
+          <line x1="15" y1="40" x2="370" y2="40"/>
+          <line x1="15" y1="90" x2="370" y2="90"/>
+          <line x1="15" y1="140" x2="370" y2="140"/>
+          <line x1="15" y1="190" x2="370" y2="190"/>
+          <line x1="15" y1="240" x2="370" y2="240"/>
+        </g>
+        <!-- 축 -->
+        <line x1="15" y1="140" x2="370" y2="140" stroke="#9e9e9e" stroke-width="1.5"/>
+        <line x1="188" y1="10" x2="188" y2="268" stroke="#9e9e9e" stroke-width="1.5"/>
+        <!-- 화살표 -->
+        <polygon points="372,137 364,133 364,147" fill="#9e9e9e"/>
+        <polygon points="188,8 184,17 192,17" fill="#9e9e9e"/>
+        <!-- 축 레이블 -->
+        <text x="368" y="134" font-size="11" fill="#757575">x</text>
+        <text x="193" y="7" font-size="11" fill="#757575">y</text>
+        <!-- 눈금 -->
+        <text x="180" y="94"  font-size="10" fill="#9e9e9e" text-anchor="end">2</text>
+        <text x="180" y="44"  font-size="10" fill="#9e9e9e" text-anchor="end">4</text>
+        <text x="180" y="194" font-size="10" fill="#9e9e9e" text-anchor="end">-2</text>
+        <text x="236" y="154" font-size="10" fill="#9e9e9e" text-anchor="middle">1</text>
+        <text x="286" y="154" font-size="10" fill="#9e9e9e" text-anchor="middle">2</text>
+        <text x="138" y="154" font-size="10" fill="#9e9e9e" text-anchor="middle">-1</text>
+        <text x="88"  y="154" font-size="10" fill="#9e9e9e" text-anchor="middle">-2</text>
+
+        <!-- y = x + 1 : origin (188,140), scale 50 -->
+        <!-- x=-3: 38, y=-2 → 240  /  x=2: 288, y=3 → 140-150=-10(clip) -->
+        <!-- clip: from (13, 275) to (363, -25) -->
+        <line x1="13" y1="275" x2="363" y2="-25"
+              stroke="#8e24aa" stroke-width="2.5" stroke-linecap="round"/>
+        <text x="340" y="18" font-size="12" fill="#8e24aa" font-weight="bold">y=x+1</text>
+
+        <!-- y = −x + 3 : at x=0 y=3→(188,140-150)=(188,-10 clip) -->
+        <!-- x=3: 338, y=0 → 140  /  x=-1:138, y=4 → 140-200=-60 -->
+        <!-- clip: from (13,15) to (363,265) -->
+        <line x1="13" y1="15" x2="363" y2="265"
+              stroke="#e65100" stroke-width="2.5" stroke-linecap="round"/>
+        <text x="14" y="28" font-size="12" fill="#e65100" font-weight="bold">y=−x+3</text>
+
+        <!-- 교점 (1, 2) → (188+50=238, 140-100=40) -->
+        <circle cx="238" cy="90" r="7" fill="#2e7d32" stroke="white" stroke-width="2"/>
+        <text x="248" y="86" font-size="12" fill="#2e7d32" font-weight="bold">(1, 2)</text>
+      </svg>
+    </div>
+
+    두 직선 <strong>y = x + 1</strong> 과 <strong>y = −x + 3</strong> 의 교점 = <strong>(1, 2)</strong><br>
+    → 연립방정식의 해: <strong>x = 1, y = 2</strong>
+  </div>
+
+  <div class="qbox purple">
+    <div class="qlabel purple">✏️ 연습</div>
+    연립방정식 <strong>{ y = 2x − 1 / y = −x + 5 }</strong> 의 해를 구하시오.
+  </div>
+  <button class="ans-btn purple" onclick="toggle('q4')">정답 보기 ▼</button>
+  <div id="q4" class="ans-box purple">
+    두 식을 연립: <br>
+    2x − 1 = −x + 5<br>
+    3x = 6<br>
+    x = 2 &nbsp;→&nbsp; y = 2 × 2 − 1 = 3<br><br>
+    교점의 좌표: <strong>(2, 3)</strong>
+    <div class="ans-result purple">x = 2, y = 3</div>
+  </div>
+
+  <!-- 최종 요약 -->
+  <div class="summary-box" style="margin-top:20px;">
+    <div class="summary-title">📌 핵심 정리</div>
+    <div class="summary-item" style="margin-bottom:6px;">
+      <strong>연립방정식의 해</strong> = 두 직선의 <strong>교점 좌표</strong>
+    </div>
+    <div class="summary-item" style="margin-bottom:6px;">
+      교점이 1개 → 해 1개 &nbsp;|&nbsp; 평행 → 해 없음 &nbsp;|&nbsp; 일치 → 해 무수히 많음
+    </div>
+    <div class="summary-item">
+      각 방정식을 <strong>y = ax + b</strong> 꼴로 변형한 뒤 그래프 관계를 파악하자
+    </div>
+  </div>
+</div>
+
+<footer>
+  중학교 2학년 수학 · 함수 보충학습 자료<br>
+  🏫 수업에서 활용하는 보조 학습 자료입니다
+</footer>
+
+</div><!-- /inner -->
+
+<script>
+function toggle(id) {
+  const box = document.getElementById(id);
+  box.classList.toggle('show');
+  const btn = box.previousElementSibling;
+  btn.textContent = box.classList.contains('show') ? '정답 닫기 ▲' : '정답 보기 ▼';
+}
+</script>
+</body>
+</html>
