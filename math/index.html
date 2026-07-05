@@ -11,12 +11,8 @@ body {
   background: linear-gradient(160deg, #fff8e1 0%, #fff3e0 50%, #fce4ec 100%);
   min-height: 100vh;
   font-family: 'Malgun Gothic', sans-serif;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 20px;
-  user-select: none;
+  color: #37474f;
+  padding: 40px 20px 60px;
 }
 
 .back-link {
@@ -45,107 +41,103 @@ body {
 .hub-sub {
   font-size: 0.9rem;
   color: #f57c00;
-  margin-bottom: 44px;
+  margin-bottom: 40px;
   text-align: center;
   opacity: .8;
 }
 
-.game-grid {
-  display: flex;
-  gap: 28px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
+.tree { max-width: 640px; margin: 0 auto; }
 
-.game-card {
-  width: 240px;
-  border-radius: 24px;
-  padding: 32px 24px 28px;
-  text-align: center;
-  text-decoration: none;
-  color: inherit;
-  transition: transform .22s, box-shadow .22s;
-  position: relative;
+/* 카테고리(폴더) */
+.category {
+  margin-bottom: 16px;
+  background: white;
+  border-radius: 18px;
+  box-shadow: 0 4px 18px rgba(0,0,0,.05);
   overflow: hidden;
+  border: 1.5px solid #ffe0b2;
+}
+.category > summary {
+  list-style: none;
   cursor: pointer;
+  padding: 16px 20px;
+  display: flex; align-items: center; gap: 12px;
+  font-weight: 900; font-size: 1.05rem;
+  user-select: none;
 }
-.game-card::before {
+.category > summary::-webkit-details-marker { display: none; }
+.category > summary .chevron {
+  margin-left: auto; font-size: .8rem; color: #b0bec5;
+  transition: transform .2s;
+}
+.category[open] > summary .chevron { transform: rotate(90deg); }
+
+.category > summary .cat-icon { font-size: 1.4rem; }
+.category > summary .cat-count {
+  font-size: .7rem; font-weight: 700; color: #90a4ae;
+  background: #f5f5f5; padding: 2px 9px; border-radius: 10px;
+}
+
+/* 카테고리 색상 테마 */
+.cat-vocab  > summary { color: #bf360c; }
+.cat-linear > summary { color: #e65100; }
+.cat-quiz   > summary { color: #1565c0; }
+.cat-study  > summary { color: #2e7d32; }
+
+/* 트리 항목 목록 */
+.cat-items {
+  padding: 4px 20px 14px 26px;
+  border-top: 1px solid #f5f5f5;
+}
+.tree-item {
+  position: relative;
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 14px 12px 22px;
+  margin: 8px 0;
+  text-decoration: none; color: inherit;
+  border-radius: 12px;
+  border: 1.5px solid #eceff1;
+  transition: all .15s;
+}
+.tree-item::before {
   content: '';
-  position: absolute; inset: 0;
-  background: radial-gradient(circle at 50% 0%, rgba(255,255,255,.4) 0%, transparent 70%);
-  pointer-events: none;
+  position: absolute; left: -14px; top: 50%;
+  width: 12px; height: 1.5px; background: #ffcc80;
 }
-.game-card:hover { transform: translateY(-10px); }
-
-/* 카드 게임 */
-.card-vocab {
-  background: linear-gradient(145deg, #ffd180, #ffab40);
-  border: 2px solid #ff9800;
-  box-shadow: 0 8px 30px rgba(255,152,0,.28);
+.cat-items::before {
+  content: '';
+  position: absolute; left: 12px; top: 0; bottom: 18px;
+  width: 1.5px; background: #ffe0b2;
 }
-.card-vocab:hover { box-shadow: 0 16px 48px rgba(255,152,0,.45); }
+.cat-items { position: relative; }
 
-/* 일차함수 */
-.card-linear {
-  background: linear-gradient(145deg, #fff3e0, #ffe0b2);
-  border: 2px solid #ffb74d;
-  box-shadow: 0 8px 30px rgba(245,124,0,.22);
+.tree-item:hover { border-color: #ffb74d; background: #fff8e1; transform: translateX(3px); }
+.tree-item .item-icon { font-size: 1.5rem; flex-shrink: 0; }
+.tree-item .item-info { flex: 1; min-width: 0; }
+.tree-item .item-title { font-size: .92rem; font-weight: 800; margin-bottom: 2px; }
+.tree-item .item-desc { font-size: .74rem; color: #90a4ae; line-height: 1.5; }
+.tree-item .item-badge {
+  font-size: .66rem; font-weight: 700; padding: 2px 8px; border-radius: 8px;
+  flex-shrink: 0; white-space: nowrap;
 }
-.card-linear:hover { box-shadow: 0 16px 48px rgba(245,124,0,.4); }
+.tree-item .item-arrow { font-size: .85rem; color: #cfd8dc; flex-shrink: 0; }
+.tree-item:hover .item-arrow { color: #ff9800; }
 
-/* 함수 퀴즈 */
-.card-quiz {
-  background: linear-gradient(145deg, #1a1a2e, #16213e);
-  border: 2px solid #64ffda;
-  box-shadow: 0 8px 30px rgba(100,255,218,.18);
-}
-.card-quiz:hover { box-shadow: 0 16px 48px rgba(100,255,218,.35); }
+/* 뱃지 색상 */
+.badge-vocab { background: rgba(191,54,12,.12); color: #bf360c; }
+.badge-linear { background: rgba(230,81,0,.12); color: #e65100; }
+.badge-quiz { background: rgba(21,101,192,.12); color: #1565c0; }
+.badge-study { background: rgba(46,125,50,.12); color: #2e7d32; }
+.badge-advanced { background: rgba(233,69,96,.15); color: #e94560; }
 
-/* 보충학습 */
-.card-study {
-  background: linear-gradient(145deg, #e8f5e9, #c8e6c9);
-  border: 2px solid #66bb6a;
-  box-shadow: 0 8px 30px rgba(76,175,80,.22);
-}
-.card-study:hover { box-shadow: 0 16px 48px rgba(76,175,80,.4); }
-
-.card-icon { font-size: 3.8rem; margin-bottom: 16px; display: block; }
-
-.card-title { font-size: 1.4rem; font-weight: 900; margin-bottom: 10px; }
-.card-vocab  .card-title { color: #bf360c; }
-.card-linear .card-title { color: #e65100; }
-.card-quiz   .card-title { color: #64ffda; }
-.card-study  .card-title { color: #2e7d32; }
-
-.card-desc { font-size: 0.84rem; line-height: 1.7; margin-bottom: 22px; }
-.card-vocab  .card-desc { color: #d84315; }
-.card-linear .card-desc { color: #f57c00; }
-.card-quiz   .card-desc { color: #8892b0; }
-.card-study  .card-desc { color: #388e3c; }
-
-.play-btn {
-  display: inline-block; padding: 10px 30px;
-  border-radius: 24px; font-size: 1rem; font-weight: bold;
-  transition: transform .15s;
-}
-.game-card:hover .play-btn { transform: scale(1.07); }
-.card-vocab  .play-btn { background: #bf360c; color: #fff; box-shadow: 0 4px 14px rgba(191,54,12,.35); }
-.card-linear .play-btn { background: #e65100; color: #fff; box-shadow: 0 4px 14px rgba(230,81,0,.35); }
-.card-quiz   .play-btn { background: #64ffda; color: #0d1b2a; box-shadow: 0 4px 14px rgba(100,255,218,.35); }
-.card-study  .play-btn { background: #2e7d32; color: #fff; box-shadow: 0 4px 14px rgba(46,125,50,.35); }
-
-.badge {
-  position: absolute; top: 14px; right: 16px;
-  font-size: 0.7rem; font-weight: bold;
-  padding: 3px 10px; border-radius: 10px;
-}
-.card-vocab  .badge { background: rgba(191,54,12,.15); color: #bf360c; }
-.card-linear .badge { background: rgba(230,81,0,.15);  color: #e65100; }
-.card-quiz   .badge { background: rgba(100,255,218,.15); color: #64ffda; }
-.card-study  .badge { background: rgba(46,125,50,.15); color: #2e7d32; }
+/* 심화학습 항목 다크 강조 */
+.tree-item.item-advanced { background: linear-gradient(145deg,#1a1a2e,#0f3460); border-color: #e94560; }
+.tree-item.item-advanced .item-title { color: #f48fb1; }
+.tree-item.item-advanced .item-desc { color: #90a4ae; }
+.tree-item.item-advanced .item-arrow { color: #e94560; }
 
 .hint {
-  margin-top: 40px; font-size: 0.78rem;
+  margin-top: 30px; font-size: 0.78rem;
   color: #f0a060; text-align: center; line-height: 1.8;
 }
 </style>
@@ -155,117 +147,134 @@ body {
 <div class="back-link"><a href="../index.html">← 게임 목록</a></div>
 
 <div class="hub-title">📐 수학 퀴즈</div>
-<div class="hub-sub">학습에 도움이 되는 퀴즈를 선택하세요!</div>
+<div class="hub-sub">카테고리를 펼쳐서 원하는 자료를 선택하세요!</div>
 
-<div class="game-grid">
+<div class="tree">
 
-  <a class="game-card card-vocab" href="math_card_game_middle.html">
-    <span class="badge">중1~중3</span>
-    <span class="card-icon">🃏</span>
-    <div class="card-title">수학 카드 게임</div>
-    <div class="card-desc">
-      중학교 수학 용어를<br>
-      카드 뒤집기로 익혀요.<br>
-      학년별 단원 선택 가능!
+  <details class="category cat-vocab" open>
+    <summary>
+      <span class="cat-icon">🃏</span>
+      수학 용어 게임
+      <span class="cat-count">1개</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="cat-items">
+      <a class="tree-item" href="math_card_game_middle.html">
+        <span class="item-icon">🃏</span>
+        <div class="item-info">
+          <div class="item-title">수학 카드 뒤집기 게임</div>
+          <div class="item-desc">학년별 6개 단원 · 36쌍씩 · 카드 뒤집기로 용어 암기</div>
+        </div>
+        <span class="item-badge badge-vocab">중1~중3</span>
+        <span class="item-arrow">→</span>
+      </a>
     </div>
-    <span class="play-btn">▶ 시작</span>
-  </a>
+  </details>
 
-  <a class="game-card card-linear" href="linear_function.html">
-    <span class="badge">중2 수학</span>
-    <span class="card-icon">📐</span>
-    <div class="card-title">일차함수 활용</div>
-    <div class="card-desc">
-      실생활 문제로<br>
-      일차함수를 탐구해요.<br>
-      그래프로 한눈에 확인!
+  <details class="category cat-linear" open>
+    <summary>
+      <span class="cat-icon">📐</span>
+      일차함수 활동
+      <span class="cat-count">2개</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="cat-items">
+      <a class="tree-item" href="linear_function.html">
+        <span class="item-icon">📐</span>
+        <div class="item-info">
+          <div class="item-title">일차함수 활용 활동지</div>
+          <div class="item-desc">pp.108~110 · 수심/압력, 빗물통, 양초, 섭씨화씨 · 그래프 포함</div>
+        </div>
+        <span class="item-badge badge-linear">중2 수학</span>
+        <span class="item-arrow">→</span>
+      </a>
+      <a class="tree-item" href="linear_activity_slides.html">
+        <span class="item-icon">✏️</span>
+        <div class="item-info">
+          <div class="item-title">선분 그림 그리기</div>
+          <div class="item-desc">알지오매쓰 활용 · 단원 마무리 · 학생 자율 진행 슬라이드</div>
+        </div>
+        <span class="item-badge badge-linear">중2 활동</span>
+        <span class="item-arrow">→</span>
+      </a>
     </div>
-    <span class="play-btn">▶ 시작</span>
-  </a>
+  </details>
 
-  <a class="game-card card-linear" href="linear_activity_slides.html">
-    <span class="badge">중2 수학</span>
-    <span class="card-icon">✏️</span>
-    <div class="card-title">선분 그림 그리기</div>
-    <div class="card-desc">
-      알지오매쓰 활용 활동<br>
-      일차함수 10개 이상으로<br>
-      나만의 그림 완성하기
+  <details class="category cat-quiz" open>
+    <summary>
+      <span class="cat-icon">⚔️</span>
+      일차함수 퀴즈 (1~4차시)
+      <span class="cat-count">4개</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="cat-items">
+      <a class="tree-item" href="function_quiz.html">
+        <span class="item-icon">⚔️</span>
+        <div class="item-info">
+          <div class="item-title">일차함수, 함숫값</div>
+          <div class="item-desc">1차시 · 함수·일차함수·함숫값 · 20문항 · 혼자풀기 + 땅따먹기</div>
+        </div>
+        <span class="item-badge badge-quiz">중2 수학</span>
+        <span class="item-arrow">→</span>
+      </a>
+      <a class="tree-item" href="linear_graph_quiz.html">
+        <span class="item-icon">📈</span>
+        <div class="item-info">
+          <div class="item-title">x절편·y절편, 기울기</div>
+          <div class="item-desc">2차시 · 그래프 기초 개념 · 20문항 · 혼자풀기 + 땅따먹기</div>
+        </div>
+        <span class="item-badge badge-quiz">중2 수학</span>
+        <span class="item-arrow">→</span>
+      </a>
+      <a class="tree-item" href="linear_property_quiz.html">
+        <span class="item-icon">📊</span>
+        <div class="item-info">
+          <div class="item-title">그래프 성질, 일차함수 활용</div>
+          <div class="item-desc">3차시 · 평행·증감·실생활 적용 · 20문항 · 혼자풀기 + 땅따먹기</div>
+        </div>
+        <span class="item-badge badge-quiz">중2 수학</span>
+        <span class="item-arrow">→</span>
+      </a>
+      <a class="tree-item" href="linear_system_quiz.html">
+        <span class="item-icon">🔀</span>
+        <div class="item-info">
+          <div class="item-title">일차함수와 연립방정식</div>
+          <div class="item-desc">4차시 · 교점·해의 개수 · 20문항 · 혼자풀기 + 땅따먹기</div>
+        </div>
+        <span class="item-badge badge-quiz">중2 수학</span>
+        <span class="item-arrow">→</span>
+      </a>
     </div>
-    <span class="play-btn">▶ 시작</span>
-  </a>
+  </details>
 
-  <a class="game-card card-quiz" href="function_quiz.html">
-    <span class="badge">중2 수학</span>
-    <span class="card-icon">⚔️</span>
-    <div class="card-title">일차함수, 함숫값</div>
-    <div class="card-desc">
-      1차시 · 함수/일차함수 개념<br>
-      혼자 풀기 + 땅따먹기<br>
-      20문항 · 하/중/상 난이도
+  <details class="category cat-study" open>
+    <summary>
+      <span class="cat-icon">📒</span>
+      보충 · 심화학습
+      <span class="cat-count">2개</span>
+      <span class="chevron">▶</span>
+    </summary>
+    <div class="cat-items">
+      <a class="tree-item" href="function_summary.html">
+        <span class="item-icon">📒</span>
+        <div class="item-info">
+          <div class="item-title">함수 핵심 정리</div>
+          <div class="item-desc">보충학습 · 함수·함숫값·일차함수·연립방정식 관계 · 개념 정리 + 연습문제</div>
+        </div>
+        <span class="item-badge badge-study">중2 보충</span>
+        <span class="item-arrow">→</span>
+      </a>
+      <a class="tree-item item-advanced" href="function_advanced.html">
+        <span class="item-icon">🔬</span>
+        <div class="item-info">
+          <div class="item-title">함수 심화 탐구</div>
+          <div class="item-desc">기본~최고난도 단계별 문제 · 수직선 검사·치환·삼선공점 등</div>
+        </div>
+        <span class="item-badge badge-advanced">중2 심화</span>
+        <span class="item-arrow">→</span>
+      </a>
     </div>
-    <span class="play-btn">▶ 시작</span>
-  </a>
-
-  <a class="game-card card-quiz" href="linear_graph_quiz.html">
-    <span class="badge">중2 수학</span>
-    <span class="card-icon">📈</span>
-    <div class="card-title">x절편·y절편, 기울기</div>
-    <div class="card-desc">
-      2차시 · 그래프 기초 개념<br>
-      혼자 풀기 + 땅따먹기<br>
-      20문항 · 하/중/상 난이도
-    </div>
-    <span class="play-btn">▶ 시작</span>
-  </a>
-
-  <a class="game-card card-quiz" href="linear_property_quiz.html">
-    <span class="badge">중2 수학</span>
-    <span class="card-icon">📊</span>
-    <div class="card-title">그래프 성질, 일차함수 활용</div>
-    <div class="card-desc">
-      3차시 · 평행·증감·실생활 적용<br>
-      혼자 풀기 + 땅따먹기<br>
-      20문항 · 하/중/상 난이도
-    </div>
-    <span class="play-btn">▶ 시작</span>
-  </a>
-
-  <a class="game-card card-quiz" href="linear_system_quiz.html">
-    <span class="badge">중2 수학</span>
-    <span class="card-icon">🔀</span>
-    <div class="card-title">일차함수와 연립방정식</div>
-    <div class="card-desc">
-      4차시 · 교점·해의 개수<br>
-      혼자 풀기 + 땅따먹기<br>
-      20문항 · 하/중/상 난이도
-    </div>
-    <span class="play-btn">▶ 시작</span>
-  </a>
-
-  <a class="game-card card-study" href="function_summary.html">
-    <span class="badge">중2 보충학습</span>
-    <span class="card-icon">📒</span>
-    <div class="card-title">함수 핵심 정리</div>
-    <div class="card-desc">
-      함수·함숫값·일차함수<br>
-      연립방정식과의 관계<br>
-      개념 정리 + 연습문제
-    </div>
-    <span class="play-btn">▶ 학습하기</span>
-  </a>
-
-  <a class="game-card card-study" href="function_advanced.html" style="background:linear-gradient(145deg,#1a1a2e,#0f3460); border-color:#e94560;">
-    <span class="badge" style="background:rgba(233,69,96,.2); color:#f48fb1;">중2 심화학습</span>
-    <span class="card-icon">🔬</span>
-    <div class="card-title" style="color:#f48fb1;">함수 심화 탐구</div>
-    <div class="card-desc" style="color:#90a4ae;">
-      기본·중급·심화·최고난도<br>
-      수직선 검사·치환·삼선공점<br>
-      단계별 도전 문제
-    </div>
-    <span class="play-btn" style="background:#e94560; box-shadow:0 4px 14px rgba(233,69,96,.4);">▶ 도전하기</span>
-  </a>
+  </details>
 
 </div>
 
