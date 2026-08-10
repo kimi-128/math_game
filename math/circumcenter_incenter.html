@@ -519,6 +519,12 @@ function drawCircle(ctx,center,r,color,w,dash){
   ctx.setLineDash([]);
 }
 
+// 벡터 (dx,dy)를 단위벡터로
+function unit(dx,dy){
+  var len=Math.hypot(dx,dy)||1;
+  return [dx/len, dy/len];
+}
+
 // 점 P에서 직선 AB에 내린 수선의 발
 function footOfPerp(P,A,B){
   var dx=B[0]-A[0], dy=B[1]-A[1];
@@ -630,14 +636,18 @@ function initBisectBG(){
   var O=[W*0.22,H*0.85];
   var X=[W*0.85,H*0.85];
   var Y=[W*0.32,H*0.12];
-  var bis=[O[0]+(X[0]-O[0])*0.62+(Y[0]-O[0])*0.62, O[1]+(X[1]-O[1])*0.62+(Y[1]-O[1])*0.62];
-  var dirx=bis[0]-O[0], diry=bis[1]-O[1], blen=Math.hypot(dirx,diry)||1;
-  var P=[O[0]+dirx/blen*(blen*0.72), O[1]+diry/blen*(blen*0.72)];
+  // 각 변의 단위벡터를 더해야 진짜 이등분선 방향이 나온다 (길이가 다른 원벡터를 그냥 더하면 안 됨)
+  var uOX=unit(X[0]-O[0], X[1]-O[1]);
+  var uOY=unit(Y[0]-O[0], Y[1]-O[1]);
+  var bd=unit(uOX[0]+uOY[0], uOX[1]+uOY[1]);
+  var rayLen=Math.min(W,H)*0.62;
+  var bis=[O[0]+bd[0]*rayLen, O[1]+bd[1]*rayLen];
+  var P=[O[0]+bd[0]*(rayLen*0.72), O[1]+bd[1]*(rayLen*0.72)];
   var D=footOfPerp(P,O,X);
   var E=footOfPerp(P,O,Y);
   drawSeg(ctx,O,X,'#455a64',2.2);
   drawSeg(ctx,O,Y,'#455a64',2.2);
-  drawSeg(ctx,O,[O[0]+dirx/blen*(blen*0.9),O[1]+diry/blen*(blen*0.9)],'#00acc1',1.6,[5,4]);
+  drawSeg(ctx,O,[O[0]+bd[0]*(rayLen*0.9),O[1]+bd[1]*(rayLen*0.9)],'#00acc1',1.6,[5,4]);
   drawSeg(ctx,P,D,'#e53935',1.8);
   drawSeg(ctx,P,E,'#e53935',1.8);
   segTick(ctx,P,D,1,'#e53935');
