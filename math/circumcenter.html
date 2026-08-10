@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>⭕ 삼각형의 외심</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: linear-gradient(160deg, #e0f2f1 0%, #e8f5f3 55%, #e3f2fd 100%);
+  min-height: 100vh;
+  font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+  color: #263238;
+  padding: 20px;
+}
+.inner { max-width: 860px; margin: 0 auto; }
+
+header {
+  background: linear-gradient(135deg, #00897b, #00695c, #004d40);
+  color: white; border-radius: 22px;
+  padding: 34px 28px; margin: 18px 0 28px;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(0,105,92,.35);
+}
+header h1 { font-size: 1.9rem; font-weight: 900; margin-bottom: 8px; }
+header .sub { font-size: .9rem; opacity: .88; }
+header .ch {
+  display: inline-block; background: rgba(255,255,255,.2);
+  border-radius: 12px; padding: 4px 14px; font-size: .8rem; margin-top: 10px;
+}
+
+.goal-box {
+  background: white; border: 1.5px solid #80cbc4;
+  border-radius: 16px; padding: 16px 22px; margin-bottom: 26px;
+  font-size: .9rem; line-height: 1.9;
+}
+.goal-box strong { color: #00695c; font-size: .8rem; letter-spacing: .4px; display: block; margin-bottom: 5px; }
+
+.card {
+  background: white; border-radius: 20px;
+  padding: 26px 26px 22px; margin-bottom: 26px;
+  box-shadow: 0 4px 18px rgba(0,105,92,.1);
+  border: 1.5px solid #b2dfdb;
+}
+.card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+.badge {
+  color: white; font-size: .76rem; font-weight: 900;
+  padding: 4px 12px; border-radius: 10px; white-space: nowrap;
+}
+.b-teal   { background: linear-gradient(135deg,#00897b,#00695c); }
+.b-cyan   { background: linear-gradient(135deg,#00acc1,#00838f); }
+.b-indigo { background: linear-gradient(135deg,#5e35b1,#4527a0); }
+.b-amber  { background: linear-gradient(135deg,#fb8c00,#ef6c00); }
+.card-title { font-size: 1.18rem; font-weight: 900; color: #00695c; flex: 1; }
+.page-tag { font-size: .72rem; color: #b0bec5; font-weight: 600; }
+
+.ctx {
+  background: linear-gradient(135deg,#e0f2f1,#e8f5f3);
+  border: 1.5px solid #b2dfdb; border-radius: 14px;
+  padding: 14px 18px; margin-bottom: 18px;
+  font-size: .92rem; line-height: 1.8;
+}
+.ctx-icon { font-size: 1.7rem; margin-bottom: 6px; display: block; }
+.ctx .tools { font-size: .8rem; color: #00796b; margin-top: 6px; }
+
+.gwrap {
+  width: 100%; height: 290px;
+  border-radius: 14px; overflow: hidden;
+  margin-bottom: 14px; border: 2px solid #b2dfdb;
+  box-shadow: 0 2px 10px rgba(0,0,0,.05);
+  background: #f4fbfa;
+}
+.gwrap.short { height: 210px; }
+canvas { display: block; }
+
+.step-row { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+.step-btn {
+  background: #00897b; color: white; border: none; border-radius: 20px;
+  padding: 9px 22px; font-weight: 800; font-size: .88rem;
+  cursor: pointer; transition: all .18s; box-shadow: 0 3px 10px rgba(0,137,123,.3);
+}
+.step-btn:hover { background: #00695c; }
+.step-btn.cyan { background: #00acc1; box-shadow: 0 3px 10px rgba(0,172,193,.3); }
+.step-btn.cyan:hover { background: #00838f; }
+.step-caption { font-size: .84rem; color: #00796b; font-weight: 700; }
+
+.qbox {
+  background: #e0f7fa; border-left: 4px solid #00acc1;
+  border-radius: 0 12px 12px 0;
+  padding: 12px 16px; margin-bottom: 12px;
+  font-size: .92rem; line-height: 1.78;
+}
+.qlabel { font-size: .76rem; font-weight: 900; color: #00695c; margin-bottom: 5px; letter-spacing: .4px; }
+
+.rev-btn {
+  background: white; border: 2px solid #00897b; border-radius: 20px;
+  padding: 8px 24px; color: #00897b;
+  font-weight: 700; font-size: .9rem;
+  cursor: pointer; transition: all .18s; margin-bottom: 10px;
+}
+.rev-btn:hover { background: #00897b; color: white; }
+.rev-btn.amber { border-color: #fb8c00; color: #ef6c00; }
+.rev-btn.amber:hover { background: #fb8c00; color: white; }
+
+.ans-box {
+  display: none; border: 2px solid #00897b; border-radius: 14px;
+  padding: 18px 20px; font-size: .9rem; line-height: 1.8;
+  background: #e0f2f1;
+}
+.ans-box.show { display: block; }
+.ans-box.amber { border-color: #fb8c00; background: #fff3e0; }
+
+.slist { list-style: none; counter-reset: sc; margin-bottom: 12px; }
+.slist li {
+  counter-increment: sc; padding: 9px 12px 9px 40px;
+  position: relative; border-bottom: 1px solid #b2dfdb;
+}
+.slist li::before {
+  content: counter(sc); position: absolute; left: 10px; top: 50%;
+  transform: translateY(-50%); width: 22px; height: 22px;
+  background: #00897b; color: white; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .74rem; font-weight: 900;
+}
+.ans-box.amber .slist li { border-color: #ffe0b2; }
+.ans-box.amber .slist li::before { background: #fb8c00; }
+
+.fbox {
+  background: #e0f2f1; border: 2px solid #b2dfdb; border-radius: 12px;
+  padding: 12px 18px; margin-bottom: 18px;
+  text-align: center; font-size: 1.05rem; font-weight: 900; color: #00695c;
+  line-height: 1.7;
+}
+
+.result {
+  background: white; border-radius: 10px; padding: 11px 16px;
+  text-align: center; font-size: 1.05rem; font-weight: 900;
+  color: #00695c; margin-top: 10px; border: 1.5px solid #b2dfdb;
+}
+.result.amber { color: #ef6c00; border-color: #ffe0b2; }
+
+.note {
+  background: #fff8e1; border: 1.5px dashed #ffca28; border-radius: 12px;
+  padding: 12px 16px; margin-top: 16px; font-size: .84rem; line-height: 1.7; color: #6d4c00;
+}
+.note strong { color: #e65100; }
+
+.seg { text-decoration: overline; text-decoration-thickness: 1.4px; text-underline-offset: 0; }
+
+footer { text-align: center; padding: 24px; color: #90a4ae; font-size: .76rem; line-height: 1.9; }
+</style>
+</head>
+<body>
+<div class="inner">
+
+<header>
+  <h1>⭕ 삼각형의 외심</h1>
+  <div class="sub">탐구 활동으로 삼각형의 외심의 뜻과 성질을 알아봐요</div>
+  <div class="ch">중학교 2학년 · Ⅳ. 도형의 성질 · 1. 삼각형의 성질 03 · 외심 · pp.148~149</div>
+</header>
+
+<div class="goal-box">
+  <strong>📌 학습 목표</strong>
+  • 삼각형의 외심의 뜻을 알고, 외심의 성질을 이해하여 정당화할 수 있다.<br>
+  • 삼각형의 모양에 따른 외심의 위치를 이해한다.
+</div>
+
+<!-- ===== 개념(배경지식) - 외심 ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-teal">개념</span>
+    <span class="card-title">먼저 복습해요 · 수직이등분선의 성질</span>
+    <span class="page-tag">p.143</span>
+  </div>
+  <div class="ctx">
+    <span class="ctx-icon">📏</span>
+    <span class="seg">AB</span>의 수직이등분선 위의 한 점 P에서 두 점 A, B에 이르는 거리는 같습니다. 즉 <span class="seg">PA</span> = <span class="seg">PB</span>입니다. 이 성질은 이미 배웠으니 그대로 이용해요!
+  </div>
+  <div class="gwrap short"><canvas id="cvPerpBG"></canvas></div>
+</div>
+
+<!-- ===== 탐구 1 - 외심 ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-teal">탐구 1</span>
+    <span class="card-title">삼각형의 외심이란 무엇일까?</span>
+    <span class="page-tag">p.148</span>
+  </div>
+  <div class="ctx">
+    <span class="ctx-icon">🖊️</span>
+    자와 컴퍼스(또는 각도기)로 △ABC를 그리고, 두 변 <span class="seg">AB</span>, <span class="seg">AC</span>의 수직이등분선을 그어 봅시다.
+    <div class="tools">준비물: 자, 컴퍼스(또는 각도기)</div>
+  </div>
+  <div class="gwrap"><canvas id="cvOuterExplore"></canvas></div>
+  <div class="step-row">
+    <button class="step-btn" onclick="nextOuter()">다음 단계 보기 ▶</button>
+    <span class="step-caption" id="outerCaption">1단계 · 삼각형 ABC를 그려요</span>
+  </div>
+  <div class="qbox">
+    <div class="qlabel">📝 문제</div>
+    ❶ 변 <span class="seg">CA</span>의 수직이등분선도 점 O를 지나는지 확인해 봅시다.<br>
+    ❷ 점 O에서 세 꼭짓점 A, B, C에 이르는 거리를 재어 비교해 봅시다.
+  </div>
+  <button class="rev-btn" onclick="reveal('a1')">정답 보기 ▼</button>
+  <div id="a1" class="ans-box">
+    <ol class="slist">
+      <li>변 <span class="seg">CA</span>의 수직이등분선도 점 O를 <strong>지납니다.</strong></li>
+      <li><span class="seg">OA</span> = <span class="seg">OB</span> = <span class="seg">OC</span>로 <strong>모두 같습니다.</strong></li>
+    </ol>
+    <div class="result">삼각형의 세 변의 수직이등분선은 한 점(O)에서 만나요!</div>
+  </div>
+</div>
+
+<!-- ===== 증명 - 외심 ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-indigo">증명</span>
+    <span class="card-title">삼각형의 외심의 성질</span>
+    <span class="page-tag">p.148~149</span>
+  </div>
+  <div class="fbox">
+    ➊ 삼각형의 세 변의 수직이등분선은 한 점(외심)에서 만난다.<br>
+    ➋ 삼각형의 외심에서 세 꼭짓점에 이르는 거리는 모두 같다.
+  </div>
+  <div class="gwrap"><canvas id="cvOuterProof"></canvas></div>
+  <div class="ctx">
+    <span class="ctx-icon">✏️</span>
+    △ABC에서 변 <span class="seg">AB</span>와 변 <span class="seg">AC</span>의 수직이등분선의 교점을 O라고 하면
+  </div>
+  <ol class="slist">
+    <li>점 O는 두 변 <span class="seg">AB</span>, <span class="seg">AC</span>의 수직이등분선 위의 점이므로 <span class="seg">OA</span>=<span class="seg">OB</span>, <span class="seg">OA</span>=<span class="seg">OC</span>, 즉 <span class="seg">OA</span>=<span class="seg">OB</span>=<span class="seg">OC</span></li>
+    <li>점 O에서 변 <span class="seg">BC</span>에 내린 수선의 발을 D라고 하면 △OBD와 △OCD에서 ∠ODB=∠ODC=90°, <span class="seg">OB</span>=<span class="seg">OC</span>, <span class="seg">OD</span>는 공통이므로 △OBD≡△OCD (RHS 합동)</li>
+    <li>합동인 도형의 대응변은 같으므로 <span class="seg">BD</span>=<span class="seg">CD</span>, 즉 <span class="seg">OD</span>는 변 <span class="seg">BC</span>의 수직이등분선이다.</li>
+  </ol>
+  <div class="fbox">이와 같이 삼각형의 세 변의 수직이등분선이 만나는 점을 <strong>외심</strong>이라고 한다. 외심을 중심으로 세 꼭짓점을 지나는 원을 그릴 수 있는데, 이 원을 <strong>외접원</strong>이라고 한다.</div>
+  <div class="gwrap short"><canvas id="cvOuterCircle"></canvas></div>
+</div>
+
+<!-- ===== 외심의 위치 ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-cyan">탐구</span>
+    <span class="card-title">삼각형의 외심의 위치는?</span>
+    <span class="page-tag">p.149</span>
+  </div>
+  <div class="ctx">
+    <span class="ctx-icon">🔍</span>
+    삼각형의 모양(예각·직각·둔각삼각형)에 따라 외심의 위치가 달라져요. 버튼을 눌러 세 가지 경우를 살펴봅시다.
+  </div>
+  <div class="gwrap"><canvas id="cvLocation"></canvas></div>
+  <div class="step-row">
+    <button class="step-btn cyan" onclick="nextLocation()">다음 삼각형 보기 ▶</button>
+    <span class="step-caption" id="locationCaption">예각삼각형 → 외심은 삼각형 내부에 있어요</span>
+  </div>
+</div>
+
+<!-- ===== 외심의 성질(참고) ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-cyan">참고</span>
+    <span class="card-title">외심의 성질 더 알아보기</span>
+    <span class="page-tag">p.149</span>
+  </div>
+  <div class="gwrap short"><canvas id="cvOuterProps"></canvas></div>
+  <div class="fbox">
+    ➊ ∠a+∠b+∠c = 90°<br>
+    ➋ ∠BOC = 2∠A
+  </div>
+  <div class="ctx">
+    <span class="ctx-icon">💡</span>
+    △OAB, △OBC, △OCA는 모두 <span class="seg">OA</span>=<span class="seg">OB</span>=<span class="seg">OC</span>인 이등변삼각형이에요. 그래서 밑각끼리 크기가 같고(∠a, ∠b, ∠c), △ABC의 세 내각의 합이 180°이므로 2(∠a+∠b+∠c)=180°, 즉 ∠a+∠b+∠c=90°가 성립해요. 같은 원리로 ∠BOC=2∠A도 보일 수 있어요.
+  </div>
+</div>
+
+<!-- ===== 배우고 익히기 - 외심 ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-amber">문제</span>
+    <span class="card-title">배우고 익히기</span>
+    <span class="page-tag">p.149</span>
+  </div>
+  <div class="gwrap short"><canvas id="cvOuterProb"></canvas></div>
+  <div class="qbox">
+    <div class="qlabel">📝 문제 1</div>
+    점 O가 △ABC의 외심이고 <span class="seg">OA</span>=7cm일 때, ⑴ <span class="seg">OB</span>, ⑵ <span class="seg">OC</span>의 길이를 각각 구하시오.
+  </div>
+  <div class="qbox">
+    <div class="qlabel">📝 문제 2</div>
+    점 O가 △ABC의 외심일 때, ⑴ ∠OAB=20°, ∠OBC=35°이면 ∠OCA(=∠x)의 크기를 구하시오. ⑵ ∠A=58°이면 ∠BOC의 크기를 구하시오.
+  </div>
+  <button class="rev-btn amber" onclick="reveal('a2')">정답 보기 ▼</button>
+  <div id="a2" class="ans-box amber">
+    <ol class="slist">
+      <li><strong>문제 1</strong> 외심에서 세 꼭짓점까지의 거리는 모두 같으므로 <span class="seg">OB</span>=<span class="seg">OA</span>=7cm, <span class="seg">OC</span>=<span class="seg">OA</span>=7cm</li>
+      <li><strong>문제 2 ⑴</strong> ∠a+∠b+∠c=90°이므로 20°+35°+∠x=90°, ∠x=35°</li>
+      <li><strong>문제 2 ⑵</strong> ∠BOC=2∠A=2×58°=116°</li>
+    </ol>
+    <div class="result amber"><span class="seg">OB</span>=7cm, <span class="seg">OC</span>=7cm | ⑴ 35°  ⑵ 116°</div>
+  </div>
+</div>
+
+<!-- ===== 종합 문제 ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-amber">종합 문제</span>
+    <span class="card-title">직각삼각형과 외심</span>
+    <span class="page-tag">p.149 응용</span>
+  </div>
+  <div class="gwrap short"><canvas id="cvOuterFinal"></canvas></div>
+  <div class="qbox">
+    <div class="qlabel">📝 문제</div>
+    직각삼각형 ABC에서 ∠B=90°이고 <span class="seg">AC</span>=14cm이다 (외심의 위치 성질에 따라 외심 O는 빗변 <span class="seg">AC</span>의 중점이다).<br>
+    ① <span class="seg">OA</span>, <span class="seg">OB</span>, <span class="seg">OC</span>의 길이를 각각 구하시오.<br>
+    ② 외접원의 넓이를 구하시오. (원주율은 π로 나타내기)
+  </div>
+  <button class="rev-btn amber" onclick="reveal('a3')">정답 보기 ▼</button>
+  <div id="a3" class="ans-box amber">
+    <ol class="slist">
+      <li>직각삼각형의 외심은 빗변의 중점이므로 <span class="seg">OA</span>=<span class="seg">OC</span>=<span class="seg">AC</span>÷2=14÷2=7cm</li>
+      <li>외심은 세 꼭짓점에 이르는 거리가 모두 같으므로 <span class="seg">OB</span>=<span class="seg">OA</span>=7cm</li>
+      <li>외접원의 반지름이 7cm이므로 넓이는 π×7²=49π (cm²)</li>
+    </ol>
+    <div class="result amber"><span class="seg">OA</span>=<span class="seg">OB</span>=<span class="seg">OC</span>=7cm | 외접원의 넓이 = 49π cm²</div>
+  </div>
+</div>
+
+<footer>
+  중학교 2학년 수학 · Ⅳ. 도형의 성질 · 1. 삼각형의 성질 03. 삼각형의 외심과 내심 · 교과서 pp.148~149
+</footer>
+</div>
+
+<script>
+// ── 기하 드로잉 유틸 ─────────────────────────────────────────
+function mid(p,q){ return [(p[0]+q[0])/2, (p[1]+q[1])/2]; }
+function dist(p,q){ return Math.hypot(q[0]-p[0], q[1]-p[1]); }
+
+function drawSeg(ctx,p,q,color,w,dash){
+  ctx.strokeStyle=color; ctx.lineWidth=w; ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.moveTo(p[0],p[1]); ctx.lineTo(q[0],q[1]); ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+function drawLabel(ctx,text,p,dx,dy,color,size){
+  ctx.fillStyle=color||'#37474f';
+  ctx.font=(size||13)+'px Malgun Gothic,sans-serif';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(text,p[0]+dx,p[1]+dy);
+}
+
+function segTick(ctx,p,q,n,color){
+  var mx=(p[0]+q[0])/2, my=(p[1]+q[1])/2;
+  var dx=q[0]-p[0], dy=q[1]-p[1], len=Math.hypot(dx,dy)||1;
+  var ux=dx/len, uy=dy/len, nx=-uy, ny=ux;
+  ctx.strokeStyle=color; ctx.lineWidth=2.4;
+  var gap=7;
+  for (var i=0;i<n;i++){
+    var off=(i-(n-1)/2)*gap;
+    var cx=mx+ux*off, cy=my+uy*off;
+    ctx.beginPath();
+    ctx.moveTo(cx-nx*7, cy-ny*7);
+    ctx.lineTo(cx+nx*7, cy+ny*7);
+    ctx.stroke();
+  }
+}
+
+function angleArc(ctx,v,pA,pB,r,color){
+  var a1=Math.atan2(pA[1]-v[1], pA[0]-v[0]);
+  var a2=Math.atan2(pB[1]-v[1], pB[0]-v[0]);
+  var diff=a2-a1;
+  while(diff<=-Math.PI) diff+=2*Math.PI;
+  while(diff>Math.PI) diff-=2*Math.PI;
+  ctx.strokeStyle=color; ctx.lineWidth=2.2;
+  ctx.beginPath();
+  ctx.arc(v[0],v[1],r,a1,a1+diff,diff<0);
+  ctx.stroke();
+}
+
+function rightMark(ctx,v,toward1,toward2,size,color){
+  var d1=[toward1[0]-v[0], toward1[1]-v[1]], l1=Math.hypot(d1[0],d1[1])||1;
+  var d2=[toward2[0]-v[0], toward2[1]-v[1]], l2=Math.hypot(d2[0],d2[1])||1;
+  var u1=[d1[0]/l1,d1[1]/l1], u2=[d2[0]/l2,d2[1]/l2];
+  var p1=[v[0]+u1[0]*size, v[1]+u1[1]*size];
+  var p3=[p1[0]+u2[0]*size, p1[1]+u2[1]*size];
+  var p2=[v[0]+u2[0]*size, v[1]+u2[1]*size];
+  ctx.strokeStyle=color; ctx.lineWidth=1.6;
+  ctx.beginPath();
+  ctx.moveTo(p1[0],p1[1]); ctx.lineTo(p3[0],p3[1]); ctx.lineTo(p2[0],p2[1]);
+  ctx.stroke();
+}
+
+function drawPoint(ctx,p,r,color){
+  ctx.fillStyle=color;
+  ctx.beginPath(); ctx.arc(p[0],p[1],r,0,Math.PI*2); ctx.fill();
+}
+
+function drawCircle(ctx,center,r,color,w,dash){
+  ctx.strokeStyle=color; ctx.lineWidth=w; ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.arc(center[0],center[1],r,0,Math.PI*2); ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+// 점 P에서 직선 AB에 내린 수선의 발
+function footOfPerp(P,A,B){
+  var dx=B[0]-A[0], dy=B[1]-A[1];
+  var len2=dx*dx+dy*dy || 1;
+  var t=((P[0]-A[0])*dx+(P[1]-A[1])*dy)/len2;
+  return [A[0]+t*dx, A[1]+t*dy];
+}
+
+// 세 꼭짓점 A,B,C를 지나는 삼각형의 외심 (수직이등분선의 교점)
+function circumcenter(A,B,C){
+  var ax=A[0],ay=A[1],bx=B[0],by=B[1],cx=C[0],cy=C[1];
+  var d=2*(ax*(by-cy)+bx*(cy-ay)+cx*(ay-by));
+  if (Math.abs(d)<1e-9) return mid(A,B);
+  var ux=((ax*ax+ay*ay)*(by-cy)+(bx*bx+by*by)*(cy-ay)+(cx*cx+cy*cy)*(ay-by))/d;
+  var uy=((ax*ax+ay*ay)*(cx-bx)+(bx*bx+by*by)*(ax-cx)+(cx*cx+cy*cy)*(bx-ax))/d;
+  return [ux,uy];
+}
+
+// 선분 P,Q의 수직이등분선을 O를 지나도록 그리기
+function perpBisectorSeg(ctx,P,Q,O,color,dash,marginPast){
+  var M=mid(P,Q);
+  var dx=Q[0]-P[0], dy=Q[1]-P[1], len=Math.hypot(dx,dy)||1;
+  var nx=-dy/len, ny=dx/len;
+  var t=(O[0]-M[0])*nx+(O[1]-M[1])*ny;
+  var half=Math.abs(t)+(marginPast||22);
+  var p1=[M[0]-nx*half, M[1]-ny*half];
+  var p2=[M[0]+nx*half, M[1]+ny*half];
+  drawSeg(ctx,p1,p2,color,1.6,dash);
+}
+
+// ── 삼각형 배치 (예각·부등변, 증명용 기본 삼각형) ───────────────
+function triMain(W,H){
+  var topY=H*0.12, baseY=H*0.85;
+  var height=baseY-topY, halfBase=height*0.70;
+  var cx=W/2, apexOffset=W*0.0625;
+  return { A:[cx+apexOffset, topY], B:[cx-halfBase, baseY], C:[cx+halfBase, baseY] };
+}
+function triRight(W,H){
+  var topY=H*0.15, baseY=H*0.85;
+  var Bx=W*0.32, Cx=W*0.74;
+  return { A:[Bx, topY], B:[Bx, baseY], C:[Cx, baseY] };
+}
+function triObtuse(W,H){
+  var topY=H*0.42, baseY=H*0.85;
+  var height=baseY-topY, halfBase=height*1.3;
+  var cx=W/2;
+  return { A:[cx, topY], B:[cx-halfBase, baseY], C:[cx+halfBase, baseY] };
+}
+
+function drawTriEdges(ctx,T){
+  drawSeg(ctx,T.A,T.B,'#455a64',2.2);
+  drawSeg(ctx,T.B,T.C,'#455a64',2.2);
+  drawSeg(ctx,T.A,T.C,'#455a64',2.2);
+}
+function labelABC(ctx,T){
+  drawLabel(ctx,'A',T.A,0,-14,'#263238',15);
+  drawLabel(ctx,'B',T.B,-14,10,'#263238',15);
+  drawLabel(ctx,'C',T.C,14,10,'#263238',15);
+}
+
+function prep(id){
+  var canvas=document.getElementById(id); if(!canvas) return null;
+  var wrap=canvas.parentElement;
+  canvas.width=wrap.clientWidth||640; canvas.height=wrap.clientHeight||290;
+  var ctx=canvas.getContext('2d');
+  ctx.fillStyle='#f4fbfa'; ctx.fillRect(0,0,canvas.width,canvas.height);
+  return { ctx:ctx, W:canvas.width, H:canvas.height };
+}
+
+// ── 배경지식: 수직이등분선 ────────────────────────────────────
+function initPerpBG(){
+  var g=prep('cvPerpBG'); if(!g) return;
+  var W=g.W,H=g.H,ctx=g.ctx;
+  var A=[W*0.28,H*0.62], B=[W*0.72,H*0.62];
+  var M=mid(A,B);
+  var P=[M[0], H*0.16];
+  drawSeg(ctx,[M[0],H*0.08],[M[0],H*0.9],'#00acc1',1.6,[5,4]);
+  drawSeg(ctx,A,B,'#455a64',2.2);
+  drawSeg(ctx,P,A,'#e53935',2);
+  drawSeg(ctx,P,B,'#e53935',2);
+  segTick(ctx,P,A,1,'#e53935');
+  segTick(ctx,P,B,1,'#e53935');
+  drawLabel(ctx,'A',A,-12,10,'#263238',14);
+  drawLabel(ctx,'B',B,12,10,'#263238',14);
+  drawLabel(ctx,'P',P,0,-16,'#00695c',14);
+  drawLabel(ctx,'M',M,0,16,'#00838f',12);
+}
+
+// ── 탐구 1: 외심 단계 ───────────────────────────────────────
+var outerStep=0;
+var outerCaptions=[
+  '1단계 · 삼각형 ABC를 그려요',
+  '2단계 · <span class="seg">AB</span>, <span class="seg">AC</span>의 수직이등분선을 그어 교점 O를 찾아요',
+  '3단계 · <span class="seg">BC</span>의 수직이등분선도 점 O를 지나요! <span class="seg">OA</span>=<span class="seg">OB</span>=<span class="seg">OC</span>'
+];
+function drawOuterExplore(){
+  var g=prep('cvOuterExplore'); if(!g) return;
+  var ctx=g.ctx, T=triMain(g.W,g.H);
+  drawTriEdges(ctx,T); labelABC(ctx,T);
+  if (outerStep>=1){
+    var O=circumcenter(T.A,T.B,T.C);
+    perpBisectorSeg(ctx,T.A,T.B,O,'#00acc1',[5,4]);
+    perpBisectorSeg(ctx,T.A,T.C,O,'#00acc1',[5,4]);
+    drawPoint(ctx,O,4.5,'#e53935');
+    drawLabel(ctx,'O',O,12,-10,'#c62828',14);
+  }
+  if (outerStep>=2){
+    var O2=circumcenter(T.A,T.B,T.C);
+    perpBisectorSeg(ctx,T.B,T.C,O2,'#00acc1',[5,4]);
+    drawSeg(ctx,O2,T.A,'#e53935',1.8);
+    drawSeg(ctx,O2,T.B,'#e53935',1.8);
+    drawSeg(ctx,O2,T.C,'#e53935',1.8);
+    segTick(ctx,O2,T.A,1,'#e53935');
+    segTick(ctx,O2,T.B,1,'#e53935');
+    segTick(ctx,O2,T.C,1,'#e53935');
+  }
+  document.getElementById('outerCaption').innerHTML=outerCaptions[outerStep];
+}
+function nextOuter(){ outerStep=(outerStep+1)%3; drawOuterExplore(); }
+
+// ── 증명 다이어그램: 외심 ─────────────────────────────────────
+function initOuterProof(){
+  var g=prep('cvOuterProof'); if(!g) return;
+  var ctx=g.ctx, T=triMain(g.W,g.H);
+  var O=circumcenter(T.A,T.B,T.C);
+  var D=footOfPerp(O,T.B,T.C);
+  drawTriEdges(ctx,T); labelABC(ctx,T);
+  perpBisectorSeg(ctx,T.A,T.B,O,'#00acc1',[5,4]);
+  perpBisectorSeg(ctx,T.A,T.C,O,'#00acc1',[5,4]);
+  drawSeg(ctx,O,T.A,'#e53935',1.8);
+  drawSeg(ctx,O,T.B,'#e53935',1.8);
+  drawSeg(ctx,O,T.C,'#e53935',1.8);
+  segTick(ctx,O,T.A,1,'#e53935');
+  segTick(ctx,O,T.B,1,'#e53935');
+  segTick(ctx,O,T.C,1,'#e53935');
+  drawSeg(ctx,O,D,'#fb8c00',1.8,[4,3]);
+  rightMark(ctx,D,O,T.C,9,'#37474f');
+  segTick(ctx,T.B,D,2,'#43a047');
+  segTick(ctx,D,T.C,2,'#43a047');
+  drawPoint(ctx,O,4.5,'#e53935');
+  drawLabel(ctx,'O',O,12,-10,'#c62828',14);
+  drawLabel(ctx,'D',D,0,16,'#ef6c00',13);
+}
+
+// ── 외접원 다이어그램 ──────────────────────────────────────
+function initOuterCircle(){
+  var g=prep('cvOuterCircle'); if(!g) return;
+  var ctx=g.ctx, T=triMain(g.W,g.H*1.35);
+  T={A:[T.A[0],T.A[1]*0.72+g.H*0.03],B:[T.B[0],T.B[1]*0.72],C:[T.C[0],T.C[1]*0.72]};
+  var O=circumcenter(T.A,T.B,T.C);
+  var r=dist(O,T.A);
+  drawCircle(ctx,O,r,'#00acc1',2,[]);
+  drawTriEdges(ctx,T); labelABC(ctx,T);
+  drawPoint(ctx,O,4,'#e53935');
+  drawLabel(ctx,'O',O,10,-10,'#c62828',13);
+  drawLabel(ctx,'외접원',[O[0],O[1]-r-12],0,0,'#00838f',12);
+}
+
+// ── 외심의 위치 (예각/직각/둔각) ───────────────────────────
+var locStep=0;
+var locFns=[triMain, triRight, triObtuse];
+var locCaptions=[
+  '예각삼각형 → 외심은 삼각형 <strong>내부</strong>에 있어요',
+  '직각삼각형 → 외심은 <strong>빗변의 중점</strong>에 있어요',
+  '둔각삼각형 → 외심은 삼각형 <strong>외부</strong>에 있어요'
+];
+function drawLocation(){
+  var g=prep('cvLocation'); if(!g) return;
+  var ctx=g.ctx, T=locFns[locStep](g.W,g.H);
+  var O=circumcenter(T.A,T.B,T.C);
+  drawTriEdges(ctx,T); labelABC(ctx,T);
+  drawSeg(ctx,O,T.A,'#b2dfdb',1.3);
+  drawSeg(ctx,O,T.B,'#b2dfdb',1.3);
+  drawSeg(ctx,O,T.C,'#b2dfdb',1.3);
+  drawPoint(ctx,O,5,'#e53935');
+  drawLabel(ctx,'O',O,12,-10,'#c62828',14);
+  document.getElementById('locationCaption').innerHTML=locCaptions[locStep];
+}
+function nextLocation(){ locStep=(locStep+1)%3; drawLocation(); }
+
+// ── 외심의 성질 참고 다이어그램 (재사용: 참고 카드 + 문제 카드) ──
+function drawOuterRef(id){
+  var g=prep(id); if(!g) return;
+  var ctx=g.ctx, T=triMain(g.W,g.H);
+  var O=circumcenter(T.A,T.B,T.C);
+  drawTriEdges(ctx,T); labelABC(ctx,T);
+  drawSeg(ctx,O,T.A,'#e53935',1.6);
+  drawSeg(ctx,O,T.B,'#e53935',1.6);
+  drawSeg(ctx,O,T.C,'#e53935',1.6);
+  angleArc(ctx,T.A,O,T.B,18,'#e53935');
+  angleArc(ctx,T.B,T.C,O,18,'#43a047');
+  angleArc(ctx,T.C,T.A,O,18,'#fb8c00');
+  drawLabel(ctx,'a',[T.A[0],T.A[1]],  -14,20,'#e53935',12);
+  drawLabel(ctx,'b',T.B, 24,-16,'#43a047',12);
+  drawLabel(ctx,'c',T.C,-22,-16,'#ef6c00',12);
+  drawPoint(ctx,O,4,'#37474f');
+  drawLabel(ctx,'O',O,10,-10,'#263238',13);
+}
+
+// ── 종합 문제: 직각삼각형의 외심 ─────────────────────────────
+function initOuterFinal(){
+  var g=prep('cvOuterFinal'); if(!g) return;
+  var ctx=g.ctx, T=triRight(g.W,g.H);
+  var O=mid(T.A,T.C); // ∠B=90°이므로 빗변은 AC, 외심은 AC의 중점
+  drawTriEdges(ctx,T); labelABC(ctx,T);
+  drawSeg(ctx,O,T.A,'#e53935',1.6);
+  drawSeg(ctx,O,T.B,'#e53935',1.6);
+  drawSeg(ctx,O,T.C,'#e53935',1.6);
+  segTick(ctx,O,T.A,1,'#e53935');
+  segTick(ctx,O,T.B,1,'#e53935');
+  segTick(ctx,O,T.C,1,'#e53935');
+  rightMark(ctx,T.B,T.A,T.C,9,'#37474f');
+  drawPoint(ctx,O,4.5,'#c62828');
+  drawLabel(ctx,'O',O,14,-6,'#c62828',13);
+}
+
+// ── 정답 토글 ──────────────────────────────────────────────
+function reveal(id){
+  document.getElementById(id).classList.toggle('show');
+}
+
+// ── 초기화 & 리사이즈 ─────────────────────────────────────────
+function drawAll(){
+  initPerpBG();
+  drawOuterExplore();
+  initOuterProof();
+  initOuterCircle();
+  drawLocation();
+  drawOuterRef('cvOuterProps');
+  drawOuterRef('cvOuterProb');
+  initOuterFinal();
+}
+window.addEventListener('load', drawAll);
+window.addEventListener('resize', drawAll);
+</script>
+</body>
+</html>
