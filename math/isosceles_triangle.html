@@ -144,6 +144,8 @@ canvas { display: block; }
 }
 .note strong { color: #e65100; }
 
+.seg { text-decoration: overline; text-decoration-thickness: 1.4px; text-underline-offset: 0; }
+
 footer { text-align: center; padding: 24px; color: #90a4ae; font-size: .76rem; line-height: 1.9; }
 </style>
 </head>
@@ -177,7 +179,7 @@ footer { text-align: center; padding: 24px; color: #90a4ae; font-size: .76rem; l
   </div>
   <div class="gwrap"><canvas id="cvDef"></canvas></div>
   <div class="note">
-    <strong>헷갈리기 쉬운 부분</strong> 밑각을 삼각형 아래쪽에 있는 두 각으로 오해하기 쉽지만, 밑각은 <strong>밑변의 양 끝 각</strong>입니다. 만약 AC=BC인 이등변삼각형이라면 밑변은 AB이고, 밑각은 ∠A, ∠B가 됩니다.
+    <strong>헷갈리기 쉬운 부분</strong> 밑각을 삼각형 아래쪽에 있는 두 각으로 오해하기 쉽지만, 밑각은 <strong>밑변의 양 끝 각</strong>입니다. 만약 <span class="seg">AC</span>=<span class="seg">BC</span>인 이등변삼각형이라면 밑변은 <span class="seg">AB</span>이고, 밑각은 ∠A, ∠B가 됩니다.
   </div>
 </div>
 
@@ -196,18 +198,18 @@ footer { text-align: center; padding: 24px; color: #90a4ae; font-size: .76rem; l
   <div class="gwrap"><canvas id="cvFold"></canvas></div>
   <div class="step-row">
     <button class="step-btn" onclick="nextFold()">다음 단계 보기 ▶</button>
-    <span class="step-caption" id="foldCaption">1단계 · AB = AC인 이등변삼각형을 그려요</span>
+    <span class="step-caption" id="foldCaption">1단계 · <span class="seg">AB</span> = <span class="seg">AC</span>인 이등변삼각형을 그려요</span>
   </div>
   <div class="qbox">
     <div class="qlabel">📝 문제</div>
     ❶ ∠B와 크기가 같은 각을 말해 봅시다.<br>
-    ❷ 접었을 때 BD와 CD의 길이를 비교하고, ∠ADC의 크기를 구해 봅시다.
+    ❷ 접었을 때 <span class="seg">BD</span>와 <span class="seg">CD</span>의 길이를 비교하고, ∠ADC의 크기를 구해 봅시다.
   </div>
   <button class="rev-btn" onclick="reveal('a1')">정답 보기 ▼</button>
   <div id="a1" class="ans-box">
     <ol class="slist">
       <li>반으로 접으면 ∠B와 ∠C가 완전히 겹치므로 <strong>∠C</strong>와 크기가 같습니다.</li>
-      <li>접었을 때 점 B와 점 C가 겹치므로 <strong>BD = CD</strong>이고, 접힌 선(AD)과 밑변이 이루는 각은 <strong>∠ADC = 90°</strong>입니다.</li>
+      <li>접었을 때 점 B와 점 C가 겹치므로 <strong><span class="seg">BD</span> = <span class="seg">CD</span></strong>이고, 접힌 선(<span class="seg">AD</span>)과 밑변이 이루는 각은 <strong>∠ADC = 90°</strong>입니다.</li>
     </ol>
     <div class="result">두 밑각은 같고, 꼭지각의 이등분선은 밑변을 수직이등분해요!</div>
   </div>
@@ -227,12 +229,12 @@ footer { text-align: center; padding: 24px; color: #90a4ae; font-size: .76rem; l
   <div class="gwrap"><canvas id="cvProof"></canvas></div>
   <div class="ctx">
     <span class="ctx-icon">✏️</span>
-    AB = AC인 △ABC에서 ∠A의 이등분선과 변 BC의 교점을 D라고 하면
+    <span class="seg">AB</span> = <span class="seg">AC</span>인 △ABC에서 ∠A의 이등분선과 변 <span class="seg">BC</span>의 교점을 D라고 하면
   </div>
   <ol class="slist">
-    <li>△ABD와 △ACD에서 AB=AC, ∠BAD=∠CAD, AD는 공통이므로 △ABD≡△ACD (SAS 합동)</li>
+    <li>△ABD와 △ACD에서 <span class="seg">AB</span>=<span class="seg">AC</span>, ∠BAD=∠CAD, <span class="seg">AD</span>는 공통이므로 △ABD≡△ACD (SAS 합동)</li>
     <li>합동인 도형의 대응각은 같으므로 ∠B=∠C</li>
-    <li>합동인 도형의 대응변은 같으므로 BD=CD이고, ∠ADB=∠ADC이며 ∠ADB+∠ADC=180°이므로 ∠ADB=∠ADC=90°, 즉 AD⊥BC</li>
+    <li>합동인 도형의 대응변은 같으므로 <span class="seg">BD</span>=<span class="seg">CD</span>이고, ∠ADB=∠ADC이며 ∠ADB+∠ADC=180°이므로 ∠ADB=∠ADC=90°, 즉 <span class="seg">AD</span>⊥<span class="seg">BC</span></li>
   </ol>
 </div>
 
@@ -251,14 +253,14 @@ footer { text-align: center; padding: 24px; color: #90a4ae; font-size: .76rem; l
   </div>
   <div class="qbox">
     <div class="qlabel">📝 문제 2</div>
-    AB=AC인 △ABC에서 AD가 ∠A의 이등분선이고 BC=10cm일 때, BD의 길이와 ∠ADC의 크기를 구하시오.
+    <span class="seg">AB</span>=<span class="seg">AC</span>인 △ABC에서 <span class="seg">AD</span>가 ∠A의 이등분선이고 <span class="seg">BC</span>=10cm일 때, <span class="seg">BD</span>의 길이와 ∠ADC의 크기를 구하시오.
   </div>
   <button class="rev-btn amber" onclick="reveal('a2')">정답 보기 ▼</button>
   <div id="a2" class="ans-box amber">
     <ol class="slist">
       <li><strong>문제 1 ⑴</strong> 이등변삼각형은 두 밑각의 크기가 같으므로 ∠x = 48°</li>
       <li><strong>문제 1 ⑵</strong> ∠x = (180° − 70°) ÷ 2 = 55°</li>
-      <li><strong>문제 2</strong> 꼭지각의 이등분선은 밑변을 수직이등분하므로 BD = 10 ÷ 2 = 5cm, ∠ADC = 90°</li>
+      <li><strong>문제 2</strong> 꼭지각의 이등분선은 밑변을 수직이등분하므로 <span class="seg">BD</span> = 10 ÷ 2 = 5cm, ∠ADC = 90°</li>
     </ol>
     <div class="result amber">⑴ 48°  ⑵ 55°  |  BD = 5cm, ∠ADC = 90°</div>
   </div>
@@ -273,12 +275,12 @@ footer { text-align: center; padding: 24px; color: #90a4ae; font-size: .76rem; l
   </div>
   <div class="ctx">
     <span class="ctx-icon">📐</span>
-    이번에는 거꾸로 생각해 봅시다. △ABC에서 <strong>∠B = ∠C</strong>일 때, 변 AB와 AC의 길이를 자로 재어 비교해 보면 어떤 삼각형이 될까요?
+    이번에는 거꾸로 생각해 봅시다. △ABC에서 <strong>∠B = ∠C</strong>일 때, 변 <span class="seg">AB</span>와 <span class="seg">AC</span>의 길이를 자로 재어 비교해 보면 어떤 삼각형이 될까요?
   </div>
   <div class="gwrap"><canvas id="cvCond"></canvas></div>
   <div class="step-row">
     <button class="step-btn cyan" onclick="revealCond()">자로 측정해 보기 📏</button>
-    <span class="step-caption" id="condCaption">∠B = ∠C인 삼각형이에요. AB, AC의 길이를 비교해 볼까요?</span>
+    <span class="step-caption" id="condCaption">∠B = ∠C인 삼각형이에요. <span class="seg">AB</span>, <span class="seg">AC</span>의 길이를 비교해 볼까요?</span>
   </div>
   <div id="condAns" class="ans-box">
     <div class="fbox" style="margin-bottom:0;">두 내각의 크기가 같은 삼각형은 이등변삼각형이다.</div>
@@ -295,12 +297,12 @@ footer { text-align: center; padding: 24px; color: #90a4ae; font-size: .76rem; l
   <div class="gwrap"><canvas id="cvCondProof"></canvas></div>
   <div class="ctx">
     <span class="ctx-icon">✏️</span>
-    ∠B=∠C인 △ABC에서 ∠A의 이등분선과 변 BC의 교점을 D라고 하면
+    ∠B=∠C인 △ABC에서 ∠A의 이등분선과 변 <span class="seg">BC</span>의 교점을 D라고 하면
   </div>
   <ol class="slist">
-    <li>△ABD와 △ACD에서 ∠BAD=∠CAD, AD는 공통</li>
+    <li>△ABD와 △ACD에서 ∠BAD=∠CAD, <span class="seg">AD</span>는 공통</li>
     <li>이때 ∠B=∠C이므로 나머지 한 내각의 크기도 같다. 즉 ∠ADB=∠ADC</li>
-    <li>따라서 △ABD≡△ACD (ASA 합동)이므로 AB=AC, 즉 △ABC는 이등변삼각형이다.</li>
+    <li>따라서 △ABD≡△ACD (ASA 합동)이므로 <span class="seg">AB</span>=<span class="seg">AC</span>, 즉 △ABC는 이등변삼각형이다.</li>
   </ol>
 </div>
 
@@ -313,15 +315,15 @@ footer { text-align: center; padding: 24px; color: #90a4ae; font-size: .76rem; l
   </div>
   <div class="qbox">
     <div class="qlabel">📝 문제</div>
-    △ABC에서 ∠B=∠C=65°이고 AB=9cm일 때, ① △ABC가 이등변삼각형인 까닭을 설명하고 ② AC의 길이를 구하시오.
+    △ABC에서 ∠B=∠C=65°이고 <span class="seg">AB</span>=9cm일 때, ① △ABC가 이등변삼각형인 까닭을 설명하고 ② <span class="seg">AC</span>의 길이를 구하시오.
   </div>
   <button class="rev-btn amber" onclick="reveal('a3')">정답 보기 ▼</button>
   <div id="a3" class="ans-box amber">
     <ol class="slist">
       <li>∠B=∠C, 즉 두 내각의 크기가 같으므로 △ABC는 이등변삼각형이다.</li>
-      <li>이등변삼각형은 두 밑각(∠B, ∠C)의 대변인 AC, AB의 길이가 같으므로 AC = AB = 9cm</li>
+      <li>이등변삼각형은 두 밑각(∠B, ∠C)의 대변인 <span class="seg">AC</span>, <span class="seg">AB</span>의 길이가 같으므로 <span class="seg">AC</span> = <span class="seg">AB</span> = 9cm</li>
     </ol>
-    <div class="result amber">AC = 9cm</div>
+    <div class="result amber"><span class="seg">AC</span> = 9cm</div>
   </div>
 </div>
 
@@ -468,9 +470,9 @@ function initDef(){
 // ── 탐구 1: 접기 단계 ────────────────────────────────────────
 var foldStep=0;
 var foldCaptions=[
-  '1단계 · AB = AC인 이등변삼각형을 그려요',
-  '2단계 · 꼭지각을 이등분하는 접는 선(AD)을 그어요',
-  '3단계 · 반으로 접으면? ∠B=∠C, BD=CD, ∠ADC=90°!'
+  '1단계 · <span class="seg">AB</span> = <span class="seg">AC</span>인 이등변삼각형을 그려요',
+  '2단계 · 꼭지각을 이등분하는 접는 선(<span class="seg">AD</span>)을 그어요',
+  '3단계 · 반으로 접으면? ∠B=∠C, <span class="seg">BD</span>=<span class="seg">CD</span>, ∠ADC=90°!'
 ];
 function drawFold(){
   var cfg={ layout: triSym, tickAB:true, tickAC:true, tickColor:'#e53935' };
@@ -481,7 +483,7 @@ function drawFold(){
     cfg.rightAtD=true;
   }
   drawTri('cvFold',cfg);
-  document.getElementById('foldCaption').textContent=foldCaptions[foldStep];
+  document.getElementById('foldCaption').innerHTML=foldCaptions[foldStep];
 }
 function nextFold(){
   foldStep=(foldStep+1)%3;
@@ -509,7 +511,7 @@ function initCond(){
 }
 function revealCond(){
   document.getElementById('condAns').classList.add('show');
-  document.getElementById('condCaption').textContent='자로 재어 보니 AB = AC! 두 내각이 같으면 이등변삼각형이 돼요.';
+  document.getElementById('condCaption').innerHTML='자로 재어 보니 <span class="seg">AB</span> = <span class="seg">AC</span>! 두 내각이 같으면 이등변삼각형이 돼요.';
   drawTri('cvCond',{
     layout: triSkew,
     angleB:true, angleC:true, angleColor:'#43a047',
