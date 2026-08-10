@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔺 이등변삼각형의 성질</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: linear-gradient(160deg, #e0f2f1 0%, #e8f5f3 55%, #e3f2fd 100%);
+  min-height: 100vh;
+  font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+  color: #263238;
+  padding: 20px;
+}
+.inner { max-width: 860px; margin: 0 auto; }
+
+header {
+  background: linear-gradient(135deg, #00897b, #00695c, #004d40);
+  color: white; border-radius: 22px;
+  padding: 34px 28px; margin: 18px 0 28px;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(0,105,92,.35);
+}
+header h1 { font-size: 1.9rem; font-weight: 900; margin-bottom: 8px; }
+header .sub { font-size: .9rem; opacity: .88; }
+header .ch {
+  display: inline-block; background: rgba(255,255,255,.2);
+  border-radius: 12px; padding: 4px 14px; font-size: .8rem; margin-top: 10px;
+}
+
+.goal-box {
+  background: white; border: 1.5px solid #80cbc4;
+  border-radius: 16px; padding: 16px 22px; margin-bottom: 26px;
+  font-size: .9rem; line-height: 1.9;
+}
+.goal-box strong { color: #00695c; font-size: .8rem; letter-spacing: .4px; display: block; margin-bottom: 5px; }
+
+.card {
+  background: white; border-radius: 20px;
+  padding: 26px 26px 22px; margin-bottom: 26px;
+  box-shadow: 0 4px 18px rgba(0,105,92,.1);
+  border: 1.5px solid #b2dfdb;
+}
+.card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+.badge {
+  color: white; font-size: .76rem; font-weight: 900;
+  padding: 4px 12px; border-radius: 10px; white-space: nowrap;
+}
+.b-teal   { background: linear-gradient(135deg,#00897b,#00695c); }
+.b-cyan   { background: linear-gradient(135deg,#00acc1,#00838f); }
+.b-indigo { background: linear-gradient(135deg,#5e35b1,#4527a0); }
+.b-amber  { background: linear-gradient(135deg,#fb8c00,#ef6c00); }
+.card-title { font-size: 1.18rem; font-weight: 900; color: #00695c; flex: 1; }
+.page-tag { font-size: .72rem; color: #b0bec5; font-weight: 600; }
+
+.ctx {
+  background: linear-gradient(135deg,#e0f2f1,#e8f5f3);
+  border: 1.5px solid #b2dfdb; border-radius: 14px;
+  padding: 14px 18px; margin-bottom: 18px;
+  font-size: .92rem; line-height: 1.8;
+}
+.ctx-icon { font-size: 1.7rem; margin-bottom: 6px; display: block; }
+.ctx .tools { font-size: .8rem; color: #00796b; margin-top: 6px; }
+
+.gwrap {
+  width: 100%; height: 290px;
+  border-radius: 14px; overflow: hidden;
+  margin-bottom: 14px; border: 2px solid #b2dfdb;
+  box-shadow: 0 2px 10px rgba(0,0,0,.05);
+  background: #f4fbfa;
+}
+canvas { display: block; }
+
+.step-row { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+.step-btn {
+  background: #00897b; color: white; border: none; border-radius: 20px;
+  padding: 9px 22px; font-weight: 800; font-size: .88rem;
+  cursor: pointer; transition: all .18s; box-shadow: 0 3px 10px rgba(0,137,123,.3);
+}
+.step-btn:hover { background: #00695c; }
+.step-btn.cyan { background: #00acc1; box-shadow: 0 3px 10px rgba(0,172,193,.3); }
+.step-btn.cyan:hover { background: #00838f; }
+.step-caption { font-size: .84rem; color: #00796b; font-weight: 700; }
+
+.qbox {
+  background: #e0f7fa; border-left: 4px solid #00acc1;
+  border-radius: 0 12px 12px 0;
+  padding: 12px 16px; margin-bottom: 12px;
+  font-size: .92rem; line-height: 1.78;
+}
+.qlabel { font-size: .76rem; font-weight: 900; color: #00695c; margin-bottom: 5px; letter-spacing: .4px; }
+
+.rev-btn {
+  background: white; border: 2px solid #00897b; border-radius: 20px;
+  padding: 8px 24px; color: #00897b;
+  font-weight: 700; font-size: .9rem;
+  cursor: pointer; transition: all .18s; margin-bottom: 10px;
+}
+.rev-btn:hover { background: #00897b; color: white; }
+.rev-btn.amber { border-color: #fb8c00; color: #ef6c00; }
+.rev-btn.amber:hover { background: #fb8c00; color: white; }
+
+.ans-box {
+  display: none; border: 2px solid #00897b; border-radius: 14px;
+  padding: 18px 20px; font-size: .9rem; line-height: 1.8;
+  background: #e0f2f1;
+}
+.ans-box.show { display: block; }
+.ans-box.amber { border-color: #fb8c00; background: #fff3e0; }
+
+.slist { list-style: none; counter-reset: sc; margin-bottom: 12px; }
+.slist li {
+  counter-increment: sc; padding: 9px 12px 9px 40px;
+  position: relative; border-bottom: 1px solid #b2dfdb;
+}
+.slist li::before {
+  content: counter(sc); position: absolute; left: 10px; top: 50%;
+  transform: translateY(-50%); width: 22px; height: 22px;
+  background: #00897b; color: white; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .74rem; font-weight: 900;
+}
+.ans-box.amber .slist li { border-color: #ffe0b2; }
+.ans-box.amber .slist li::before { background: #fb8c00; }
+
+.fbox {
+  background: #e0f2f1; border: 2px solid #b2dfdb; border-radius: 12px;
+  padding: 12px 18px; margin-bottom: 18px;
+  text-align: center; font-size: 1.05rem; font-weight: 900; color: #00695c;
+  line-height: 1.7;
+}
+
+.result {
+  background: white; border-radius: 10px; padding: 11px 16px;
+  text-align: center; font-size: 1.05rem; font-weight: 900;
+  color: #00695c; margin-top: 10px; border: 1.5px solid #b2dfdb;
+}
+.result.amber { color: #ef6c00; border-color: #ffe0b2; }
+
+.note {
+  background: #fff8e1; border: 1.5px dashed #ffca28; border-radius: 12px;
+  padding: 12px 16px; margin-top: 16px; font-size: .84rem; line-height: 1.7; color: #6d4c00;
+}
+.note strong { color: #e65100; }
+
+footer { text-align: center; padding: 24px; color: #90a4ae; font-size: .76rem; line-height: 1.9; }
+</style>
+</head>
+<body>
+<div class="inner">
+
+<header>
+  <h1>🔺 이등변삼각형의 성질</h1>
+  <div class="sub">탐구 활동으로 이등변삼각형의 성질과 조건을 알아봐요</div>
+  <div class="ch">중학교 2학년 · Ⅳ. 도형의 성질 · 1. 삼각형의 성질 01 · pp.140~143</div>
+</header>
+
+<div class="goal-box">
+  <strong>📌 학습 목표</strong>
+  • 이등변삼각형의 두 밑각의 크기가 같음을 이해하고 정당화할 수 있다.<br>
+  • 이등변삼각형의 꼭지각의 이등분선이 밑변을 수직이등분함을 이해하고 정당화할 수 있다.<br>
+  • 두 내각의 크기가 같은 삼각형은 이등변삼각형임을 이해하고 정당화할 수 있다.
+</div>
+
+<!-- ===== 개념 ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-teal">개념</span>
+    <span class="card-title">이등변삼각형이란?</span>
+    <span class="page-tag">p.139</span>
+  </div>
+  <div class="ctx">
+    <span class="ctx-icon">🔺</span>
+    두 변의 길이가 같은 삼각형을 <strong>이등변삼각형</strong>이라고 합니다.<br>
+    길이가 같은 두 변이 이루는 각을 <strong style="color:#e53935;">꼭지각</strong>, 꼭지각의 대변을 <strong style="color:#1e88e5;">밑변</strong>, 밑변의 양 끝 각을 <strong style="color:#43a047;">밑각</strong>이라고 합니다.
+  </div>
+  <div class="gwrap"><canvas id="cvDef"></canvas></div>
+  <div class="note">
+    <strong>헷갈리기 쉬운 부분</strong> 밑각을 삼각형 아래쪽에 있는 두 각으로 오해하기 쉽지만, 밑각은 <strong>밑변의 양 끝 각</strong>입니다. 만약 AC=BC인 이등변삼각형이라면 밑변은 AB이고, 밑각은 ∠A, ∠B가 됩니다.
+  </div>
+</div>
+
+<!-- ===== 탐구 1 ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-teal">탐구 1</span>
+    <span class="card-title">색종이를 접어 성질 찾기</span>
+    <span class="page-tag">p.140</span>
+  </div>
+  <div class="ctx">
+    <span class="ctx-icon">✂️</span>
+    색종이를 사용하여 이등변삼각형을 만들어 자른 후, 반으로 접어 봅시다.
+    <div class="tools">준비물: 색종이, 컴퍼스, 가위</div>
+  </div>
+  <div class="gwrap"><canvas id="cvFold"></canvas></div>
+  <div class="step-row">
+    <button class="step-btn" onclick="nextFold()">다음 단계 보기 ▶</button>
+    <span class="step-caption" id="foldCaption">1단계 · AB = AC인 이등변삼각형을 그려요</span>
+  </div>
+  <div class="qbox">
+    <div class="qlabel">📝 문제</div>
+    ❶ ∠B와 크기가 같은 각을 말해 봅시다.<br>
+    ❷ 접었을 때 BD와 CD의 길이를 비교하고, ∠ADC의 크기를 구해 봅시다.
+  </div>
+  <button class="rev-btn" onclick="reveal('a1')">정답 보기 ▼</button>
+  <div id="a1" class="ans-box">
+    <ol class="slist">
+      <li>반으로 접으면 ∠B와 ∠C가 완전히 겹치므로 <strong>∠C</strong>와 크기가 같습니다.</li>
+      <li>접었을 때 점 B와 점 C가 겹치므로 <strong>BD = CD</strong>이고, 접힌 선(AD)과 밑변이 이루는 각은 <strong>∠ADC = 90°</strong>입니다.</li>
+    </ol>
+    <div class="result">두 밑각은 같고, 꼭지각의 이등분선은 밑변을 수직이등분해요!</div>
+  </div>
+</div>
+
+<!-- ===== 증명 1 ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-indigo">증명</span>
+    <span class="card-title">이등변삼각형의 성질</span>
+    <span class="page-tag">p.140</span>
+  </div>
+  <div class="fbox">
+    ➊ 이등변삼각형의 두 밑각의 크기는 같다.<br>
+    ➋ 이등변삼각형의 꼭지각의 이등분선은 밑변을 수직이등분한다.
+  </div>
+  <div class="gwrap"><canvas id="cvProof"></canvas></div>
+  <div class="ctx">
+    <span class="ctx-icon">✏️</span>
+    AB = AC인 △ABC에서 ∠A의 이등분선과 변 BC의 교점을 D라고 하면
+  </div>
+  <ol class="slist">
+    <li>△ABD와 △ACD에서 AB=AC, ∠BAD=∠CAD, AD는 공통이므로 △ABD≡△ACD (SAS 합동)</li>
+    <li>합동인 도형의 대응각은 같으므로 ∠B=∠C</li>
+    <li>합동인 도형의 대응변은 같으므로 BD=CD이고, ∠ADB=∠ADC이며 ∠ADB+∠ADC=180°이므로 ∠ADB=∠ADC=90°, 즉 AD⊥BC</li>
+  </ol>
+</div>
+
+<!-- ===== 배우고 익히기 ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-amber">문제</span>
+    <span class="card-title">배우고 익히기</span>
+    <span class="page-tag">p.141</span>
+  </div>
+  <div class="qbox">
+    <div class="qlabel">📝 문제 1</div>
+    다음 이등변삼각형에서 ∠x의 크기를 구하시오.<br>
+    ⑴ 한 밑각의 크기가 48°일 때, 다른 밑각 ∠x<br>
+    ⑵ 꼭지각의 크기가 70°일 때, 한 밑각 ∠x
+  </div>
+  <div class="qbox">
+    <div class="qlabel">📝 문제 2</div>
+    AB=AC인 △ABC에서 AD가 ∠A의 이등분선이고 BC=10cm일 때, BD의 길이와 ∠ADC의 크기를 구하시오.
+  </div>
+  <button class="rev-btn amber" onclick="reveal('a2')">정답 보기 ▼</button>
+  <div id="a2" class="ans-box amber">
+    <ol class="slist">
+      <li><strong>문제 1 ⑴</strong> 이등변삼각형은 두 밑각의 크기가 같으므로 ∠x = 48°</li>
+      <li><strong>문제 1 ⑵</strong> ∠x = (180° − 70°) ÷ 2 = 55°</li>
+      <li><strong>문제 2</strong> 꼭지각의 이등분선은 밑변을 수직이등분하므로 BD = 10 ÷ 2 = 5cm, ∠ADC = 90°</li>
+    </ol>
+    <div class="result amber">⑴ 48°  ⑵ 55°  |  BD = 5cm, ∠ADC = 90°</div>
+  </div>
+</div>
+
+<!-- ===== 탐구 2 ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-cyan">탐구 2</span>
+    <span class="card-title">이등변삼각형이 되는 조건</span>
+    <span class="page-tag">p.142</span>
+  </div>
+  <div class="ctx">
+    <span class="ctx-icon">📐</span>
+    이번에는 거꾸로 생각해 봅시다. △ABC에서 <strong>∠B = ∠C</strong>일 때, 변 AB와 AC의 길이를 자로 재어 비교해 보면 어떤 삼각형이 될까요?
+  </div>
+  <div class="gwrap"><canvas id="cvCond"></canvas></div>
+  <div class="step-row">
+    <button class="step-btn cyan" onclick="revealCond()">자로 측정해 보기 📏</button>
+    <span class="step-caption" id="condCaption">∠B = ∠C인 삼각형이에요. AB, AC의 길이를 비교해 볼까요?</span>
+  </div>
+  <div id="condAns" class="ans-box">
+    <div class="fbox" style="margin-bottom:0;">두 내각의 크기가 같은 삼각형은 이등변삼각형이다.</div>
+  </div>
+</div>
+
+<!-- ===== 증명 2 ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-indigo">증명</span>
+    <span class="card-title">이등변삼각형이 되는 조건</span>
+    <span class="page-tag">p.142</span>
+  </div>
+  <div class="gwrap"><canvas id="cvCondProof"></canvas></div>
+  <div class="ctx">
+    <span class="ctx-icon">✏️</span>
+    ∠B=∠C인 △ABC에서 ∠A의 이등분선과 변 BC의 교점을 D라고 하면
+  </div>
+  <ol class="slist">
+    <li>△ABD와 △ACD에서 ∠BAD=∠CAD, AD는 공통</li>
+    <li>이때 ∠B=∠C이므로 나머지 한 내각의 크기도 같다. 즉 ∠ADB=∠ADC</li>
+    <li>따라서 △ABD≡△ACD (ASA 합동)이므로 AB=AC, 즉 △ABC는 이등변삼각형이다.</li>
+  </ol>
+</div>
+
+<!-- ===== 종합 문제 ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-amber">종합 문제</span>
+    <span class="card-title">성질과 조건 함께 적용하기</span>
+    <span class="page-tag">p.143</span>
+  </div>
+  <div class="qbox">
+    <div class="qlabel">📝 문제</div>
+    △ABC에서 ∠B=∠C=65°이고 AB=9cm일 때, ① △ABC가 이등변삼각형인 까닭을 설명하고 ② AC의 길이를 구하시오.
+  </div>
+  <button class="rev-btn amber" onclick="reveal('a3')">정답 보기 ▼</button>
+  <div id="a3" class="ans-box amber">
+    <ol class="slist">
+      <li>∠B=∠C, 즉 두 내각의 크기가 같으므로 △ABC는 이등변삼각형이다.</li>
+      <li>이등변삼각형은 두 밑각(∠B, ∠C)의 대변인 AC, AB의 길이가 같으므로 AC = AB = 9cm</li>
+    </ol>
+    <div class="result amber">AC = 9cm</div>
+  </div>
+</div>
+
+<footer>
+  중학교 2학년 수학 · Ⅳ. 도형의 성질 · 1. 삼각형의 성질 01. 이등변삼각형의 성질 · 교과서 pp.140~143
+</footer>
+</div>
+
+<script>
+// ── 기하 드로잉 유틸 ─────────────────────────────────────────
+function mid(p,q){ return [(p[0]+q[0])/2, (p[1]+q[1])/2]; }
+
+function drawSeg(ctx,p,q,color,w,dash){
+  ctx.strokeStyle=color; ctx.lineWidth=w; ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.moveTo(p[0],p[1]); ctx.lineTo(q[0],q[1]); ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+function drawLabel(ctx,text,p,dx,dy,color,size){
+  ctx.fillStyle=color||'#37474f';
+  ctx.font=(size||13)+'px Malgun Gothic,sans-serif';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(text,p[0]+dx,p[1]+dy);
+}
+
+function segTick(ctx,p,q,n,color){
+  var mx=(p[0]+q[0])/2, my=(p[1]+q[1])/2;
+  var dx=q[0]-p[0], dy=q[1]-p[1], len=Math.hypot(dx,dy)||1;
+  var ux=dx/len, uy=dy/len, nx=-uy, ny=ux;
+  ctx.strokeStyle=color; ctx.lineWidth=2.4;
+  var gap=7;
+  for (var i=0;i<n;i++){
+    var off=(i-(n-1)/2)*gap;
+    var cx=mx+ux*off, cy=my+uy*off;
+    ctx.beginPath();
+    ctx.moveTo(cx-nx*7, cy-ny*7);
+    ctx.lineTo(cx+nx*7, cy+ny*7);
+    ctx.stroke();
+  }
+}
+
+function angleArc(ctx,v,pA,pB,r,color){
+  var a1=Math.atan2(pA[1]-v[1], pA[0]-v[0]);
+  var a2=Math.atan2(pB[1]-v[1], pB[0]-v[0]);
+  var diff=a2-a1;
+  while(diff<=-Math.PI) diff+=2*Math.PI;
+  while(diff>Math.PI) diff-=2*Math.PI;
+  ctx.strokeStyle=color; ctx.lineWidth=2.2;
+  ctx.beginPath();
+  ctx.arc(v[0],v[1],r,a1,a1+diff,diff<0);
+  ctx.stroke();
+}
+
+function rightMark(ctx,v,toward1,toward2,size,color){
+  var d1=[toward1[0]-v[0], toward1[1]-v[1]], l1=Math.hypot(d1[0],d1[1])||1;
+  var d2=[toward2[0]-v[0], toward2[1]-v[1]], l2=Math.hypot(d2[0],d2[1])||1;
+  var u1=[d1[0]/l1,d1[1]/l1], u2=[d2[0]/l2,d2[1]/l2];
+  var p1=[v[0]+u1[0]*size, v[1]+u1[1]*size];
+  var p3=[p1[0]+u2[0]*size, p1[1]+u2[1]*size];
+  var p2=[v[0]+u2[0]*size, v[1]+u2[1]*size];
+  ctx.strokeStyle=color; ctx.lineWidth=1.6;
+  ctx.beginPath();
+  ctx.moveTo(p1[0],p1[1]); ctx.lineTo(p3[0],p3[1]); ctx.lineTo(p2[0],p2[1]);
+  ctx.stroke();
+}
+
+// ── 삼각형 배치 ─────────────────────────────────────────────
+function triSym(W,H){
+  var bh=Math.min(140,W*0.24), top=42, base=H-52;
+  return { A:[W/2,top], B:[W/2-bh,base], C:[W/2+bh,base], D:[W/2,base] };
+}
+function triSkew(W,H){
+  var bh=Math.min(140,W*0.24), top=42, base=H-52;
+  return { A:[W*0.44,top], B:[W/2-bh,base], C:[W/2+bh,base] };
+}
+function triSkewD(W,H){
+  var t=triSkew(W,H);
+  var D=[ t.B[0]+(t.C[0]-t.B[0])*0.46, t.B[1]+(t.C[1]-t.B[1])*0.46 ];
+  return { A:t.A, B:t.B, C:t.C, D:D };
+}
+
+// ── 공용 삼각형 렌더러 ────────────────────────────────────────
+function drawTri(id,cfg){
+  var canvas=document.getElementById(id); if(!canvas) return;
+  var wrap=canvas.parentElement;
+  canvas.width=wrap.clientWidth||640; canvas.height=wrap.clientHeight||290;
+  var ctx=canvas.getContext('2d');
+  var W=canvas.width, H=canvas.height;
+
+  ctx.fillStyle='#f4fbfa'; ctx.fillRect(0,0,W,H);
+
+  var T=cfg.layout(W,H);
+  var A=T.A,B=T.B,C=T.C,D=T.D;
+
+  if (cfg.baseHighlight) drawSeg(ctx,B,C,'#1e88e5',5);
+  drawSeg(ctx,B,C,'#455a64',2.4);
+  drawSeg(ctx,A,B,'#455a64',2.4);
+  drawSeg(ctx,A,C,'#455a64',2.4);
+
+  if (cfg.showD && D) drawSeg(ctx,A,D,'#00897b',2, cfg.dDash?[5,4]:[]);
+
+  if (cfg.tickAB) segTick(ctx,A,B, cfg.tickCount||1, cfg.tickColor||'#e53935');
+  if (cfg.tickAC) segTick(ctx,A,C, cfg.tickCount||1, cfg.tickColor||'#e53935');
+  if (cfg.tickBD) segTick(ctx,B,D, 2, cfg.tickColor2||'#e53935');
+  if (cfg.tickCD) segTick(ctx,C,D, 2, cfg.tickColor2||'#e53935');
+
+  if (cfg.apexAngle) angleArc(ctx,A,B,C,24,'#e53935');
+  if (cfg.angleB) angleArc(ctx,B,A,C,26,cfg.angleColor||'#43a047');
+  if (cfg.angleC) angleArc(ctx,C,A,B,26,cfg.angleColor||'#43a047');
+  if (cfg.angleBAD) angleArc(ctx,A,B,D,20,'#fb8c00');
+  if (cfg.angleCAD) angleArc(ctx,A,D,C,20,'#fb8c00');
+
+  if (cfg.rightAtD && D) rightMark(ctx,D,A,C,10,'#37474f');
+
+  drawLabel(ctx,'A',A,0,-14,'#263238',15);
+  drawLabel(ctx,'B',B,-14,10,'#263238',15);
+  drawLabel(ctx,'C',C,14,10,'#263238',15);
+  if (cfg.showD && D) drawLabel(ctx,'D',D,0,17,'#00695c',14);
+
+  (cfg.extraLabels||[]).forEach(function(l){
+    drawLabel(ctx,l.t,l.p,l.dx,l.dy,l.color,l.size);
+  });
+}
+
+// ── 개념 다이어그램 ───────────────────────────────────────────
+function initDef(){
+  var canvas=document.getElementById('cvDef');
+  var W=canvas.parentElement.clientWidth||640;
+  var T=triSym(W,290);
+  drawTri('cvDef',{
+    layout: triSym,
+    baseHighlight:true,
+    apexAngle:true,
+    angleB:true, angleC:true, angleColor:'#43a047',
+    extraLabels:[
+      {t:'꼭지각', p:T.A, dx:0, dy:34, color:'#e53935', size:12},
+      {t:'밑변', p:mid(T.B,T.C), dx:0, dy:22, color:'#1e88e5', size:12},
+      {t:'밑각', p:T.B, dx:6, dy:-26, color:'#43a047', size:12},
+      {t:'밑각', p:T.C, dx:-6, dy:-26, color:'#43a047', size:12}
+    ]
+  });
+}
+
+// ── 탐구 1: 접기 단계 ────────────────────────────────────────
+var foldStep=0;
+var foldCaptions=[
+  '1단계 · AB = AC인 이등변삼각형을 그려요',
+  '2단계 · 꼭지각을 이등분하는 접는 선(AD)을 그어요',
+  '3단계 · 반으로 접으면? ∠B=∠C, BD=CD, ∠ADC=90°!'
+];
+function drawFold(){
+  var cfg={ layout: triSym, tickAB:true, tickAC:true, tickColor:'#e53935' };
+  if (foldStep>=1){ cfg.showD=true; cfg.dDash = foldStep<2; }
+  if (foldStep>=2){
+    cfg.tickBD=true; cfg.tickCD=true; cfg.tickColor2='#e53935';
+    cfg.angleB=true; cfg.angleC=true; cfg.angleColor='#43a047';
+    cfg.rightAtD=true;
+  }
+  drawTri('cvFold',cfg);
+  document.getElementById('foldCaption').textContent=foldCaptions[foldStep];
+}
+function nextFold(){
+  foldStep=(foldStep+1)%3;
+  drawFold();
+}
+
+// ── 증명 1 다이어그램 (항상 완성된 상태) ─────────────────────
+function initProof(){
+  drawTri('cvProof',{
+    layout: triSym, showD:true,
+    tickAB:true, tickAC:true, tickColor:'#e53935',
+    tickBD:true, tickCD:true, tickColor2:'#e53935',
+    angleB:true, angleC:true, angleColor:'#43a047',
+    angleBAD:true, angleCAD:true,
+    rightAtD:true
+  });
+}
+
+// ── 탐구 2: 조건 ────────────────────────────────────────────
+function initCond(){
+  drawTri('cvCond',{
+    layout: triSkew,
+    angleB:true, angleC:true, angleColor:'#43a047'
+  });
+}
+function revealCond(){
+  document.getElementById('condAns').classList.add('show');
+  document.getElementById('condCaption').textContent='자로 재어 보니 AB = AC! 두 내각이 같으면 이등변삼각형이 돼요.';
+  drawTri('cvCond',{
+    layout: triSkew,
+    angleB:true, angleC:true, angleColor:'#43a047',
+    tickAB:true, tickAC:true, tickColor:'#e53935'
+  });
+}
+
+// ── 증명 2 다이어그램 ────────────────────────────────────────
+function initCondProof(){
+  drawTri('cvCondProof',{
+    layout: triSkewD, showD:true,
+    angleB:true, angleC:true, angleColor:'#43a047',
+    angleBAD:true, angleCAD:true,
+    tickAB:true, tickAC:true, tickColor:'#e53935'
+  });
+}
+
+// ── 정답 토글 ──────────────────────────────────────────────
+function reveal(id){
+  document.getElementById(id).classList.toggle('show');
+}
+
+// ── 초기화 & 리사이즈 ─────────────────────────────────────────
+function drawAll(){
+  initDef(); drawFold(); initProof(); initCond();
+  if (document.getElementById('condAns').classList.contains('show')) revealCond();
+  initCondProof();
+}
+window.addEventListener('load', drawAll);
+window.addEventListener('resize', drawAll);
+</script>
+</body>
+</html>
