@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📐 직각삼각형의 합동 조건</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: linear-gradient(160deg, #e0f2f1 0%, #e8f5f3 55%, #e3f2fd 100%);
+  min-height: 100vh;
+  font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+  color: #263238;
+  padding: 20px;
+}
+.inner { max-width: 860px; margin: 0 auto; }
+
+header {
+  background: linear-gradient(135deg, #00897b, #00695c, #004d40);
+  color: white; border-radius: 22px;
+  padding: 34px 28px; margin: 18px 0 28px;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(0,105,92,.35);
+}
+header h1 { font-size: 1.9rem; font-weight: 900; margin-bottom: 8px; }
+header .sub { font-size: .9rem; opacity: .88; }
+header .ch {
+  display: inline-block; background: rgba(255,255,255,.2);
+  border-radius: 12px; padding: 4px 14px; font-size: .8rem; margin-top: 10px;
+}
+
+.goal-box {
+  background: white; border: 1.5px solid #80cbc4;
+  border-radius: 16px; padding: 16px 22px; margin-bottom: 26px;
+  font-size: .9rem; line-height: 1.9;
+}
+.goal-box strong { color: #00695c; font-size: .8rem; letter-spacing: .4px; display: block; margin-bottom: 5px; }
+
+.card {
+  background: white; border-radius: 20px;
+  padding: 26px 26px 22px; margin-bottom: 26px;
+  box-shadow: 0 4px 18px rgba(0,105,92,.1);
+  border: 1.5px solid #b2dfdb;
+}
+.card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+.badge {
+  color: white; font-size: .76rem; font-weight: 900;
+  padding: 4px 12px; border-radius: 10px; white-space: nowrap;
+}
+.b-teal   { background: linear-gradient(135deg,#00897b,#00695c); }
+.b-cyan   { background: linear-gradient(135deg,#00acc1,#00838f); }
+.b-indigo { background: linear-gradient(135deg,#5e35b1,#4527a0); }
+.b-amber  { background: linear-gradient(135deg,#fb8c00,#ef6c00); }
+.card-title { font-size: 1.18rem; font-weight: 900; color: #00695c; flex: 1; }
+.page-tag { font-size: .72rem; color: #b0bec5; font-weight: 600; }
+
+.ctx {
+  background: linear-gradient(135deg,#e0f2f1,#e8f5f3);
+  border: 1.5px solid #b2dfdb; border-radius: 14px;
+  padding: 14px 18px; margin-bottom: 18px;
+  font-size: .92rem; line-height: 1.8;
+}
+.ctx-icon { font-size: 1.7rem; margin-bottom: 6px; display: block; }
+.ctx .tools { font-size: .8rem; color: #00796b; margin-top: 6px; }
+
+.gwrap {
+  width: 100%; height: 290px;
+  border-radius: 14px; overflow: hidden;
+  margin-bottom: 14px; border: 2px solid #b2dfdb;
+  box-shadow: 0 2px 10px rgba(0,0,0,.05);
+  background: #f4fbfa;
+}
+canvas { display: block; }
+
+.step-row { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+.step-btn {
+  background: #00897b; color: white; border: none; border-radius: 20px;
+  padding: 9px 22px; font-weight: 800; font-size: .88rem;
+  cursor: pointer; transition: all .18s; box-shadow: 0 3px 10px rgba(0,137,123,.3);
+}
+.step-btn:hover { background: #00695c; }
+.step-btn.cyan { background: #00acc1; box-shadow: 0 3px 10px rgba(0,172,193,.3); }
+.step-btn.cyan:hover { background: #00838f; }
+.step-caption { font-size: .84rem; color: #00796b; font-weight: 700; }
+
+.qbox {
+  background: #e0f7fa; border-left: 4px solid #00acc1;
+  border-radius: 0 12px 12px 0;
+  padding: 12px 16px; margin-bottom: 12px;
+  font-size: .92rem; line-height: 1.78;
+}
+.qlabel { font-size: .76rem; font-weight: 900; color: #00695c; margin-bottom: 5px; letter-spacing: .4px; }
+
+.rev-btn {
+  background: white; border: 2px solid #00897b; border-radius: 20px;
+  padding: 8px 24px; color: #00897b;
+  font-weight: 700; font-size: .9rem;
+  cursor: pointer; transition: all .18s; margin-bottom: 10px;
+}
+.rev-btn:hover { background: #00897b; color: white; }
+.rev-btn.amber { border-color: #fb8c00; color: #ef6c00; }
+.rev-btn.amber:hover { background: #fb8c00; color: white; }
+
+.ans-box {
+  display: none; border: 2px solid #00897b; border-radius: 14px;
+  padding: 18px 20px; font-size: .9rem; line-height: 1.8;
+  background: #e0f2f1;
+}
+.ans-box.show { display: block; }
+.ans-box.amber { border-color: #fb8c00; background: #fff3e0; }
+
+.slist { list-style: none; counter-reset: sc; margin-bottom: 12px; }
+.slist li {
+  counter-increment: sc; padding: 9px 12px 9px 40px;
+  position: relative; border-bottom: 1px solid #b2dfdb;
+}
+.slist li::before {
+  content: counter(sc); position: absolute; left: 10px; top: 50%;
+  transform: translateY(-50%); width: 22px; height: 22px;
+  background: #00897b; color: white; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .74rem; font-weight: 900;
+}
+.ans-box.amber .slist li { border-color: #ffe0b2; }
+.ans-box.amber .slist li::before { background: #fb8c00; }
+
+.fbox {
+  background: #e0f2f1; border: 2px solid #b2dfdb; border-radius: 12px;
+  padding: 12px 18px; margin-bottom: 18px;
+  text-align: center; font-size: 1.05rem; font-weight: 900; color: #00695c;
+  line-height: 1.7;
+}
+
+.result {
+  background: white; border-radius: 10px; padding: 11px 16px;
+  text-align: center; font-size: 1.05rem; font-weight: 900;
+  color: #00695c; margin-top: 10px; border: 1.5px solid #b2dfdb;
+}
+.result.amber { color: #ef6c00; border-color: #ffe0b2; }
+
+.note {
+  background: #fff8e1; border: 1.5px dashed #ffca28; border-radius: 12px;
+  padding: 12px 16px; margin-top: 16px; font-size: .84rem; line-height: 1.7; color: #6d4c00;
+}
+.note strong { color: #e65100; }
+
+.seg { text-decoration: overline; text-decoration-thickness: 1.4px; text-underline-offset: 0; }
+
+footer { text-align: center; padding: 24px; color: #90a4ae; font-size: .76rem; line-height: 1.9; }
+</style>
+</head>
+<body>
+<div class="inner">
+
+<header>
+  <h1>📐 직각삼각형의 합동 조건</h1>
+  <div class="sub">RHA 합동과 RHS 합동, 두 가지 조건만으로 직각삼각형의 합동을 밝혀 봐요</div>
+  <div class="ch">중학교 2학년 · Ⅳ. 도형의 성질 · 1. 삼각형의 성질 02 · pp.144~147</div>
+</header>
+
+<div class="goal-box">
+  <strong>📌 학습 목표</strong>
+  • 빗변의 길이와 한 예각의 크기가 각각 같은 두 직각삼각형이 합동임을 이해하고 정당화할 수 있다. (RHA 합동)<br>
+  • 빗변의 길이와 다른 한 변의 길이가 각각 같은 두 직각삼각형이 합동임을 이해하고 정당화할 수 있다. (RHS 합동)
+</div>
+
+<!-- ===== 개념 ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-teal">개념</span>
+    <span class="card-title">빗변과 RHA·RHS</span>
+    <span class="page-tag">p.144</span>
+  </div>
+  <div class="ctx">
+    <span class="ctx-icon">📐</span>
+    직각삼각형에서 <strong style="color:#1e88e5;">직각의 대변</strong>을 <strong>빗변</strong>이라고 합니다. 직각삼각형은 이미 직각이라는 조건이 하나 주어져 있으므로, 일반 삼각형의 합동 조건(SSS, SAS, ASA)과 달리 <strong>두 가지 조건만으로도</strong> 합동을 판별할 수 있습니다.
+  </div>
+  <div class="gwrap"><canvas id="cvHyp"></canvas></div>
+  <div class="note">
+    <strong>이름의 유래</strong> R는 Right angle(직각), H는 Hypotenuse(빗변)의 첫 글자입니다. 여기에 A(Angle, 각)가 붙으면 <strong>RHA 합동</strong>, S(Side, 변)가 붙으면 <strong>RHS 합동</strong>이 됩니다. 직각삼각형은 두 예각의 합이 90°이므로, 한 예각의 크기를 알면 나머지 한 예각의 크기도 자동으로 정해진다는 점이 핵심입니다.
+  </div>
+</div>
+
+<!-- ===== 탐구 1 (RHA 생각열기) ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-teal">탐구 1</span>
+    <span class="card-title">다리 위 두 직각삼각형</span>
+    <span class="page-tag">p.144</span>
+  </div>
+  <div class="ctx">
+    <span class="ctx-icon">🌉</span>
+    오른쪽 그림은 다리(교량)의 일부 구조를 나타낸 것입니다. △ABC와 △DEF에서 ∠C=∠F=90°, <span class="seg">AB</span>=<span class="seg">DE</span>, ∠B=∠E=60°일 때
+  </div>
+  <div class="gwrap"><canvas id="cvBridge"></canvas></div>
+  <div class="qbox">
+    <div class="qlabel">📝 문제</div>
+    ❶ ∠A와 ∠D의 크기를 각각 구해 봅시다.<br>
+    ❷ △ABC와 △DEF는 서로 합동인지 말해 봅시다.
+  </div>
+  <button class="rev-btn" onclick="reveal('a1')">정답 보기 ▼</button>
+  <div id="a1" class="ans-box">
+    <ol class="slist">
+      <li>△ABC에서 ∠A=180°−(90°+60°)=<strong>30°</strong>, △DEF에서 ∠D=180°−(90°+60°)=<strong>30°</strong></li>
+      <li>△ABC와 △DEF에서 <span class="seg">AB</span>=<span class="seg">DE</span>, ∠B=∠E, ∠A=∠D이므로 △ABC≡△DEF (ASA 합동) — <strong>서로 합동입니다.</strong></li>
+    </ol>
+    <div class="result">∠A = ∠D = 30°, △ABC ≡ △DEF</div>
+  </div>
+</div>
+
+<!-- ===== 증명 1 (RHA) ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-indigo">증명</span>
+    <span class="card-title">직각삼각형의 합동 조건 (1) — RHA</span>
+    <span class="page-tag">p.144~145</span>
+  </div>
+  <div class="fbox">
+    빗변의 길이와 한 예각의 크기가 각각 같은 두 직각삼각형은 서로 합동이다. (RHA 합동)
+  </div>
+  <div class="gwrap"><canvas id="cvRHAProof"></canvas></div>
+  <div class="ctx">
+    <span class="ctx-icon">✏️</span>
+    두 직각삼각형 ABC와 DEF에서 ∠C=∠F=90°, <span class="seg">AB</span>=<span class="seg">DE</span>, ∠B=∠E라고 하면
+  </div>
+  <ol class="slist">
+    <li>△ABC와 △DEF에서 <span class="seg">AB</span>=<span class="seg">DE</span> ····①,  ∠B=∠E ····②</li>
+    <li>또 ∠C=∠F=90°이므로 ∠A=180°−(90°+∠B), ∠D=180°−(90°+∠E)이고 ∠B=∠E이므로 ∠A=∠D ····③</li>
+    <li>①, ②, ③에서 △ABC≡△DEF (ASA 합동) — 즉 <strong>RHA 합동</strong></li>
+  </ol>
+</div>
+
+<!-- ===== 배우고 익히기 (RHA) ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-amber">문제</span>
+    <span class="card-title">배우고 익히기</span>
+    <span class="page-tag">p.145</span>
+  </div>
+  <div class="qbox">
+    <div class="qlabel">📝 문제 1</div>
+    두 직각삼각형 ABC, DEF에서 ∠C=∠F=90°, <span class="seg">AB</span>=<span class="seg">DE</span>=9cm, ∠B=∠E=58°일 때, ∠A와 ∠D의 크기를 각각 구하고 두 삼각형이 합동인지 합동 조건과 함께 말하시오.
+  </div>
+  <div class="qbox">
+    <div class="qlabel">📝 문제 2</div>
+    사각형 ABCD에서 <span class="seg">AC</span>가 ∠A, ∠C를 각각 이등분하고 ∠B=∠D=90°이다. <span class="seg">AB</span>=6cm, <span class="seg">BC</span>=5cm일 때, 사각형 ABCD의 둘레의 길이를 구하시오.
+  </div>
+  <button class="rev-btn amber" onclick="reveal('a2')">정답 보기 ▼</button>
+  <div id="a2" class="ans-box amber">
+    <ol class="slist">
+      <li><strong>문제 1</strong> ∠A=180°−(90°+58°)=32°, ∠D=32°. <span class="seg">AB</span>=<span class="seg">DE</span>, ∠B=∠E, ∠A=∠D이므로 △ABC≡△DEF (RHA 합동)</li>
+      <li><strong>문제 2</strong> △ABC와 △ADC에서 ∠B=∠D=90°, <span class="seg">AC</span>는 공통, ∠BAC=∠DAC이므로 △ABC≡△ADC (RHA 합동). 즉 <span class="seg">AD</span>=<span class="seg">AB</span>=6cm, <span class="seg">CD</span>=<span class="seg">CB</span>=5cm이므로 둘레의 길이는 6+5+6+5=22(cm)</li>
+    </ol>
+    <div class="result amber">∠A=∠D=32° (RHA 합동)  |  둘레 = 22cm</div>
+  </div>
+</div>
+
+<!-- ===== 탐구 2 (RHS 뒤집어 이어붙이기) ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-cyan">탐구 2</span>
+    <span class="card-title">뒤집어서 이어 붙이기</span>
+    <span class="page-tag">p.146</span>
+  </div>
+  <div class="ctx">
+    <span class="ctx-icon">✂️</span>
+    빗변의 길이와 다른 한 변의 길이가 각각 같은 두 직각삼각형 ABC, DEF (∠C=∠F=90°, <span class="seg">AB</span>=<span class="seg">DE</span>, <span class="seg">AC</span>=<span class="seg">DF</span>)를 색종이로 만들어 봅시다. △DEF를 뒤집어 <span class="seg">AC</span>와 <span class="seg">DF</span>가 맞닿도록 이어 붙이면 어떤 모양이 될까요?
+    <div class="tools">준비물: 색종이, 자, 컴퍼스</div>
+  </div>
+  <div class="gwrap"><canvas id="cvRHSDemo"></canvas></div>
+  <div class="step-row">
+    <button class="step-btn cyan" onclick="nextRHS()">다음 단계 보기 ▶</button>
+    <span class="step-caption" id="rhsCaption">1단계 · 두 직각삼각형 ABC, DEF (<span class="seg">AB</span>=<span class="seg">DE</span>, <span class="seg">AC</span>=<span class="seg">DF</span>, ∠C=∠F=90°)</span>
+  </div>
+  <div class="qbox">
+    <div class="qlabel">📝 문제</div>
+    ❶ <span class="seg">AC</span>와 <span class="seg">DF</span>가 맞닿도록 이어 붙였을 때, 세 점 B, C(F), E가 한 직선 위에 있는 까닭을 설명해 봅시다.<br>
+    ❷ 이때 생기는 △ABE는 어떤 삼각형인지 말해 봅시다.
+  </div>
+  <button class="rev-btn" onclick="reveal('a3')">정답 보기 ▼</button>
+  <div id="a3" class="ans-box">
+    <ol class="slist">
+      <li>∠ACB=90°, ∠DFE=90°이므로 이어 붙인 점 C(F)에서 두 각의 합은 ∠ACB+∠DFE=90°+90°=180°. 한 점에서 크기의 합이 180°인 두 각이 만나면 세 점은 한 직선 위에 있습니다.</li>
+      <li><span class="seg">AB</span>=<span class="seg">DE</span>이고 이어 붙이면 <span class="seg">DE</span>가 <span class="seg">AE</span>가 되므로 <span class="seg">AB</span>=<span class="seg">AE</span>, 즉 △ABE는 <strong>이등변삼각형</strong>입니다.</li>
+    </ol>
+    <div class="result">세 점 B, C(F), E는 한 직선 위에 있고, △ABE는 <span class="seg">AB</span>=<span class="seg">AE</span>인 이등변삼각형이에요!</div>
+  </div>
+</div>
+
+<!-- ===== 증명 2 (RHS) ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-indigo">증명</span>
+    <span class="card-title">직각삼각형의 합동 조건 (2) — RHS</span>
+    <span class="page-tag">p.146~147</span>
+  </div>
+  <div class="fbox">
+    빗변의 길이와 다른 한 변의 길이가 각각 같은 두 직각삼각형은 서로 합동이다. (RHS 합동)
+  </div>
+  <div class="gwrap"><canvas id="cvRHSProof"></canvas></div>
+  <div class="ctx">
+    <span class="ctx-icon">✏️</span>
+    두 직각삼각형 ABC와 DEF에서 ∠C=∠F=90°, <span class="seg">AB</span>=<span class="seg">DE</span>, <span class="seg">AC</span>=<span class="seg">DF</span>라고 하면
+  </div>
+  <ol class="slist">
+    <li>△ABC와 △DEF에서 ∠C=∠F=90° ····①</li>
+    <li>△DEF를 뒤집어 <span class="seg">AC</span>와 <span class="seg">DF</span>가 맞닿도록 놓으면 ∠ACB+∠DFE=90°+90°=180°이므로 세 점 B, C(F), E는 한 직선 위에 있다.</li>
+    <li>이때 <span class="seg">AB</span>=<span class="seg">DE</span> ····② 이므로 △ABE는 <span class="seg">AB</span>=<span class="seg">AE</span>인 이등변삼각형이고, 이등변삼각형의 두 밑각의 크기는 같으므로 ∠B=∠E ····③</li>
+    <li>①, ②, ③에서 △ABC≡△DEF — 앞서 증명한 <strong>RHA 합동</strong>에 의해 성립. 즉 <strong>RHS 합동</strong></li>
+  </ol>
+</div>
+
+<!-- ===== 배우고 익히기 (RHS) ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-amber">문제</span>
+    <span class="card-title">배우고 익히기</span>
+    <span class="page-tag">p.147</span>
+  </div>
+  <div class="qbox">
+    <div class="qlabel">📝 문제 1</div>
+    두 직각삼각형 ABC, DEF에서 ∠B=∠E=90°, <span class="seg">AC</span>=<span class="seg">DF</span>=13cm, <span class="seg">AB</span>=<span class="seg">DE</span>=5cm일 때, 두 삼각형이 합동인지 합동 조건과 함께 말하시오.
+  </div>
+  <div class="qbox">
+    <div class="qlabel">📝 문제 2</div>
+    <span class="seg">AB</span>=<span class="seg">AC</span>인 이등변삼각형 ABC에서 꼭짓점 A에서 변 <span class="seg">BC</span>에 내린 수선의 발을 H라고 하자. △ABH와 △ACH가 합동임을 설명하고, 합동 조건을 말하시오.
+  </div>
+  <button class="rev-btn amber" onclick="reveal('a4')">정답 보기 ▼</button>
+  <div id="a4" class="ans-box amber">
+    <ol class="slist">
+      <li><strong>문제 1</strong> 빗변 <span class="seg">AC</span>=<span class="seg">DF</span>, 다른 한 변 <span class="seg">AB</span>=<span class="seg">DE</span>가 각각 같으므로 △ABC≡△DEF (RHS 합동)</li>
+      <li><strong>문제 2</strong> △ABH와 △ACH에서 ∠AHB=∠AHC=90°, 빗변 <span class="seg">AB</span>=<span class="seg">AC</span>, <span class="seg">AH</span>는 공통이므로 △ABH≡△ACH (RHS 합동)</li>
+    </ol>
+    <div class="result amber">△ABC≡△DEF (RHS 합동)  |  △ABH≡△ACH (RHS 합동)</div>
+  </div>
+</div>
+
+<!-- ===== 종합 문제 ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-amber">종합 문제</span>
+    <span class="card-title">RHA · RHS 한눈에 판별하기</span>
+    <span class="page-tag">p.147</span>
+  </div>
+  <div class="qbox">
+    <div class="qlabel">📝 문제</div>
+    다음 세 쌍의 직각삼각형에 대한 조건을 보고, 합동인 것을 모두 찾아 기호로 나타내고 그때의 합동 조건을 말하시오. (합동이 아니면 그 이유도 설명하시오.)<br>
+    ㄱ. △ABC, △DEF: ∠C=∠F=90°, <span class="seg">AB</span>=<span class="seg">DE</span>=10cm, ∠A=∠D=40°<br>
+    ㄴ. △GHI, △JKL: ∠I=∠L=90°, <span class="seg">GH</span>=<span class="seg">JK</span>=13cm, <span class="seg">HI</span>=<span class="seg">KL</span>=5cm<br>
+    ㄷ. △MNO, △PQR: ∠O=∠R=90°, <span class="seg">MN</span>=<span class="seg">PQ</span>=8cm, <span class="seg">NO</span>=6cm, <span class="seg">QR</span>=5cm
+  </div>
+  <button class="rev-btn amber" onclick="reveal('a5')">정답 보기 ▼</button>
+  <div id="a5" class="ans-box amber">
+    <ol class="slist">
+      <li>ㄱ. 빗변 <span class="seg">AB</span>=<span class="seg">DE</span>, 한 예각 ∠A=∠D가 각각 같으므로 △ABC≡△DEF (<strong>RHA 합동</strong>)</li>
+      <li>ㄴ. 빗변 <span class="seg">GH</span>=<span class="seg">JK</span>, 다른 한 변 <span class="seg">HI</span>=<span class="seg">KL</span>이 각각 같으므로 △GHI≡△JKL (<strong>RHS 합동</strong>)</li>
+      <li>ㄷ. 빗변 <span class="seg">MN</span>=<span class="seg">PQ</span>=8cm로 같지만 다른 한 변이 <span class="seg">NO</span>=6cm, <span class="seg">QR</span>=5cm로 다르므로 △MNO와 △PQR는 <strong>합동이 아니다.</strong></li>
+    </ol>
+    <div class="result amber">합동: ㄱ(RHA 합동), ㄴ(RHS 합동)  |  ㄷ은 합동이 아님</div>
+  </div>
+</div>
+
+<footer>
+  중학교 2학년 수학 · Ⅳ. 도형의 성질 · 1. 삼각형의 성질 02. 직각삼각형의 합동 조건 · 교과서 pp.144~147
+</footer>
+</div>
+
+<script>
+// ── 기하 드로잉 유틸 ─────────────────────────────────────────
+function mid(p,q){ return [(p[0]+q[0])/2, (p[1]+q[1])/2]; }
+
+function drawSeg(ctx,p,q,color,w,dash){
+  ctx.strokeStyle=color; ctx.lineWidth=w; ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.moveTo(p[0],p[1]); ctx.lineTo(q[0],q[1]); ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+function drawLabel(ctx,text,p,dx,dy,color,size){
+  ctx.fillStyle=color||'#37474f';
+  ctx.font=(size||13)+'px Malgun Gothic,sans-serif';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(text,p[0]+dx,p[1]+dy);
+}
+
+function segTick(ctx,p,q,n,color){
+  var mx=(p[0]+q[0])/2, my=(p[1]+q[1])/2;
+  var dx=q[0]-p[0], dy=q[1]-p[1], len=Math.hypot(dx,dy)||1;
+  var ux=dx/len, uy=dy/len, nx=-uy, ny=ux;
+  ctx.strokeStyle=color; ctx.lineWidth=2.4;
+  var gap=7;
+  for (var i=0;i<n;i++){
+    var off=(i-(n-1)/2)*gap;
+    var cx=mx+ux*off, cy=my+uy*off;
+    ctx.beginPath();
+    ctx.moveTo(cx-nx*7, cy-ny*7);
+    ctx.lineTo(cx+nx*7, cy+ny*7);
+    ctx.stroke();
+  }
+}
+
+function angleArc(ctx,v,pA,pB,r,color){
+  var a1=Math.atan2(pA[1]-v[1], pA[0]-v[0]);
+  var a2=Math.atan2(pB[1]-v[1], pB[0]-v[0]);
+  var diff=a2-a1;
+  while(diff<=-Math.PI) diff+=2*Math.PI;
+  while(diff>Math.PI) diff-=2*Math.PI;
+  ctx.strokeStyle=color; ctx.lineWidth=2.2;
+  ctx.beginPath();
+  ctx.arc(v[0],v[1],r,a1,a1+diff,diff<0);
+  ctx.stroke();
+}
+
+function rightMark(ctx,v,toward1,toward2,size,color){
+  var d1=[toward1[0]-v[0], toward1[1]-v[1]], l1=Math.hypot(d1[0],d1[1])||1;
+  var d2=[toward2[0]-v[0], toward2[1]-v[1]], l2=Math.hypot(d2[0],d2[1])||1;
+  var u1=[d1[0]/l1,d1[1]/l1], u2=[d2[0]/l2,d2[1]/l2];
+  var p1=[v[0]+u1[0]*size, v[1]+u1[1]*size];
+  var p3=[p1[0]+u2[0]*size, p1[1]+u2[1]*size];
+  var p2=[v[0]+u2[0]*size, v[1]+u2[1]*size];
+  ctx.strokeStyle=color; ctx.lineWidth=1.6;
+  ctx.beginPath();
+  ctx.moveTo(p1[0],p1[1]); ctx.lineTo(p3[0],p3[1]); ctx.lineTo(p2[0],p2[1]);
+  ctx.stroke();
+}
+
+// ── 캔버스 준비 ─────────────────────────────────────────────
+function setupCanvas(id){
+  var canvas=document.getElementById(id); if(!canvas) return null;
+  var wrap=canvas.parentElement;
+  canvas.width=wrap.clientWidth||640; canvas.height=wrap.clientHeight||290;
+  var ctx=canvas.getContext('2d');
+  ctx.fillStyle='#f4fbfa'; ctx.fillRect(0,0,canvas.width,canvas.height);
+  return { canvas:canvas, ctx:ctx, W:canvas.width, H:canvas.height };
+}
+
+// ── 개념: 직각삼각형 하나, 빗변 표시 ───────────────────────────
+function initHyp(){
+  var s=setupCanvas('cvHyp'); if(!s) return;
+  var ctx=s.ctx, W=s.W, H=s.H;
+  var legH=Math.min(170,H-70), legW=Math.min(150,W*0.22);
+  var top=(H-legH)/2, base=top+legH;
+  var x0=W/2;
+  var A=[x0,top], C=[x0,base], B=[x0-legW,base];
+
+  drawSeg(ctx,B,C,'#455a64',2.4);
+  drawSeg(ctx,A,C,'#455a64',2.4);
+  drawSeg(ctx,A,B,'#1e88e5',4.5);
+
+  rightMark(ctx,C,A,B,12,'#37474f');
+
+  drawLabel(ctx,'A',A,0,-14,'#263238',15);
+  drawLabel(ctx,'B',B,-14,10,'#263238',15);
+  drawLabel(ctx,'C',C,16,14,'#263238',15);
+  drawLabel(ctx,'빗변',mid(A,B),-30,-4,'#1e88e5',13);
+  drawLabel(ctx,'직각',C,28,-16,'#37474f',12);
+}
+
+// ── 두 직각삼각형을 나란히 배치 (분리 상태) ─────────────────────
+// A top / B bottom-left / C bottom-right(직각) ,  D top / E bottom-left / F bottom-right(직각)
+function drawTrianglePair(id, opts){
+  opts = opts || {};
+  var s=setupCanvas(id); if(!s) return;
+  var ctx=s.ctx, W=s.W, H=s.H;
+  var legH=Math.min(150,H-80), legW=Math.min(85,W*0.11);
+  var top=(H-legH)/2, base=top+legH;
+  var x0=W*0.27, x1=W*0.73;
+
+  var A=[x0,top], C=[x0,base], B=[x0-legW,base];
+  var D=[x1,top], F=[x1,base], E=[x1-legW,base];
+
+  drawSeg(ctx,A,B,'#455a64',2.4); drawSeg(ctx,B,C,'#455a64',2.4); drawSeg(ctx,C,A,'#455a64',2.4);
+  drawSeg(ctx,D,E,'#455a64',2.4); drawSeg(ctx,E,F,'#455a64',2.4); drawSeg(ctx,F,D,'#455a64',2.4);
+
+  rightMark(ctx,C,A,B,10,'#37474f');
+  rightMark(ctx,F,D,E,10,'#37474f');
+
+  if (opts.tickHyp){ segTick(ctx,A,B,1,'#e53935'); segTick(ctx,D,E,1,'#e53935'); }
+  if (opts.tickLeg){ segTick(ctx,A,C,2,'#5e35b1'); segTick(ctx,D,F,2,'#5e35b1'); }
+  if (opts.angleArc){ angleArc(ctx,B,A,C,26,'#43a047'); angleArc(ctx,E,D,F,26,'#43a047'); }
+
+  drawLabel(ctx,'A',A,0,-14,'#263238',15);
+  drawLabel(ctx,'B',B,-14,10,'#263238',15);
+  drawLabel(ctx,'C',C,16,14,'#263238',15);
+  drawLabel(ctx,'D',D,0,-14,'#263238',15);
+  drawLabel(ctx,'E',E,-14,10,'#263238',15);
+  drawLabel(ctx,'F',F,16,14,'#263238',15);
+
+  if (opts.angleDeg){
+    drawLabel(ctx,opts.angleDeg,B,24,-8,'#2e7d32',12);
+    drawLabel(ctx,opts.angleDeg,E,24,-8,'#2e7d32',12);
+  }
+}
+
+// ── 뒤집어 이어 붙인 상태 (△ABE) ────────────────────────────
+// A(D) top / B bottom-left / E bottom-right / C(F) 중간(직각의 발)
+function drawJoined(id, showAngles){
+  var s=setupCanvas(id); if(!s) return;
+  var ctx=s.ctx, W=s.W, H=s.H;
+  var legH=Math.min(150,H-80), legW=Math.min(125,W*0.17);
+  var top=(H-legH)/2, base=top+legH;
+  var x0=W*0.5;
+
+  var Am=[x0,top], Cm=[x0,base], B=[x0-legW,base], E=[x0+legW,base];
+
+  drawSeg(ctx,B,E,'#455a64',2.4);
+  drawSeg(ctx,Am,B,'#455a64',2.4);
+  drawSeg(ctx,Am,E,'#455a64',2.4);
+  drawSeg(ctx,Am,Cm,'#00897b',2,[5,4]);
+
+  rightMark(ctx,Cm,Am,B,9,'#37474f');
+  rightMark(ctx,Cm,Am,E,9,'#37474f');
+
+  segTick(ctx,Am,B,1,'#e53935');
+  segTick(ctx,Am,E,1,'#e53935');
+  segTick(ctx,Am,Cm,2,'#5e35b1');
+
+  if (showAngles){
+    angleArc(ctx,B,Am,Cm,26,'#43a047');
+    angleArc(ctx,E,Am,Cm,26,'#43a047');
+  }
+
+  drawLabel(ctx,'A(D)',Am,0,-16,'#263238',14);
+  drawLabel(ctx,'C(F)',Cm,0,17,'#00695c',13);
+  drawLabel(ctx,'B',B,-14,10,'#263238',15);
+  drawLabel(ctx,'E',E,14,10,'#263238',15);
+}
+
+// ── 탐구 2 (RHS) 단계별 데모 ─────────────────────────────────
+var rhsStep=0;
+var rhsCaptions=[
+  '1단계 · 두 직각삼각형 ABC, DEF (<span class="seg">AB</span>=<span class="seg">DE</span>, <span class="seg">AC</span>=<span class="seg">DF</span>, ∠C=∠F=90°)',
+  '2단계 · DEF를 뒤집어 <span class="seg">AC</span>와 <span class="seg">DF</span>를 맞대어 이어 붙이면 B, C(F), E가 한 직선 위에 놓여요',
+  '3단계 · 이렇게 생긴 △ABE는 <span class="seg">AB</span>=<span class="seg">AE</span>인 이등변삼각형! 그래서 ∠B=∠E'
+];
+function drawRHS(){
+  if (rhsStep===0) drawTrianglePair('cvRHSDemo',{tickHyp:true, tickLeg:true});
+  else if (rhsStep===1) drawJoined('cvRHSDemo', false);
+  else drawJoined('cvRHSDemo', true);
+  document.getElementById('rhsCaption').innerHTML=rhsCaptions[rhsStep];
+}
+function nextRHS(){
+  rhsStep=(rhsStep+1)%3;
+  drawRHS();
+}
+
+// ── 정답 토글 ──────────────────────────────────────────────
+function reveal(id){
+  document.getElementById(id).classList.toggle('show');
+}
+
+// ── 초기화 & 리사이즈 ─────────────────────────────────────────
+function drawAll(){
+  initHyp();
+  drawTrianglePair('cvBridge',{tickHyp:true, angleArc:true, angleDeg:'60°'});
+  drawTrianglePair('cvRHAProof',{tickHyp:true, angleArc:true});
+  drawRHS();
+  drawJoined('cvRHSProof', true);
+}
+window.addEventListener('load', drawAll);
+window.addEventListener('resize', drawAll);
+</script>
+</body>
+</html>

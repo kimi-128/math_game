@@ -1,0 +1,780 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🔲 여러 가지 사각형</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: linear-gradient(160deg, #e0f2f1 0%, #e8f5f3 55%, #e3f2fd 100%);
+  min-height: 100vh;
+  font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+  color: #263238;
+  padding: 20px;
+}
+.inner { max-width: 860px; margin: 0 auto; }
+
+header {
+  background: linear-gradient(135deg, #00897b, #00695c, #004d40);
+  color: white; border-radius: 22px;
+  padding: 34px 28px; margin: 18px 0 28px;
+  text-align: center;
+  box-shadow: 0 8px 30px rgba(0,105,92,.35);
+}
+header h1 { font-size: 1.9rem; font-weight: 900; margin-bottom: 8px; }
+header .sub { font-size: .9rem; opacity: .88; }
+header .ch {
+  display: inline-block; background: rgba(255,255,255,.2);
+  border-radius: 12px; padding: 4px 14px; font-size: .8rem; margin-top: 10px;
+}
+
+.goal-box {
+  background: white; border: 1.5px solid #80cbc4;
+  border-radius: 16px; padding: 16px 22px; margin-bottom: 26px;
+  font-size: .9rem; line-height: 1.9;
+}
+.goal-box strong { color: #00695c; font-size: .8rem; letter-spacing: .4px; display: block; margin-bottom: 5px; }
+
+.card {
+  background: white; border-radius: 20px;
+  padding: 26px 26px 22px; margin-bottom: 26px;
+  box-shadow: 0 4px 18px rgba(0,105,92,.1);
+  border: 1.5px solid #b2dfdb;
+}
+.card-head { display: flex; align-items: center; gap: 10px; margin-bottom: 18px; flex-wrap: wrap; }
+.badge {
+  color: white; font-size: .76rem; font-weight: 900;
+  padding: 4px 12px; border-radius: 10px; white-space: nowrap;
+}
+.b-teal   { background: linear-gradient(135deg,#00897b,#00695c); }
+.b-cyan   { background: linear-gradient(135deg,#00acc1,#00838f); }
+.b-indigo { background: linear-gradient(135deg,#5e35b1,#4527a0); }
+.b-amber  { background: linear-gradient(135deg,#fb8c00,#ef6c00); }
+.card-title { font-size: 1.18rem; font-weight: 900; color: #00695c; flex: 1; }
+.page-tag { font-size: .72rem; color: #b0bec5; font-weight: 600; }
+
+.ctx {
+  background: linear-gradient(135deg,#e0f2f1,#e8f5f3);
+  border: 1.5px solid #b2dfdb; border-radius: 14px;
+  padding: 14px 18px; margin-bottom: 18px;
+  font-size: .92rem; line-height: 1.8;
+}
+.ctx-icon { font-size: 1.7rem; margin-bottom: 6px; display: block; }
+.ctx .tools { font-size: .8rem; color: #00796b; margin-top: 6px; }
+
+.gwrap {
+  width: 100%; height: 290px;
+  border-radius: 14px; overflow: hidden;
+  margin-bottom: 14px; border: 2px solid #b2dfdb;
+  box-shadow: 0 2px 10px rgba(0,0,0,.05);
+  background: #f4fbfa;
+}
+canvas { display: block; }
+
+.step-row { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; flex-wrap: wrap; }
+.step-btn {
+  background: #00897b; color: white; border: none; border-radius: 20px;
+  padding: 9px 22px; font-weight: 800; font-size: .88rem;
+  cursor: pointer; transition: all .18s; box-shadow: 0 3px 10px rgba(0,137,123,.3);
+}
+.step-btn:hover { background: #00695c; }
+.step-btn.cyan { background: #00acc1; box-shadow: 0 3px 10px rgba(0,172,193,.3); }
+.step-btn.cyan:hover { background: #00838f; }
+.step-caption { font-size: .84rem; color: #00796b; font-weight: 700; }
+
+.qbox {
+  background: #e0f7fa; border-left: 4px solid #00acc1;
+  border-radius: 0 12px 12px 0;
+  padding: 12px 16px; margin-bottom: 12px;
+  font-size: .92rem; line-height: 1.78;
+}
+.qlabel { font-size: .76rem; font-weight: 900; color: #00695c; margin-bottom: 5px; letter-spacing: .4px; }
+
+.rev-btn {
+  background: white; border: 2px solid #00897b; border-radius: 20px;
+  padding: 8px 24px; color: #00897b;
+  font-weight: 700; font-size: .9rem;
+  cursor: pointer; transition: all .18s; margin-bottom: 10px;
+}
+.rev-btn:hover { background: #00897b; color: white; }
+.rev-btn.amber { border-color: #fb8c00; color: #ef6c00; }
+.rev-btn.amber:hover { background: #fb8c00; color: white; }
+
+.ans-box {
+  display: none; border: 2px solid #00897b; border-radius: 14px;
+  padding: 18px 20px; font-size: .9rem; line-height: 1.8;
+  background: #e0f2f1;
+}
+.ans-box.show { display: block; }
+.ans-box.amber { border-color: #fb8c00; background: #fff3e0; }
+
+.slist { list-style: none; counter-reset: sc; margin-bottom: 12px; }
+.slist li {
+  counter-increment: sc; padding: 9px 12px 9px 40px;
+  position: relative; border-bottom: 1px solid #b2dfdb;
+}
+.slist li::before {
+  content: counter(sc); position: absolute; left: 10px; top: 50%;
+  transform: translateY(-50%); width: 22px; height: 22px;
+  background: #00897b; color: white; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: .74rem; font-weight: 900;
+}
+.ans-box.amber .slist li { border-color: #ffe0b2; }
+.ans-box.amber .slist li::before { background: #fb8c00; }
+
+.fbox {
+  background: #e0f2f1; border: 2px solid #b2dfdb; border-radius: 12px;
+  padding: 12px 18px; margin-bottom: 18px;
+  text-align: center; font-size: 1.05rem; font-weight: 900; color: #00695c;
+  line-height: 1.7;
+}
+
+.result {
+  background: white; border-radius: 10px; padding: 11px 16px;
+  text-align: center; font-size: 1.05rem; font-weight: 900;
+  color: #00695c; margin-top: 10px; border: 1.5px solid #b2dfdb;
+}
+.result.amber { color: #ef6c00; border-color: #ffe0b2; }
+
+.note {
+  background: #fff8e1; border: 1.5px dashed #ffca28; border-radius: 12px;
+  padding: 12px 16px; margin-top: 16px; font-size: .84rem; line-height: 1.7; color: #6d4c00;
+}
+.note strong { color: #e65100; }
+
+.seg { text-decoration: overline; text-decoration-thickness: 1.4px; text-underline-offset: 0; }
+
+/* ── 여러 가지 사각형 사이의 관계 (계층 다이어그램) ── */
+.hier-box {
+  border: 2px solid #cfd8dc; border-radius: 16px;
+  padding: 14px; margin-top: 10px; background: #fafafa;
+}
+.hier-tag { font-weight: 900; font-size: .92rem; margin-bottom: 3px; }
+.hier-cond { font-size: .72rem; font-weight: 700; opacity: .82; margin-bottom: 4px; }
+.hier-row { display: flex; gap: 10px; margin-top: 10px; }
+.hier-row .hier-box { flex: 1; margin-top: 0; }
+.hier-trap { border-color: #80cbc4; background: #e8f5f3; }
+.hier-trap > .hier-tag { color: #00695c; }
+.hier-para { border-color: #4db6ac; background: #dcf3ef; }
+.hier-para > .hier-tag { color: #00695c; }
+.hier-rect { border-color: #fb8c00; background: #fff3e0; }
+.hier-rect > .hier-tag { color: #ef6c00; }
+.hier-rhom { border-color: #5e35b1; background: #ede7f6; }
+.hier-rhom > .hier-tag { color: #4527a0; }
+.hier-square { border-color: #00897b; background: #b2dfdb; max-width: 240px; margin: 12px auto 0; }
+.hier-square > .hier-tag { color: #00695c; }
+
+/* ── 정사각형 벤 다이어그램 ── */
+.venn-wrap { position: relative; height: 170px; max-width: 260px; margin: 16px auto 10px; }
+.venn-circle { position: absolute; top: 10px; width: 140px; height: 140px; border-radius: 50%; }
+.venn-rect { left: 0; background: rgba(251,140,0,.16); border: 2.5px solid #fb8c00; }
+.venn-rhom { left: 110px; background: rgba(94,53,177,.16); border: 2.5px solid #5e35b1; }
+.venn-label-rect { position: absolute; top: 28px; left: 18px; font-weight: 900; color: #ef6c00; font-size: .84rem; }
+.venn-label-rhom { position: absolute; top: 28px; right: 18px; font-weight: 900; color: #4527a0; font-size: .84rem; }
+.venn-label-sq { position: absolute; top: 76px; left: 50%; transform: translateX(-50%); font-weight: 900; color: #00695c; font-size: .76rem; text-align: center; width: 78px; }
+
+footer { text-align: center; padding: 24px; color: #90a4ae; font-size: .76rem; line-height: 1.9; }
+</style>
+</head>
+<body>
+<div class="inner">
+
+<header>
+  <h1>🔲 여러 가지 사각형</h1>
+  <div class="sub">직사각형, 마름모, 정사각형의 성질을 탐구하고 사각형 사이의 관계를 알아봐요</div>
+  <div class="ch">중학교 2학년 · Ⅳ. 도형의 성질 · 2. 사각형의 성질 02 · pp.166~176</div>
+</header>
+
+<div class="goal-box">
+  <strong>📌 학습 목표</strong>
+  • 직사각형의 뜻과 두 대각선의 성질을 이해하고 정당화할 수 있다.<br>
+  • 마름모의 뜻과 두 대각선의 성질을 이해하고 정당화할 수 있다.<br>
+  • 정사각형의 뜻과 두 대각선의 성질을 이해할 수 있다.<br>
+  • 여러 가지 사각형 사이의 관계를 이해할 수 있다.
+</div>
+
+<!-- ===== 개념: 직사각형 ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-teal">개념</span>
+    <span class="card-title">직사각형이란?</span>
+    <span class="page-tag">p.166</span>
+  </div>
+  <div class="ctx">
+    <span class="ctx-icon">📐</span>
+    네 내각의 크기가 모두 같은 사각형을 <strong>직사각형</strong>이라고 합니다. 네 내각의 크기의 합은 360°이므로 네 내각은 각각 <strong style="color:#e53935;">90°</strong>입니다.<br>
+    직사각형은 네 내각이 90°로 같으므로 두 쌍의 대각의 크기가 각각 같습니다. 즉, 직사각형은 <strong>평행사변형의 특수한 경우</strong>이므로 평행사변형의 성질(두 쌍의 대변의 길이가 각각 같다, 두 대각선이 서로 다른 것을 이등분한다)을 모두 그대로 가집니다.
+  </div>
+  <div class="gwrap"><canvas id="cvRectDef"></canvas></div>
+</div>
+
+<!-- ===== 탐구 1: 직사각형 대각선 ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-teal">탐구 1</span>
+    <span class="card-title">직사각형의 대각선은 어떤 성질이 있을까?</span>
+    <span class="page-tag">p.166</span>
+  </div>
+  <div class="ctx">
+    <span class="ctx-icon">📏</span>
+    일정한 간격으로 점이 있는 모눈종이 위에 직사각형을 그리고, 두 대각선을 그어 길이를 재어 비교해 봅시다.
+    <div class="tools">준비물: 자, 컴퍼스</div>
+  </div>
+  <div class="gwrap"><canvas id="cvRectExplore"></canvas></div>
+  <div class="step-row">
+    <button class="step-btn" onclick="nextRect()">다음 단계 보기 ▶</button>
+    <span class="step-caption" id="rectCaption">1단계 · 네 내각이 모두 직각인 직사각형 ABCD를 그려요</span>
+  </div>
+  <div class="qbox">
+    <div class="qlabel">📝 문제</div>
+    ❶ 직사각형의 두 대각선 <span class="seg">AC</span>, <span class="seg">BD</span>의 길이를 자로 재어 비교해 봅시다.<br>
+    ❷ 다른 친구가 그린 직사각형에서도 같은 결과가 나오는지 확인해 봅시다.
+  </div>
+  <button class="rev-btn" onclick="reveal('a1')">정답 보기 ▼</button>
+  <div id="a1" class="ans-box">
+    <ol class="slist">
+      <li>자로 재어 보면 <strong><span class="seg">AC</span> = <span class="seg">BD</span></strong>로 두 대각선의 길이가 같습니다.</li>
+      <li>다른 친구가 그린 직사각형에서도 두 대각선의 길이는 항상 같습니다.</li>
+    </ol>
+    <div class="result">직사각형의 두 대각선은 길이가 서로 같아요!</div>
+  </div>
+</div>
+
+<!-- ===== 증명: 직사각형 대각선 ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-indigo">증명</span>
+    <span class="card-title">직사각형의 대각선의 성질</span>
+    <span class="page-tag">p.166</span>
+  </div>
+  <div class="fbox">직사각형의 두 대각선은 길이가 서로 같고, 서로 다른 것을 이등분한다.</div>
+  <div class="gwrap"><canvas id="cvRectProof"></canvas></div>
+  <div class="ctx">
+    <span class="ctx-icon">✏️</span>
+    직사각형 ABCD에서 대각선 <span class="seg">AC</span>와 <span class="seg">BD</span>를 그으면
+  </div>
+  <ol class="slist">
+    <li>△ABC와 △DCB에서 <span class="seg">AB</span>=<span class="seg">DC</span>, ∠ABC=∠DCB=90°, <span class="seg">BC</span>는 공통이므로 △ABC≡△DCB (SAS 합동)</li>
+    <li>합동인 도형의 대응변은 같으므로 <span class="seg">AC</span>=<span class="seg">DB</span></li>
+    <li>또한 직사각형은 평행사변형이므로 두 대각선은 서로 다른 것을 이등분한다. 따라서 직사각형의 두 대각선은 길이가 서로 같고, 서로 다른 것을 이등분한다.</li>
+  </ol>
+  <div class="note">
+    <strong>참고 (거꾸로 생각하면)</strong> 두 대각선의 길이가 서로 같고 서로 다른 것을 이등분하는 사각형은 직사각형입니다.
+  </div>
+</div>
+
+<!-- ===== 배우고 익히기 (직사각형) ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-amber">문제</span>
+    <span class="card-title">배우고 익히기</span>
+    <span class="page-tag">p.167</span>
+  </div>
+  <div class="qbox">
+    <div class="qlabel">📝 문제 1</div>
+    직사각형 ABCD에서 두 대각선의 교점을 O라고 하자. <span class="seg">BD</span>=14cm, ∠BAC=40°일 때, 다음을 구하시오.<br>
+    ⑴ <span class="seg">OC</span>의 길이<br>
+    ⑵ ∠BCA의 크기
+  </div>
+  <div class="qbox">
+    <div class="qlabel">📝 문제 2</div>
+    오른쪽 그림은 직사각형 ABCD 모양의 방패연이다. <span class="seg">AC</span>=100cm일 때, 다음을 구하시오. (단, 점 O는 두 대각선의 교점)<br>
+    ⑴ <span class="seg">BD</span>의 길이<br>
+    ⑵ <span class="seg">OC</span>의 길이
+  </div>
+  <button class="rev-btn amber" onclick="reveal('a2')">정답 보기 ▼</button>
+  <div id="a2" class="ans-box amber">
+    <ol class="slist">
+      <li><strong>문제 1 ⑴</strong> 직사각형의 두 대각선은 길이가 같으므로 <span class="seg">AC</span>=<span class="seg">BD</span>=14cm, <span class="seg">OC</span> = <span class="seg">AC</span>÷2 = 7cm</li>
+      <li><strong>문제 1 ⑵</strong> △ABC에서 ∠ABC=90°(직사각형), ∠BAC=40°이므로 ∠BCA=180°−90°−40°=50°</li>
+      <li><strong>문제 2 ⑴</strong> 직사각형의 두 대각선의 길이는 같으므로 <span class="seg">BD</span>=<span class="seg">AC</span>=100cm</li>
+      <li><strong>문제 2 ⑵</strong> 두 대각선은 서로 다른 것을 이등분하므로 <span class="seg">OC</span> = 100 ÷ 2 = 50cm</li>
+    </ol>
+    <div class="result amber">⑴ 7cm ⑵ 50°  |  ⑴ 100cm ⑵ 50cm</div>
+  </div>
+</div>
+
+<!-- ===== 개념: 마름모 ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-teal">개념</span>
+    <span class="card-title">마름모란?</span>
+    <span class="page-tag">p.168</span>
+  </div>
+  <div class="ctx">
+    <span class="ctx-icon">💎</span>
+    네 변의 길이가 모두 같은 사각형을 <strong>마름모</strong>라고 합니다.<br>
+    마름모는 네 변의 길이가 모두 같으므로 두 쌍의 대변의 길이가 각각 같습니다. 즉, 마름모도 <strong>평행사변형의 특수한 경우</strong>이므로 평행사변형의 성질(두 쌍의 대각의 크기가 각각 같다, 두 대각선이 서로 다른 것을 이등분한다)을 모두 그대로 가집니다.
+  </div>
+  <div class="gwrap"><canvas id="cvRhombusDef"></canvas></div>
+</div>
+
+<!-- ===== 탐구 2: 마름모 대각선 ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-cyan">탐구 2</span>
+    <span class="card-title">마름모의 대각선은 어떤 성질이 있을까?</span>
+    <span class="page-tag">p.168</span>
+  </div>
+  <div class="ctx">
+    <span class="ctx-icon">✂️</span>
+    색종이를 반으로 접고 접은 선 위에 두 점 B, C를 표시한 다음, B와 C를 중심으로 반지름의 길이가 같은 원의 일부를 그려 교점 A를 표시하고, <span class="seg">AB</span>, <span class="seg">AC</span>를 따라 잘라 마름모를 만들어 봅시다.
+    <div class="tools">준비물: 색종이, 가위, 자, 컴퍼스, 각도기</div>
+  </div>
+  <div class="gwrap"><canvas id="cvRhombusExplore"></canvas></div>
+  <div class="step-row">
+    <button class="step-btn cyan" onclick="nextRhombus()">다음 단계 보기 ▶</button>
+    <span class="step-caption" id="rhombusCaption">1단계 · 네 변의 길이가 모두 같은 마름모 ABCD를 만들어요</span>
+  </div>
+  <div class="qbox">
+    <div class="qlabel">📝 문제</div>
+    ❶ 마름모 모양의 종이를 두 대각선을 따라 접으면 어떻게 겹쳐질까요?<br>
+    ❷ 두 대각선이 만나서 이루는 각의 크기는 몇 도일까요?
+  </div>
+  <button class="rev-btn" onclick="reveal('a3')">정답 보기 ▼</button>
+  <div id="a3" class="ans-box">
+    <ol class="slist">
+      <li>두 대각선을 따라 접으면 네 삼각형이 완전히 포개어집니다.</li>
+      <li>두 대각선이 만나서 생기는 각의 크기는 모두 <strong>90°</strong>입니다.</li>
+    </ol>
+    <div class="result">마름모의 두 대각선은 서로 다른 것을 수직이등분해요!</div>
+  </div>
+</div>
+
+<!-- ===== 증명: 마름모 대각선 ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-indigo">증명</span>
+    <span class="card-title">마름모의 대각선의 성질</span>
+    <span class="page-tag">p.168</span>
+  </div>
+  <div class="fbox">마름모의 두 대각선은 서로 다른 것을 수직이등분한다.</div>
+  <div class="gwrap"><canvas id="cvRhombusProof"></canvas></div>
+  <div class="ctx">
+    <span class="ctx-icon">✏️</span>
+    마름모 ABCD에서 두 대각선 <span class="seg">AC</span>와 <span class="seg">BD</span>의 교점을 O라고 하면
+  </div>
+  <ol class="slist">
+    <li>마름모는 평행사변형이므로 두 대각선은 서로 다른 것을 이등분한다. 즉 <span class="seg">OB</span>=<span class="seg">OD</span></li>
+    <li>△ABO와 △ADO에서 <span class="seg">OB</span>=<span class="seg">OD</span>, <span class="seg">AB</span>=<span class="seg">AD</span>, <span class="seg">AO</span>는 공통이므로 △ABO≡△ADO (SSS 합동)</li>
+    <li>합동인 도형의 대응각은 같으므로 ∠AOB=∠AOD이고, ∠AOB+∠AOD=180°이므로 ∠AOB=∠AOD=90°, 즉 <span class="seg">AC</span>⊥<span class="seg">BD</span></li>
+  </ol>
+  <div class="note">
+    <strong>참고 (거꾸로 생각하면)</strong> 두 대각선이 서로 다른 것을 수직이등분하는 사각형은 마름모입니다.
+  </div>
+</div>
+
+<!-- ===== 배우고 익히기 (마름모) ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-amber">문제</span>
+    <span class="card-title">배우고 익히기</span>
+    <span class="page-tag">p.169</span>
+  </div>
+  <div class="qbox">
+    <div class="qlabel">📝 문제 1</div>
+    마름모 ABCD에서 두 대각선의 교점을 O라고 하자. ∠BAC=50°일 때, 다음을 구하시오.<br>
+    ⑴ ∠AOB의 크기<br>
+    ⑵ ∠BCA의 크기
+  </div>
+  <div class="qbox">
+    <div class="qlabel">📝 문제 2</div>
+    한 변의 길이가 4cm인 마름모 ABCD에서 두 대각선의 길이가 각각 6cm, 8cm일 때, 다음을 구하시오.<br>
+    ⑴ 마름모 ABCD의 둘레의 길이<br>
+    ⑵ 마름모 ABCD의 넓이
+  </div>
+  <button class="rev-btn amber" onclick="reveal('a4')">정답 보기 ▼</button>
+  <div id="a4" class="ans-box amber">
+    <ol class="slist">
+      <li><strong>문제 1 ⑴</strong> 마름모의 두 대각선은 서로 수직이므로 ∠AOB=90°</li>
+      <li><strong>문제 1 ⑵</strong> 마름모는 네 변의 길이가 같으므로 <span class="seg">AB</span>=<span class="seg">CB</span>, 즉 △ABC는 이등변삼각형이다. 따라서 ∠BCA=∠BAC=50°</li>
+      <li><strong>문제 2 ⑴</strong> 마름모는 네 변의 길이가 모두 같으므로 둘레의 길이 = 4×4 = 16cm</li>
+      <li><strong>문제 2 ⑵</strong> 마름모의 넓이 = (두 대각선의 길이의 곱)÷2 = (6×8)÷2 = 24cm²</li>
+    </ol>
+    <div class="result amber">⑴ 90° ⑵ 50°  |  ⑴ 16cm ⑵ 24cm²</div>
+  </div>
+</div>
+
+<!-- ===== 개념: 정사각형 ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-teal">개념</span>
+    <span class="card-title">정사각형이란?</span>
+    <span class="page-tag">p.170</span>
+  </div>
+  <div class="ctx">
+    <span class="ctx-icon">🔳</span>
+    네 각의 크기가 모두 같고, 네 변의 길이가 모두 같은 사각형을 <strong>정사각형</strong>이라고 합니다.<br>
+    정사각형은 네 내각의 크기가 모두 같으므로 <strong>직사각형</strong>이고, 네 변의 길이가 모두 같으므로 <strong>마름모</strong>입니다. 즉 정사각형은 직사각형이면서 동시에 마름모입니다.
+  </div>
+  <div class="venn-wrap">
+    <div class="venn-circle venn-rect"></div>
+    <div class="venn-circle venn-rhom"></div>
+    <div class="venn-label-rect">직사각형</div>
+    <div class="venn-label-rhom">마름모</div>
+    <div class="venn-label-sq">정사각형</div>
+  </div>
+  <div class="gwrap"><canvas id="cvSquare"></canvas></div>
+  <div class="fbox">정사각형의 두 대각선은 길이가 서로 같고, 서로 다른 것을 수직이등분한다.</div>
+  <div class="note">
+    <strong>헷갈리기 쉬운 부분</strong> 평행사변형은 옆으로 기울어진 모양, 직사각형은 가로로 긴 모양만 떠올려 정사각형은 직사각형이 아니라고 생각하거나 직사각형은 평행사변형이 아니라고 생각하기 쉽습니다. 모양이 아니라 사각형의 <strong>뜻과 성질</strong>로 판단해야 합니다.
+  </div>
+</div>
+
+<!-- ===== 개념: 여러 가지 사각형 사이의 관계 ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-teal">개념</span>
+    <span class="card-title">여러 가지 사각형 사이의 관계</span>
+    <span class="page-tag">pp.172~176</span>
+  </div>
+  <div class="ctx">
+    <span class="ctx-icon">🗂️</span>
+    한 쌍의 대변이 평행한 사각형은 사다리꼴이고, 사다리꼴 중에서 다른 한 쌍의 대변도 평행한 사각형은 평행사변형입니다. 또 평행사변형 중에서 한 내각이 직각인 사각형은 직사각형, 이웃하는 두 변의 길이가 같은 사각형은 마름모이고, 직사각형이면서 동시에 마름모인 사각형은 정사각형입니다.
+  </div>
+  <div class="hier-box">
+    <div class="hier-tag">사각형</div>
+    <div class="hier-box hier-trap">
+      <div class="hier-tag">사다리꼴</div>
+      <div class="hier-cond">↳ 한 쌍의 대변이 평행하다</div>
+      <div class="hier-box hier-para">
+        <div class="hier-tag">평행사변형</div>
+        <div class="hier-cond">↳ 다른 한 쌍의 대변도 평행하다</div>
+        <div class="hier-row">
+          <div class="hier-box hier-rect">
+            <div class="hier-tag">직사각형</div>
+            <div class="hier-cond">↳ 한 내각이 직각이다</div>
+          </div>
+          <div class="hier-box hier-rhom">
+            <div class="hier-tag">마름모</div>
+            <div class="hier-cond">↳ 이웃하는 두 변의 길이가 같다</div>
+          </div>
+        </div>
+        <div class="hier-box hier-square">
+          <div class="hier-tag">정사각형</div>
+          <div class="hier-cond">직사각형이면서 마름모</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 종합 문제: O/X 판별 ===== -->
+<div class="card">
+  <div class="card-head">
+    <span class="badge b-amber">종합 문제</span>
+    <span class="card-title">O/X로 판별하기</span>
+    <span class="page-tag">pp.166~176</span>
+  </div>
+  <div class="qbox">
+    <div class="qlabel">📝 문제</div>
+    다음 문장이 옳으면 O, 옳지 않으면 X를 표시하시오.<br>
+    ⑴ 평행사변형은 사다리꼴이다. ( )<br>
+    ⑵ 직사각형은 마름모이다. ( )<br>
+    ⑶ 정사각형은 직사각형이면서 마름모이다. ( )<br>
+    ⑷ 마름모의 두 대각선의 길이는 항상 같다. ( )<br>
+    ⑸ 두 대각선이 서로 수직인 평행사변형은 마름모이다. ( )<br>
+    ⑹ 두 대각선의 길이가 서로 같고 서로 다른 것을 이등분하는 사각형은 직사각형이다. ( )
+  </div>
+  <button class="rev-btn amber" onclick="reveal('a5')">정답 보기 ▼</button>
+  <div id="a5" class="ans-box amber">
+    <ol class="slist">
+      <li><strong>⑴ O</strong> 평행사변형은 두 쌍의 대변이 평행하므로, 한 쌍의 대변만 평행해도 되는 사다리꼴의 조건을 만족한다.</li>
+      <li><strong>⑵ X</strong> 직사각형은 네 각의 크기가 같을 뿐, 네 변의 길이가 같다는 조건은 없다. (네 변까지 같으면 정사각형)</li>
+      <li><strong>⑶ O</strong> 정사각형은 네 내각의 크기가 모두 같으므로 직사각형이고, 네 변의 길이가 모두 같으므로 마름모이다.</li>
+      <li><strong>⑷ X</strong> 마름모는 두 대각선이 서로 수직이등분할 뿐, 길이가 같다는 보장은 없다. (길이까지 같으면 정사각형)</li>
+      <li><strong>⑸ O</strong> 두 대각선이 서로 수직인 평행사변형은 이웃하는 두 변의 길이가 같아지므로 마름모이다.</li>
+      <li><strong>⑹ O</strong> 두 대각선의 길이가 서로 같고 서로 다른 것을 이등분하는 사각형은 직사각형이 된다.</li>
+    </ol>
+    <div class="result amber">⑴ O ⑵ X ⑶ O ⑷ X ⑸ O ⑹ O</div>
+  </div>
+</div>
+
+<footer>
+  중학교 2학년 수학 · Ⅳ. 도형의 성질 · 2. 사각형의 성질 02. 여러 가지 사각형 · 교과서 pp.166~176
+</footer>
+</div>
+
+<script>
+// ── 기하 드로잉 유틸 (공용) ─────────────────────────────────────
+function mid(p,q){ return [(p[0]+q[0])/2, (p[1]+q[1])/2]; }
+
+function drawSeg(ctx,p,q,color,w,dash){
+  ctx.strokeStyle=color; ctx.lineWidth=w; ctx.setLineDash(dash||[]);
+  ctx.beginPath(); ctx.moveTo(p[0],p[1]); ctx.lineTo(q[0],q[1]); ctx.stroke();
+  ctx.setLineDash([]);
+}
+
+function drawLabel(ctx,text,p,dx,dy,color,size){
+  ctx.fillStyle=color||'#37474f';
+  ctx.font=(size||13)+'px Malgun Gothic,sans-serif';
+  ctx.textAlign='center'; ctx.textBaseline='middle';
+  ctx.fillText(text,p[0]+dx,p[1]+dy);
+}
+
+function segTick(ctx,p,q,n,color){
+  var mx=(p[0]+q[0])/2, my=(p[1]+q[1])/2;
+  var dx=q[0]-p[0], dy=q[1]-p[1], len=Math.hypot(dx,dy)||1;
+  var ux=dx/len, uy=dy/len, nx=-uy, ny=ux;
+  ctx.strokeStyle=color; ctx.lineWidth=2.4;
+  var gap=7;
+  for (var i=0;i<n;i++){
+    var off=(i-(n-1)/2)*gap;
+    var cx=mx+ux*off, cy=my+uy*off;
+    ctx.beginPath();
+    ctx.moveTo(cx-nx*7, cy-ny*7);
+    ctx.lineTo(cx+nx*7, cy+ny*7);
+    ctx.stroke();
+  }
+}
+
+function angleArc(ctx,v,pA,pB,r,color){
+  var a1=Math.atan2(pA[1]-v[1], pA[0]-v[0]);
+  var a2=Math.atan2(pB[1]-v[1], pB[0]-v[0]);
+  var diff=a2-a1;
+  while(diff<=-Math.PI) diff+=2*Math.PI;
+  while(diff>Math.PI) diff-=2*Math.PI;
+  ctx.strokeStyle=color; ctx.lineWidth=2.2;
+  ctx.beginPath();
+  ctx.arc(v[0],v[1],r,a1,a1+diff,diff<0);
+  ctx.stroke();
+}
+
+function rightMark(ctx,v,toward1,toward2,size,color){
+  var d1=[toward1[0]-v[0], toward1[1]-v[1]], l1=Math.hypot(d1[0],d1[1])||1;
+  var d2=[toward2[0]-v[0], toward2[1]-v[1]], l2=Math.hypot(d2[0],d2[1])||1;
+  var u1=[d1[0]/l1,d1[1]/l1], u2=[d2[0]/l2,d2[1]/l2];
+  var p1=[v[0]+u1[0]*size, v[1]+u1[1]*size];
+  var p3=[p1[0]+u2[0]*size, p1[1]+u2[1]*size];
+  var p2=[v[0]+u2[0]*size, v[1]+u2[1]*size];
+  ctx.strokeStyle=color; ctx.lineWidth=1.6;
+  ctx.beginPath();
+  ctx.moveTo(p1[0],p1[1]); ctx.lineTo(p3[0],p3[1]); ctx.lineTo(p2[0],p2[1]);
+  ctx.stroke();
+}
+
+function labelOffset(v,O,dist){
+  var dx=v[0]-O[0], dy=v[1]-O[1], len=Math.hypot(dx,dy)||1;
+  return [dx/len*dist, dy/len*dist];
+}
+
+// ── 사각형 배치 ────────────────────────────────────────────────
+function rectLayout(W,H){
+  var rw=Math.min(W*0.6,300), rh=Math.min(H*0.46,150);
+  var cx=W/2, cy=H/2;
+  return {
+    A:[cx-rw/2,cy-rh/2], B:[cx+rw/2,cy-rh/2],
+    C:[cx+rw/2,cy+rh/2], D:[cx-rw/2,cy+rh/2],
+    O:[cx,cy]
+  };
+}
+function rhombusLayout(W,H){
+  var dh=Math.min(W*0.24,105), dv=Math.min(H*0.4,120);
+  var cx=W/2, cy=H/2;
+  return {
+    A:[cx,cy-dv], B:[cx+dh,cy], C:[cx,cy+dv], D:[cx-dh,cy],
+    O:[cx,cy]
+  };
+}
+function squareLayout(W,H){
+  var s=Math.min(W*0.4,180,H*0.56);
+  var cx=W/2, cy=H/2;
+  return {
+    A:[cx-s/2,cy-s/2], B:[cx+s/2,cy-s/2],
+    C:[cx+s/2,cy+s/2], D:[cx-s/2,cy+s/2],
+    O:[cx,cy]
+  };
+}
+
+// ── 공용 사각형 렌더러 ──────────────────────────────────────────
+function drawQuadShape(id,layoutFn,cfg){
+  var canvas=document.getElementById(id); if(!canvas) return;
+  var wrap=canvas.parentElement;
+  canvas.width=wrap.clientWidth||640; canvas.height=wrap.clientHeight||290;
+  var ctx=canvas.getContext('2d');
+  var W=canvas.width, H=canvas.height;
+
+  ctx.fillStyle='#f4fbfa'; ctx.fillRect(0,0,W,H);
+
+  var Q=layoutFn(W,H);
+  var A=Q.A,B=Q.B,C=Q.C,D=Q.D,O=Q.O;
+  var pts={A:A,B:B,C:C,D:D,O:O};
+
+  drawSeg(ctx,A,B,'#455a64',2.4);
+  drawSeg(ctx,B,C,'#455a64',2.4);
+  drawSeg(ctx,C,D,'#455a64',2.4);
+  drawSeg(ctx,D,A,'#455a64',2.4);
+
+  (cfg.highlight||[]).forEach(function(h){
+    drawSeg(ctx,pts[h[0]],pts[h[1]],h[2]||'#5e35b1',3.6);
+  });
+
+  if (cfg.diagAC) drawSeg(ctx,A,C,cfg.diagColor||'#00897b',2,cfg.diagDash?[5,4]:[]);
+  if (cfg.diagBD) drawSeg(ctx,B,D,cfg.diagColor||'#00897b',2,cfg.diagDash?[5,4]:[]);
+
+  (cfg.ticks||[]).forEach(function(t){
+    segTick(ctx,pts[t.a],pts[t.b],t.n||1,t.color||'#e53935');
+  });
+
+  var neighborMap={A:['D','B'],B:['A','C'],C:['B','D'],D:['C','A']};
+  (cfg.rightCorners||[]).forEach(function(k){
+    var nb=neighborMap[k];
+    rightMark(ctx,pts[k],pts[nb[0]],pts[nb[1]],10,'#37474f');
+  });
+  if (cfg.rightAtO) rightMark(ctx,O,A,B,9,'#37474f');
+
+  ['A','B','C','D'].forEach(function(k){
+    var off=labelOffset(pts[k],O,17);
+    drawLabel(ctx,k,pts[k],off[0],off[1],'#263238',15);
+  });
+  if (cfg.showO) drawLabel(ctx,'O',O,-13,-11,'#00695c',13);
+
+  (cfg.extraLabels||[]).forEach(function(l){
+    drawLabel(ctx,l.t,l.p,l.dx,l.dy,l.color,l.size);
+  });
+}
+
+// ── 직사각형: 개념 ──────────────────────────────────────────────
+function initRectDef(){
+  drawQuadShape('cvRectDef', rectLayout, {
+    rightCorners:['A','B','C','D']
+  });
+}
+
+// ── 직사각형: 탐구 1 (단계별) ────────────────────────────────────
+var rectStep=0;
+var rectCaptions=[
+  '1단계 · 네 내각이 모두 직각인 직사각형 ABCD를 그려요',
+  '2단계 · 대각선 <span class="seg">AC</span>를 그어요',
+  '3단계 · 대각선 <span class="seg">BD</span>도 그으면? 두 대각선의 길이가 같아요!'
+];
+function drawRectExplore(){
+  var cfg={ rightCorners:['A','B','C','D'] };
+  if (rectStep>=1) cfg.diagAC=true;
+  if (rectStep>=2){
+    cfg.diagBD=true; cfg.showO=true;
+    cfg.ticks=[
+      {a:'A',b:'O',n:1,color:'#fb8c00'},
+      {a:'O',b:'B',n:1,color:'#fb8c00'},
+      {a:'O',b:'C',n:1,color:'#fb8c00'},
+      {a:'O',b:'D',n:1,color:'#fb8c00'}
+    ];
+  }
+  drawQuadShape('cvRectExplore', rectLayout, cfg);
+  document.getElementById('rectCaption').innerHTML=rectCaptions[rectStep];
+}
+function nextRect(){
+  rectStep=(rectStep+1)%3;
+  drawRectExplore();
+}
+
+// ── 직사각형: 증명 (완성된 상태) ──────────────────────────────────
+function initRectProof(){
+  drawQuadShape('cvRectProof', rectLayout, {
+    diagAC:true, diagBD:true, showO:true,
+    rightCorners:['B','C'],
+    highlight:[['A','B','#e53935'],['D','C','#e53935'],['B','C','#1e88e5']],
+    ticks:[{a:'A',b:'B',n:1,color:'#e53935'},{a:'D',b:'C',n:1,color:'#e53935'}]
+  });
+}
+
+// ── 마름모: 개념 ────────────────────────────────────────────────
+function initRhombusDef(){
+  drawQuadShape('cvRhombusDef', rhombusLayout, {
+    ticks:[
+      {a:'A',b:'B',n:1,color:'#e53935'},
+      {a:'B',b:'C',n:1,color:'#e53935'},
+      {a:'C',b:'D',n:1,color:'#e53935'},
+      {a:'D',b:'A',n:1,color:'#e53935'}
+    ]
+  });
+}
+
+// ── 마름모: 탐구 2 (단계별) ───────────────────────────────────────
+var rhombusStep=0;
+var rhombusCaptions=[
+  '1단계 · 네 변의 길이가 모두 같은 마름모 ABCD를 만들어요',
+  '2단계 · 두 대각선 <span class="seg">AC</span>, <span class="seg">BD</span>를 그어요',
+  '3단계 · 두 대각선은 서로 수직! 서로 다른 것을 이등분해요'
+];
+function drawRhombusExplore(){
+  var cfg={
+    ticks:[
+      {a:'A',b:'B',n:1,color:'#e53935'},
+      {a:'B',b:'C',n:1,color:'#e53935'},
+      {a:'C',b:'D',n:1,color:'#e53935'},
+      {a:'D',b:'A',n:1,color:'#e53935'}
+    ]
+  };
+  if (rhombusStep>=1){ cfg.diagAC=true; cfg.diagBD=true; cfg.showO=true; }
+  if (rhombusStep>=2){
+    cfg.rightAtO=true;
+    cfg.ticks=cfg.ticks.concat([
+      {a:'A',b:'O',n:1,color:'#fb8c00'},
+      {a:'O',b:'C',n:1,color:'#fb8c00'},
+      {a:'B',b:'O',n:2,color:'#fb8c00'},
+      {a:'O',b:'D',n:2,color:'#fb8c00'}
+    ]);
+  }
+  drawQuadShape('cvRhombusExplore', rhombusLayout, cfg);
+  document.getElementById('rhombusCaption').innerHTML=rhombusCaptions[rhombusStep];
+}
+function nextRhombus(){
+  rhombusStep=(rhombusStep+1)%3;
+  drawRhombusExplore();
+}
+
+// ── 마름모: 증명 (완성된 상태) ────────────────────────────────────
+function initRhombusProof(){
+  drawQuadShape('cvRhombusProof', rhombusLayout, {
+    diagAC:true, diagBD:true, showO:true, rightAtO:true,
+    highlight:[['A','B','#e53935'],['A','D','#e53935'],['B','O','#fb8c00'],['O','D','#fb8c00'],['A','O','#1e88e5']],
+    ticks:[
+      {a:'A',b:'B',n:1,color:'#e53935'},
+      {a:'A',b:'D',n:1,color:'#e53935'},
+      {a:'B',b:'O',n:2,color:'#fb8c00'},
+      {a:'O',b:'D',n:2,color:'#fb8c00'}
+    ]
+  });
+}
+
+// ── 정사각형 ────────────────────────────────────────────────────
+function initSquare(){
+  drawQuadShape('cvSquare', squareLayout, {
+    diagAC:true, diagBD:true, showO:true, rightAtO:true,
+    rightCorners:['A','B','C','D'],
+    ticks:[
+      {a:'A',b:'B',n:1,color:'#e53935'},
+      {a:'B',b:'C',n:1,color:'#e53935'},
+      {a:'C',b:'D',n:1,color:'#e53935'},
+      {a:'D',b:'A',n:1,color:'#e53935'},
+      {a:'A',b:'O',n:2,color:'#fb8c00'},
+      {a:'O',b:'B',n:2,color:'#fb8c00'},
+      {a:'O',b:'C',n:2,color:'#fb8c00'},
+      {a:'O',b:'D',n:2,color:'#fb8c00'}
+    ]
+  });
+}
+
+// ── 정답 토글 ──────────────────────────────────────────────────
+function reveal(id){
+  document.getElementById(id).classList.toggle('show');
+}
+
+// ── 초기화 & 리사이즈 ────────────────────────────────────────────
+function drawAll(){
+  initRectDef();
+  drawRectExplore();
+  initRectProof();
+  initRhombusDef();
+  drawRhombusExplore();
+  initRhombusProof();
+  initSquare();
+}
+window.addEventListener('load', drawAll);
+window.addEventListener('resize', drawAll);
+</script>
+</body>
+</html>
