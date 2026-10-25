@@ -1,0 +1,395 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>피타고라스의 비밀 금고</title>
+<style>
+:root{color-scheme:light;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0;font:14px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+img{max-width:100%}
+[hidden]{display:none!important}
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Mono:wght@500;600&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* Layout: one vault console column — start, mission (brief → keypad), escape. Deliberately single dark theme: a night-blue vault with brass fittings. */
+:root{
+  --bg:#0E1626; --panel:#16223A; --panel2:#1C2B48; --line:#2B3C5E; --ink:#EEF1F7; --muted:#A3B0C8;
+  --brass:#E2B65A; --brass-ink:#1B1505; --ok:#5ED497; --bad:#FF8A7A;
+  --pa:#F0A04A; --pb:#46B887; --pc:#7D9CF4;
+  --q0:#EE6B5E; --q1:#F3CC4E; --q2:#4DB884; --q3:#6E95EA; --q4:#AE80DA;
+  --f-display:"Do Hyeon","IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --f-num:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+  color-scheme:dark;
+}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6}
+.wrap{max-width:760px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 40px;display:flex;flex-direction:column;gap:16px}
+h1,h2{font-family:var(--f-display);font-weight:400;margin:0;text-wrap:balance;line-height:1.15}
+h1{font-size:clamp(34px,8vw,52px)}
+h2{font-size:clamp(26px,6vw,34px)}
+p{margin:0}
+.eyebrow{font-size:13px;letter-spacing:.06em;color:var(--brass)}
+.muted{color:var(--muted)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:12px;min-width:0}
+button{font:inherit;cursor:pointer}
+button:focus-visible{outline:3px solid var(--brass);outline-offset:2px}
+.btn{border:0;border-radius:12px;padding:12px 20px;font-weight:700;min-height:48px}
+.btn-brass{background:var(--brass);color:var(--brass-ink)}
+.btn-brass:disabled{opacity:.4;cursor:not-allowed}
+.btn-ghost{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.hero{display:flex;gap:18px;align-items:center}
+.hero svg{flex:0 0 auto;width:96px;height:96px}
+.story{font-size:17px;max-width:60ch}
+.rules{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px;color:var(--muted)}
+.rules b{color:var(--ink)}
+.teams{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+.teams button{background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:12px;min-height:52px;font-family:var(--f-display);font-size:20px}
+.teams button[aria-pressed="true"]{background:var(--brass);color:var(--brass-ink);border-color:var(--brass)}
+/* mission bar */
+.bar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.team-tag{font-family:var(--f-display);font-size:20px}
+.locks{display:flex;gap:6px}
+.lock{width:34px;height:34px;border-radius:10px;border:1px solid var(--line);display:grid;place-items:center;color:var(--muted);background:var(--panel)}
+.lock.done{background:var(--brass);color:var(--brass-ink);border-color:var(--brass)}
+.lock.now{border-color:var(--brass);color:var(--brass)}
+.lock svg{width:18px;height:18px}
+.timer{font-family:var(--f-num);font-variant-numeric:tabular-nums;font-size:clamp(28px,7vw,40px);font-weight:600;letter-spacing:.02em}
+.timer.over{color:var(--bad)}
+.timer-row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.over-note{color:var(--bad);font-weight:700;font-size:14px}
+.chip{display:inline-block;background:var(--panel2);border:1px solid var(--line);border-radius:999px;padding:2px 12px;font-size:14px;color:var(--muted)}
+.steps{margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px}
+.steps li::marker{color:var(--brass);font-weight:700}
+/* keypad */
+.slots{display:flex;gap:10px;justify-content:center}
+.slot{width:clamp(48px,13vw,64px);height:clamp(60px,16vw,78px);border-radius:12px;background:#0A1120;border:2px solid var(--line);display:grid;place-items:center;font-family:var(--f-num);font-size:clamp(30px,8vw,40px);font-weight:600;font-variant-numeric:tabular-nums}
+.slot.filled{border-color:var(--brass)}
+.slots.shake{animation:shake .4s}
+.slots.wrong .slot{border-color:var(--bad)}
+@keyframes shake{20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+.pad{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;max-width:360px;width:100%;margin:0 auto}
+.pad button{background:var(--panel2);border:1px solid var(--line);color:var(--ink);border-radius:12px;min-height:58px;font-family:var(--f-num);font-size:24px;font-weight:600}
+.pad button:active{background:var(--line)}
+.pad .fn{font-family:var(--f-body);font-size:15px;color:var(--muted)}
+.feedback{text-align:center;min-height:1.6em;font-weight:700}
+.feedback.bad{color:var(--bad)}
+.hint-box{border:1px dashed var(--brass);border-radius:12px;padding:12px 14px;color:var(--ink)}
+.hint-row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+/* unlocked */
+.unlocked{border-color:var(--brass);text-align:center;align-items:center}
+.unlocked .big{font-family:var(--f-display);font-size:clamp(40px,10vw,60px);color:var(--brass)}
+.eqline{font-family:var(--f-num);font-size:clamp(20px,5vw,26px);font-variant-numeric:tabular-nums}
+.next{background:var(--panel2);border-radius:12px;padding:12px 16px;font-weight:700}
+/* win */
+.recap{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.recap div{background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;min-width:0}
+.recap span{font-size:13px;color:var(--muted)}
+.recap b{font-family:var(--f-num);font-size:18px;font-variant-numeric:tabular-nums}
+.foot{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;align-items:center;font-size:14px}
+.foot button{background:transparent;border:1px solid var(--line);color:var(--muted);border-radius:999px;padding:6px 14px}
+@media (prefers-reduced-motion: reduce){.slots.shake{animation:none}}
+@media (max-width:480px){.hero svg{width:72px;height:72px}.teams{grid-template-columns:repeat(4,minmax(0,1fr))}}
+</style>
+
+</head>
+<body>
+<main class="wrap">
+  <!-- START -->
+  <section id="screen-start" style="display:flex;flex-direction:column;gap:16px">
+    <div class="hero">
+      <svg viewBox="0 0 100 100" aria-hidden="true">
+        <rect x="18" y="58" width="34" height="34" fill="none" stroke="#E2B65A" stroke-width="2.5"/>
+        <rect x="52" y="22" width="36" height="36" fill="none" stroke="#E2B65A" stroke-width="2.5" opacity=".6"/>
+        <polygon points="18,58 52,58 52,22" fill="#E2B65A" opacity=".25" stroke="#E2B65A" stroke-width="2.5" stroke-linejoin="round"/>
+        <circle cx="35" cy="75" r="6" fill="none" stroke="#E2B65A" stroke-width="2.5"/>
+        <line x1="35" y1="81" x2="35" y2="87" stroke="#E2B65A" stroke-width="2.5"/>
+      </svg>
+      <div style="display:flex;flex-direction:column;gap:4px;min-width:0">
+        <p class="eyebrow">중학교 2학년 · 피타고라스의 정리</p>
+        <h1>피타고라스의 비밀 금고</h1>
+      </div>
+    </div>
+    <p class="story">피타고라스 학파가 비밀 금고에 마지막 수수께끼를 숨겼습니다. 네 개의 자물쇠를 차례로 풀어야 금고가 열립니다. 비밀번호는 모두 조각 퍼즐 속에 숨어 있습니다.</p>
+    <div class="panel">
+      <ul class="rules">
+        <li>미션은 <b>4개</b>예요. 미션마다 7분 · 7분 · 7분 · 8분을 목표로 하되, 비밀번호를 맞히면 바로 다음 미션으로 넘어가요.</li>
+        <li>모둠원 <b>두 명씩</b> 짝을 지어 퍼즐을 하나씩 맡아요.</li>
+        <li>퍼즐판과 조각 종이는 처음에 모두 받아요. 조각은 <b>미리 잘라도 되지만</b>, 맞추기와 비밀번호는 미션 순서대로 해요.</li>
+        <li>자른 조각은 그 퍼즐판 위에 올려 두세요. 섞이면 찾기 어려워요.</li>
+        <li>퍼즐을 완성하면 손을 들어 선생님께 코드 카드를 받아요.</li>
+        <li>힌트는 모둠당 <b>딱 한 번</b> 쓸 수 있어요.</li>
+      </ul>
+    </div>
+    <div class="panel">
+      <p style="font-weight:700">우리 모둠을 골라 주세요</p>
+      <div class="teams" id="teams"></div>
+      <button class="btn btn-brass" id="startBtn" type="button" disabled>모둠을 고르면 시작할 수 있어요</button>
+    </div>
+  </section>
+
+  <!-- MISSION -->
+  <section id="screen-mission" hidden style="display:flex;flex-direction:column;gap:16px">
+    <div class="bar">
+      <span class="team-tag" id="teamTag"></span>
+      <div class="locks" id="locks" aria-label="미션 진행"></div>
+    </div>
+    <div class="panel">
+      <div class="timer-row">
+        <div style="display:flex;flex-direction:column;gap:2px;min-width:0">
+          <p class="eyebrow" id="mEyebrow"></p>
+          <h2 id="mTitle"></h2>
+        </div>
+        <div style="text-align:right">
+          <div class="timer" id="timer">08:00</div>
+          <div class="over-note" id="overNote" hidden>시간 초과 · 선생님께 구조 카드를 받으세요</div>
+        </div>
+      </div>
+      <p><span class="chip" id="mChip"></span></p>
+      <p class="muted" id="mIntro"></p>
+      <ol class="steps" id="mSteps"></ol>
+    </div>
+
+    <div class="panel" id="codePanel">
+      <p style="font-weight:700;text-align:center" id="codeLabel">비밀번호 3자리</p>
+      <div class="slots" id="slots" aria-live="polite"></div>
+      <p class="feedback" id="feedback" aria-live="polite"></p>
+      <div class="pad" id="pad"></div>
+    </div>
+
+    <div class="panel unlocked" id="unlockPanel" hidden>
+      <p class="big">열렸다!</p>
+      <p class="eqline" id="uEq"></p>
+      <p class="muted" id="uWhy"></p>
+      <p class="next" id="uNext"></p>
+      <button class="btn btn-brass" id="nextBtn" type="button">다음 미션 시작</button>
+    </div>
+
+    <div class="panel" id="hintPanel">
+      <div class="hint-row">
+        <button class="btn btn-ghost" id="hintBtn" type="button">힌트 카드 쓰기</button>
+        <span class="muted" id="hintNote" style="font-size:14px">모둠 전체에서 한 번만 쓸 수 있어요</span>
+      </div>
+      <div class="hint-row" id="hintConfirm" hidden>
+        <span style="font-weight:700">정말 지금 쓸까요?</span>
+        <button class="btn btn-brass" id="hintYes" type="button">쓸게요</button>
+        <button class="btn btn-ghost" id="hintNo" type="button">아직이요</button>
+      </div>
+      <p class="hint-box" id="hintText" hidden></p>
+    </div>
+  </section>
+
+  <!-- WIN -->
+  <section id="screen-win" hidden style="display:flex;flex-direction:column;gap:16px">
+    <div class="panel unlocked">
+      <p class="eyebrow">비밀 금고가 열렸습니다</p>
+      <h1 style="color:var(--brass)">탈출 성공!</h1>
+      <p class="team-tag" id="winTeam"></p>
+      <p class="timer" id="winTime"></p>
+      <p class="muted">미션 1을 시작해서 금고를 열기까지 걸린 시간</p>
+    </div>
+    <div class="panel">
+      <p style="font-weight:700">비밀번호 속에 숨어 있던 식</p>
+      <div class="recap" id="recap"></div>
+      <p class="muted">네 개의 비밀번호 모두 a² + b² = c² 로 만들어졌어요.</p>
+    </div>
+    <div class="panel" style="border-color:var(--brass)">
+      <p class="eyebrow">보너스 미션</p>
+      <h2>정사각형이 아니어도 될까?</h2>
+      <p>선생님께 삼각형, 육각형, 팔각형 피타고라스 퍼즐을 받아 맞춰 보세요.</p>
+      <ol class="steps">
+        <li>직각삼각형의 세 변 위에 정사각형 대신 다른 도형이 붙어 있어요. 작은 두 도형의 조각으로 큰 도형을 채울 수 있나요?</li>
+        <li>세 도형은 서로 닮음이에요. 닮음비가 a : b : c 이면 넓이의 비는 얼마일까요?</li>
+        <li>그렇다면 어떤 닮은 도형을 붙여도 성립하는 이유를 모둠에서 한 문장으로 말해 보세요.</li>
+      </ol>
+    </div>
+  </section>
+
+  <div class="foot">
+    <button type="button" id="resetBtn">처음부터 다시</button>
+    <span id="resetConfirm" hidden style="display:inline-flex;gap:8px;align-items:center">
+      <span class="muted">진행 기록이 지워져요.</span>
+      <button type="button" id="resetYes">지우고 처음으로</button>
+      <button type="button" id="resetNo">취소</button>
+    </span>
+  </div>
+</main>
+
+
+<script>
+// ---------- mission data ----------
+const SALT='pyth-vault-salt-2026';
+const cyrb=(str,seed=0)=>{let h1=0xdeadbeef^seed,h2=0x41c6ce57^seed;for(let i=0,ch;i<str.length;i++){ch=str.charCodeAt(i);h1=Math.imul(h1^ch,2654435761);h2=Math.imul(h2^ch,1597334677);}h1=Math.imul(h1^(h1>>>16),2246822507)^Math.imul(h2^(h2>>>13),3266489909);h2=Math.imul(h2^(h2>>>16),2246822507)^Math.imul(h1^(h1>>>13),3266489909);return (4294967296*(2097151&h2)+(h1>>>0)).toString(36);};
+const stream=(key,n)=>{const out=[];let i=0;while(out.length<n){const s=cyrb(key+SALT+':'+(i++),7);for(const c of s)out.push(c.charCodeAt(0));}return out;};
+function openBox(b64,key){try{const bin=atob(b64);const k=stream(key,bin.length);const u=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i)^k[i];return JSON.parse(new TextDecoder().decode(u));}catch(e){return {eq:'',why:''};}}
+const MISSIONS=[
+  {label:'미션 1',name:'조각의 방',chip:'퍼즐 1 · 퍼즐 2',min:7,len:3,hash:'1lgpbjqpe78',
+   intro:'퍼즐 1, 2의 조각 종이를 가위로 오리세요. 빗변 위 정사각형 조각을 옮겨 나머지 두 정사각형을 빈틈없이 채웁니다.',
+   steps:['짝 A는 퍼즐 1, 짝 B는 퍼즐 2를 오려서 맞춥니다.','완성하면 손을 들어 선생님께 확인받고 코드 카드를 받으세요.','두 코드 카드의 수를 두 변으로 하는 직각삼각형의 빗변 길이를 구하세요.','비밀번호 = (퍼즐 1 코드)(퍼즐 2 코드)(빗변)'],
+   hint:'가장 큰 조각부터 큰 정사각형의 모서리에 맞춰 보세요. 빗변은 두 코드를 각각 제곱해서 더한 수의 제곱근이에요.',
+   box:'ShAMGE4JVlGu1E9EFgay0ExFFgWhgxVPW0EeF0pIG1MSE1VVURVaVApASg8=',next:'퍼즐 3, 4로 넘어가세요. 미리 잘라 둔 조각이 있으면 바로 맞춰 보세요.'},
+  {label:'미션 2',name:'거울의 방',chip:'퍼즐 3 · 퍼즐 4',min:7,len:5,hash:'63rp115ik3',
+   intro:'이번에는 조각이 더 잘게 나뉘어 있습니다. 직각인 모서리가 어디로 가야 할지 생각하세요.',
+   steps:['짝 A는 퍼즐 3, 짝 B는 퍼즐 4를 오려서 맞춥니다.','완성하면 손을 들어 선생님께 확인받고 코드 카드를 받으세요.','두 수를 두 변으로 하는 직각삼각형의 빗변을 구하세요.','비밀번호 = (퍼즐 3 코드)(퍼즐 4 코드)(빗변)'],
+   hint:'직각인 모서리는 정사각형의 꼭짓점으로 갑니다. 빗변은 두 코드를 각각 제곱해서 더한 수의 제곱근이에요. 그 수는 어떤 수의 제곱일까요?',
+   box:'SUMGCxVVRFiwhVMZQlhMu8FaV0hEV/OHTh5LDgpATVJbBVRCHBUCBkZBURMHRwQVTQ==',next:'퍼즐 5, 6으로 넘어가세요. 이번에는 방향이 바뀝니다.'},
+  {label:'미션 3',name:'움직이는 방',chip:'퍼즐 5 · 퍼즐 6',min:7,len:5,hash:'12o72qu1jm',
+   intro:'방향이 바뀌었습니다. 이번에는 두 정사각형의 조각으로 빗변 위 정사각형을 채웁니다.',
+   steps:['짝 A는 퍼즐 5, 짝 B는 퍼즐 6을 오려서 맞춥니다.','완성하면 손을 들어 선생님께 확인받고 코드 카드를 받으세요.','이번에는 퍼즐 5 코드가 빗변, 퍼즐 6 코드가 한 변의 길이예요. 나머지 한 변의 길이를 구하세요.','비밀번호 = (퍼즐 5 코드)(퍼즐 6 코드)(나머지 한 변)'],
+   hint:'퍼즐 5의 작은 정사각형은 통째로 가운데로 갑니다. 나머지 한 변은 (빗변)² − (한 변)² 의 제곱근이에요.',
+   box:'C0sVQVNLUFz7hREbVAFEsINRCVJYAqqCRB8WRlAeTwhOBAFAFYvmplYABFdPSktRVhlSWEhQqNVDRQ==',next:'퍼즐 7 조각과 퍼즐 7 계산 카드로 넘어가세요. 마지막 금고입니다.'},
+  {label:'최종 미션',name:'비밀 금고',chip:'퍼즐 7 조각 · 퍼즐 7 계산',min:8,len:3,hash:'1abs7giu91t',
+   intro:'마지막 금고에는 장치가 두 개 있습니다. 조각 퍼즐과 계산 문제를 함께 풀어야 열립니다.',
+   steps:['짝 A는 퍼즐 7 조각을 오려서 아래쪽 빈 정사각형을 채웁니다. 완성하면 선생님께 확인받고 코드 카드를 받으세요.','짝 B는 이어 붙은 직각삼각형 그림에서 맨 아래 분홍 삼각형의 빗변부터 구합니다.','구한 길이가 다음 삼각형의 어느 변이 되는지 따라 올라가 맨 위 x 를 구하세요. 더하거나 빼야 하는 길이도 있어요.','비밀번호 = (퍼즐 7 코드)(x 의 값)'],
+   hint:'조각: 같은 색 삼각형 4개는 모양이 같아요. 계산: 분홍 삼각형의 빗변 10이 주황 삼각형 빗변의 일부가 됩니다. 4 + 10 − 1 을 생각해 보세요.',
+   box:'SkMIH0tJUlgMp4BNQhkJ8MJBTREFBq2GRR1YEBwAGwpUVVxDSE8UXAFGDkJVQQ5KCA==',next:''}
+];
+const MS=()=>MISSIONS;
+
+// ---------- state ----------
+const KEY='pyth-vault-v4';
+let S=load();
+function fresh(){return {phase:'start',team:null,stage:0,starts:[],ends:[],hintUsed:false,hintStage:null,attempts:[0,0,0,0]};}
+function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.phase)return s;}catch(e){}return fresh();}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S));}catch(e){}}
+
+const $=id=>document.getElementById(id);
+const lockSvg=open=>open
+  ?'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/></svg>'
+  :'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>';
+const fmt=sec=>{sec=Math.max(0,Math.floor(sec));return String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0');};
+
+// ---------- start screen ----------
+(function(){
+  const box=$('teams');
+  for(let i=1;i<=8;i++){
+    const b=document.createElement('button');b.type='button';b.id='team-'+i;b.textContent=i+'모둠';b.setAttribute('aria-pressed','false');
+    b.addEventListener('click',()=>{S.team=i;save();renderStart();});
+    box.appendChild(b);
+  }
+})();
+function renderStart(){
+  document.querySelectorAll('#teams button').forEach((b,i)=>b.setAttribute('aria-pressed',S.team===i+1?'true':'false'));
+  const sb=$('startBtn');sb.disabled=!S.team;sb.textContent=S.team?S.team+'모둠, 미션 1 시작':'모둠을 고르면 시작할 수 있어요';
+}
+$('startBtn').addEventListener('click',()=>{if(!S.team)return;S.phase='mission';S.stage=0;S.starts[0]=Date.now();save();show();});
+
+// ---------- mission ----------
+let entry='';
+(function(){
+  const pad=$('pad');
+  ['1','2','3','4','5','6','7','8','9','del','0','ok'].forEach(k=>{
+    const b=document.createElement('button');b.type='button';b.id='key-'+k;
+    if(k==='del'){b.textContent='지우기';b.className='fn';b.setAttribute('aria-label','한 칸 지우기');}
+    else if(k==='ok'){b.textContent='확인';b.className='fn';}
+    else b.textContent=k;
+    b.addEventListener('click',()=>press(k));pad.appendChild(b);
+  });
+})();
+function press(k){
+  if(S.phase!=='mission')return;
+  const codeLen=MS()[S.stage].len;
+  $('slots').classList.remove('wrong');
+  if(k==='del'){entry=entry.slice(0,-1);$('feedback').textContent='';}
+  else if(k==='ok'){if(entry.length===codeLen)check();else{$('feedback').className='feedback bad';$('feedback').textContent=codeLen+'자리를 모두 입력하세요.';}}
+  else if(entry.length<codeLen){entry+=k;$('feedback').textContent='';if(entry.length===codeLen){drawSlots();setTimeout(check,180);return;}}
+  drawSlots();
+}
+function drawSlots(){
+  const codeLen=MS()[S.stage].len,el=$('slots');
+  el.innerHTML='';
+  for(let i=0;i<codeLen;i++){const d=document.createElement('div');d.className='slot'+(entry[i]?' filled':'');d.textContent=entry[i]||'';el.appendChild(d);}
+  el.setAttribute('aria-label','입력한 비밀번호 '+(entry.split('').join(' ')||'없음'));
+}
+function check(){
+  const m=MS()[S.stage];
+  if(cyrb(SALT+entry)===m.hash){
+    S.ends[S.stage]=Date.now();
+    S.solved=S.solved||[];S.solved[S.stage]=Object.assign({code:entry},openBox(m.box,entry));
+    if(S.stage===MS().length-1){S.phase='win';save();show();return;}
+    S.phase='unlocked';save();show();
+  }else{
+    S.attempts[S.stage]=(S.attempts[S.stage]||0)+1;save();
+    const sl=$('slots');sl.classList.remove('shake');void sl.offsetWidth;sl.classList.add('shake','wrong');
+    $('feedback').className='feedback bad';$('feedback').textContent='아직 열리지 않아요. 퍼즐과 계산을 다시 확인해 보세요.';
+    entry='';setTimeout(()=>{if(S.phase==='mission'){drawSlots();$('slots').classList.add('wrong');}},450);
+  }
+}
+document.addEventListener('keydown',e=>{
+  if(S.phase!=='mission'||e.target.closest('input'))return;
+  if(/^[0-9]$/.test(e.key))press(e.key);else if(e.key==='Backspace')press('del');else if(e.key==='Enter')press('ok');
+});
+$('nextBtn').addEventListener('click',()=>{S.stage++;S.starts[S.stage]=Date.now();S.phase='mission';save();show();});
+
+// hint
+$('hintBtn').addEventListener('click',()=>{if(S.hintUsed)return;$('hintConfirm').hidden=false;$('hintBtn').hidden=true;});
+$('hintNo').addEventListener('click',()=>{$('hintConfirm').hidden=true;$('hintBtn').hidden=false;});
+$('hintYes').addEventListener('click',()=>{S.hintUsed=true;S.hintStage=S.stage;save();renderHint();});
+function renderHint(){
+  $('hintConfirm').hidden=true;
+  const here=S.hintUsed&&S.hintStage===S.stage;
+  $('hintBtn').hidden=S.hintUsed;
+  $('hintText').hidden=!here;
+  if(here)$('hintText').textContent='힌트 · '+MS()[S.stage].hint;
+  $('hintNote').textContent=S.hintUsed?(here?'':'힌트 카드는 '+MS()[S.hintStage].label+'에서 이미 썼어요.'):'모둠 전체에서 한 번만 쓸 수 있어요';
+  $('hintNote').hidden=S.hintUsed&&here;
+}
+
+function renderMission(){
+  const m=MS()[S.stage];
+  $('teamTag').textContent=S.team+'모둠';
+  $('locks').innerHTML=MS().map((x,i)=>{const done=i<S.stage||(i===S.stage&&S.phase==='unlocked');const cls='lock'+(done?' done':i===S.stage?' now':'');return `<span class="${cls}" title="${x.label}" aria-label="${x.label} ${done?'열림':'잠김'}">${lockSvg(done)}</span>`;}).join('');
+  $('mEyebrow').textContent=m.label;$('mTitle').textContent=m.name;$('mChip').textContent=m.chip;$('mIntro').textContent=m.intro;
+  $('mSteps').innerHTML=m.steps.map(s=>`<li>${s}</li>`).join('');
+  $('codeLabel').textContent='비밀번호 '+m.len+'자리';
+  const unlocked=S.phase==='unlocked';
+  $('codePanel').hidden=unlocked;$('unlockPanel').hidden=!unlocked;
+  if(unlocked){const sv=(S.solved||[])[S.stage]||{};$('uEq').textContent=sv.eq||'';$('uWhy').textContent=sv.why||'';$('uNext').textContent=m.next;$('nextBtn').textContent=S.stage===MS().length-2?'최종 미션 시작':'다음 미션 시작';}
+  $('hintPanel').hidden=unlocked;
+  entry='';$('feedback').textContent='';$('slots').classList.remove('wrong');drawSlots();
+  renderHint();
+  tick();
+}
+function tick(){
+  if(S.phase!=='mission'&&S.phase!=='unlocked')return;
+  const m=MS()[S.stage];
+  const end=S.phase==='unlocked'?S.ends[S.stage]:Date.now();
+  const left=m.min*60-(end-S.starts[S.stage])/1000;
+  const t=$('timer');
+  if(left>=0){t.textContent=fmt(left);t.classList.remove('over');$('overNote').hidden=true;}
+  else{t.textContent='+'+fmt(-left);t.classList.add('over');$('overNote').hidden=S.phase==='unlocked';}
+}
+setInterval(tick,1000);
+
+// win
+function renderWin(){
+  $('winTeam').textContent=S.team+'모둠';
+  $('winTime').textContent=fmt((S.ends[3]-S.starts[0])/1000);
+  $('recap').innerHTML=MS().map((m,i)=>{const sv=(S.solved||[])[i]||{};return `<div><span>${m.label} · ${sv.code||''}</span><b>${sv.eq||''}</b></div>`;}).join('');
+}
+
+// reset
+$('resetBtn').addEventListener('click',()=>{$('resetConfirm').hidden=false;$('resetBtn').hidden=true;});
+$('resetNo').addEventListener('click',()=>{$('resetConfirm').hidden=true;$('resetBtn').hidden=false;});
+$('resetYes').addEventListener('click',()=>{S=fresh();save();$('resetConfirm').hidden=true;$('resetBtn').hidden=false;show();window.scrollTo(0,0);});
+
+function show(){
+  $('screen-start').hidden=S.phase!=='start';
+  $('screen-mission').hidden=!(S.phase==='mission'||S.phase==='unlocked');
+  $('screen-win').hidden=S.phase!=='win';
+  if(S.phase==='start')renderStart();
+  else if(S.phase==='win')renderWin();
+  else renderMission();
+  if(S.phase==='unlocked'||S.phase==='win')window.scrollTo({top:0});
+}
+
+
+show();
+</script>
+
+</body>
+</html>
