@@ -11,7 +11,7 @@ body {
   min-height: 100vh; font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
   color: #37474f; padding: 40px 16px 60px;
 }
-.back-link { position: fixed; top: 18px; left: 18px; z-index: 5; }
+.back-link { position: fixed; top: 18px; left: 18px; z-index: 30; }
 .back-link a {
   display: inline-flex; align-items: center; gap: 5px; padding: 7px 16px;
   background: rgba(255,255,255,.9); border: 1.5px solid #ffcc80; border-radius: 20px;
@@ -19,39 +19,56 @@ body {
 }
 .back-link a:hover { background: #e65100; color: white; border-color: #e65100; }
 .hub-title { font-size: 2.1rem; font-weight: 900; color: #e65100; letter-spacing: 1px; margin: 24px 0 8px; text-align: center; }
-.hub-sub { font-size: .9rem; color: #f57c00; margin-bottom: 18px; text-align: center; opacity: .85; line-height: 1.6; }
-.tree { max-width: 680px; margin: 0 auto; }
+.hub-sub { font-size: .9rem; color: #f57c00; margin-bottom: 26px; text-align: center; opacity: .85; line-height: 1.6; }
 
-.guide { background: rgba(255,255,255,.75); border: 1.5px dashed #ffcc80; border-radius: 16px; padding: 14px 18px; margin-bottom: 22px; font-size: .8rem; line-height: 1.7; color: #6d4c41; }
-.guide b { color: #e65100; }
-.guide .flow { display: flex; flex-wrap: wrap; gap: 6px; margin: 6px 0 8px; }
-.guide .flow span { background: #fff; border: 1px solid #ffe0b2; border-radius: 10px; padding: 2px 10px; font-weight: 700; }
-.guide .legend { display: flex; flex-wrap: wrap; gap: 6px; }
+/* unit toggles: 2–3 per row on wide screens, one column on phones */
+.units { max-width: 820px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 14px; align-items: start; }
+.unit { position: relative; }
+.unit-head {
+  width: 100%; display: flex; align-items: center; gap: 10px; padding: 13px 14px;
+  background: #fff; border: 1.5px solid #ffe0b2; border-left: 6px solid var(--c); border-radius: 14px;
+  font: inherit; color: inherit; text-align: left; cursor: pointer;
+  box-shadow: 0 3px 12px rgba(0,0,0,.05); transition: box-shadow .15s, border-radius .15s;
+}
+.unit-icon { font-size: 1.45rem; flex-shrink: 0; }
+.unit-text { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.unit-text b { font-size: .98rem; font-weight: 900; color: var(--c); line-height: 1.3; }
+.unit-text small { font-size: .72rem; font-weight: 700; color: #90a4ae; margin-top: 2px; }
+.unit-chev { color: #b0bec5; font-size: .85rem; transition: transform .2s; }
 
-.category { margin-bottom: 16px; background: white; border-radius: 18px; box-shadow: 0 4px 18px rgba(0,0,0,.05); overflow: hidden; border: 1.5px solid #ffe0b2; border-left: 6px solid var(--c); }
-.category > summary { list-style: none; cursor: pointer; padding: 16px 20px; display: flex; align-items: center; gap: 12px; font-weight: 900; font-size: 1.08rem; user-select: none; color: var(--c); }
-.category > summary::-webkit-details-marker { display: none; }
-.cat-name { display: flex; flex-direction: column; }
-.cat-name small { font-size: .72rem; font-weight: 600; color: #90a4ae; margin-top: 2px; }
-.chevron { margin-left: 4px; font-size: .8rem; color: #b0bec5; transition: transform .2s; }
-.category[open] > summary .chevron { transform: rotate(90deg); }
-.cat-icon { font-size: 1.5rem; }
-.cat-count { margin-left: auto; font-size: .7rem; font-weight: 700; color: #90a4ae; background: #f5f5f5; padding: 2px 9px; border-radius: 10px; }
-
-.stage { margin: 12px 20px 0 20px; font-size: .76rem; font-weight: 800; color: var(--c); opacity: .85; letter-spacing: .3px; }
-.cat-items { position: relative; padding: 0 20px 8px 30px; }
-.cat-items:last-child { padding-bottom: 16px; }
-.cat-items::before { content: ''; position: absolute; left: 16px; top: 4px; bottom: 22px; width: 1.5px; background: #ffe0b2; }
-.tree-item { position: relative; display: flex; align-items: center; gap: 12px; padding: 11px 14px; margin: 8px 0; text-decoration: none; color: inherit; border-radius: 12px; border: 1.5px solid #eceff1; transition: all .15s; }
-.tree-item::before { content: ''; position: absolute; left: -14px; top: 50%; width: 12px; height: 1.5px; background: #ffcc80; }
-.tree-item:hover { border-color: #ffb74d; background: #fff8e1; transform: translateX(3px); }
-.item-icon { font-size: 1.45rem; flex-shrink: 0; }
-.item-info { flex: 1; min-width: 0; }
-.item-title { font-size: .92rem; font-weight: 800; margin-bottom: 2px; }
-.item-desc { font-size: .74rem; color: #90a4ae; line-height: 1.5; }
-.item-badge { font-size: .66rem; font-weight: 700; padding: 2px 8px; border-radius: 8px; flex-shrink: 0; white-space: nowrap; }
-.item-arrow { font-size: .85rem; color: #cfd8dc; flex-shrink: 0; }
-.tree-item:hover .item-arrow { color: #ff9800; }
+/* dropdown opens downward over the page, below its toggle */
+.drop {
+  position: absolute; left: 0; right: 0; top: calc(100% - 6px); z-index: 20;
+  background: #fff; border: 1.5px solid #ffe0b2; border-left: 6px solid var(--c); border-top: 0;
+  border-radius: 0 0 14px 14px; box-shadow: 0 14px 28px rgba(0,0,0,.12);
+  padding: 10px 10px 10px 12px;
+  opacity: 0; visibility: hidden; transform: translateY(-6px);
+  transition: opacity .16s ease .12s, transform .16s ease .12s, visibility 0s linear .28s;
+}
+.unit.open .drop { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+.unit.open { z-index: 21; }
+.unit.open .unit-head { border-radius: 14px 14px 0 0; box-shadow: none; }
+.unit.open .unit-chev { transform: rotate(180deg); }
+@media (hover: hover) {
+  .unit:hover, .unit:focus-within { z-index: 21; }
+  .unit:hover .drop, .unit:focus-within .drop { opacity: 1; visibility: visible; transform: none; transition-delay: 0s; }
+  .unit:hover .unit-head, .unit:focus-within .unit-head { border-radius: 14px 14px 0 0; box-shadow: none; }
+  .unit:hover .unit-chev, .unit:focus-within .unit-chev { transform: rotate(180deg); }
+}
+.drop-brief { font-size: .74rem; color: #8d6e63; line-height: 1.5; padding: 2px 4px 8px; border-bottom: 1px dashed #ffe0b2; margin-bottom: 6px; }
+.drop ul { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+.mat { display: block; padding: 7px 8px; border-radius: 9px; text-decoration: none; color: inherit; }
+.mat-name { display: flex; align-items: center; gap: 8px; font-size: .86rem; font-weight: 800; line-height: 1.35; }
+.mat-icon { font-size: 1.05rem; flex-shrink: 0; }
+.mat-brief { display: grid; grid-template-rows: 0fr; transition: grid-template-rows .18s ease; }
+.mat-brief > span { overflow: hidden; font-size: .72rem; color: #78909c; line-height: 1.5; padding-left: 27px; }
+.mat:hover, .mat:focus-visible { background: #fff8e1; outline: none; }
+.mat:hover .mat-name, .mat:focus-visible .mat-name { color: var(--c); }
+.mat:hover .mat-brief, .mat:focus-visible .mat-brief { grid-template-rows: 1fr; }
+.mat:hover .mat-brief > span, .mat:focus-visible .mat-brief > span { padding-top: 3px; }
+@media (hover: none) { .mat-brief { grid-template-rows: 1fr; } .mat-brief > span { padding-top: 2px; } }
+.tag { display: inline-block; font-size: .64rem; font-weight: 700; padding: 0 6px; border-radius: 6px; margin-right: 5px; }
+.unit-head:focus-visible { outline: 3px solid #ffb74d; outline-offset: 2px; }
 .t-concept { background: rgba(0,105,92,.12); color: #00695c; }
 .t-activity { background: rgba(230,81,0,.12); color: #e65100; }
 .t-quiz { background: rgba(21,101,192,.12); color: #1565c0; }
@@ -61,7 +78,8 @@ body {
 .t-escape { background: rgba(106,27,154,.12); color: #6a1b9a; }
 .t-game { background: rgba(191,54,12,.12); color: #bf360c; }
 .hint { margin-top: 30px; font-size: .78rem; color: #f0a060; text-align: center; line-height: 1.8; }
-@media (max-width: 520px) { .item-badge { display: none; } .hub-title { font-size: 1.7rem; } }
+@media (prefers-reduced-motion: reduce) { .drop, .mat-brief, .unit-chev { transition: none; } }
+@media (max-width: 520px) { .hub-title { font-size: 1.7rem; } }
 </style>
 </head>
 <body>
@@ -69,259 +87,178 @@ body {
 <div class="back-link"><a href="../index.html">← 게임 목록</a></div>
 
 <div class="hub-title">📐 중2 수학 수업 자료</div>
-<div class="hub-sub">교과서 단원 순서대로, 단원마다 수업 흐름에 맞춰 정리했어요.</div>
+<div class="hub-sub">단원에 마우스를 올리면 자료가 펼쳐져요. 태블릿에서는 눌러서 열어요. · 자료 19개</div>
 
-<div class="tree">
-
-  <div class="guide">
-    <b>단원 안에서는 이렇게 진행해요</b>
-    <div class="flow"><span>① 배우기</span><span>② 확인하기</span><span>③ 다지기</span><span>④ 도전하기</span><span>⑤ 마무리하기</span></div>
-    <b>자료 유형</b>
-    <div class="legend"><span class="item-badge t-concept">개념 탐구</span><span class="item-badge t-activity">활동지</span><span class="item-badge t-quiz">차시 퀴즈</span><span class="item-badge t-review">개념 정리</span><span class="item-badge t-advanced">심화</span><span class="item-badge t-wrap">마무리 활동</span><span class="item-badge t-escape">방탈출</span></div>
+<div class="units">
+  <div class="unit" style="--c:#e65100" id="unit-0">
+    <button class="unit-head" type="button" aria-expanded="false" aria-controls="drop-0">
+      <span class="unit-icon" aria-hidden="true">📈</span>
+      <span class="unit-text"><b>일차함수</b><small>3단원 · 자료 8개</small></span>
+      <span class="unit-chev" aria-hidden="true">▾</span>
+    </button>
+    <div class="drop" id="drop-0">
+      <p class="drop-brief">함수와 일차함수의 그래프, 활용, 연립방정식</p>
+      <ul>
+        <li><a class="mat" href="linear_function.html">
+          <span class="mat-name"><span class="mat-icon" aria-hidden="true">📐</span>일차함수 활용 활동지</span>
+          <span class="mat-brief"><span><span class="tag t-activity">활동지</span>pp.108~110 · 수심과 압력, 빗물통, 양초, 섭씨·화씨로 식 세우고 그래프 그리기</span></span>
+        </a></li>
+        <li><a class="mat" href="function_quiz.html">
+          <span class="mat-name"><span class="mat-icon" aria-hidden="true">⚔️</span>1차시 · 함수, 일차함수, 함숫값</span>
+          <span class="mat-brief"><span><span class="tag t-quiz">차시 퀴즈</span>20문항 · 혼자 풀기 + 모둠 땅따먹기</span></span>
+        </a></li>
+        <li><a class="mat" href="linear_graph_quiz.html">
+          <span class="mat-name"><span class="mat-icon" aria-hidden="true">📈</span>2차시 · x절편, y절편, 기울기</span>
+          <span class="mat-brief"><span><span class="tag t-quiz">차시 퀴즈</span>그래프 기초 개념 20문항 · 혼자 풀기 + 땅따먹기</span></span>
+        </a></li>
+        <li><a class="mat" href="linear_property_quiz.html">
+          <span class="mat-name"><span class="mat-icon" aria-hidden="true">📊</span>3차시 · 그래프의 성질과 활용</span>
+          <span class="mat-brief"><span><span class="tag t-quiz">차시 퀴즈</span>평행·증가·감소, 실생활 적용 20문항</span></span>
+        </a></li>
+        <li><a class="mat" href="linear_system_quiz.html">
+          <span class="mat-name"><span class="mat-icon" aria-hidden="true">🔀</span>4차시 · 일차함수와 연립방정식</span>
+          <span class="mat-brief"><span><span class="tag t-quiz">차시 퀴즈</span>교점과 해의 개수 20문항</span></span>
+        </a></li>
+        <li><a class="mat" href="function_summary.html">
+          <span class="mat-name"><span class="mat-icon" aria-hidden="true">📒</span>함수 핵심 정리</span>
+          <span class="mat-brief"><span><span class="tag t-review">개념 정리</span>함수부터 연립방정식까지 개념 정리 + 연습문제 · 보충이 필요한 학생용</span></span>
+        </a></li>
+        <li><a class="mat" href="function_advanced.html">
+          <span class="mat-name"><span class="mat-icon" aria-hidden="true">🔬</span>함수 심화 탐구</span>
+          <span class="mat-brief"><span><span class="tag t-advanced">심화</span>기본~최고난도 단계별 문제 · 수직선 검사, 치환, 세 직선이 한 점에서 만날 조건</span></span>
+        </a></li>
+        <li><a class="mat" href="linear_activity_slides.html">
+          <span class="mat-name"><span class="mat-icon" aria-hidden="true">✏️</span>선분으로 그림 그리기</span>
+          <span class="mat-brief"><span><span class="tag t-wrap">마무리 활동</span>알지오매스로 일차함수 그래프 10개를 이용해 그림 완성 · 학생 자율 진행 슬라이드</span></span>
+        </a></li>
+      </ul>
+    </div>
   </div>
-
-  <details class="category" style="--c:#e65100" open>
-    <summary>
-      <span class="cat-icon">📈</span>
-      <span class="cat-name">일차함수<small>3단원 · 함수와 일차함수의 그래프, 활용, 연립방정식</small></span>
-      <span class="cat-count">8개</span>
-      <span class="chevron">▶</span>
-    </summary>
-      <div class="stage">① 배우기 · 수업 시간</div>
-      <div class="cat-items">
-        <a class="tree-item" href="linear_function.html">
-          <span class="item-icon">📐</span>
-          <div class="item-info">
-            <div class="item-title">일차함수 활용 활동지</div>
-            <div class="item-desc">pp.108~110 · 수심과 압력, 빗물통, 양초, 섭씨·화씨로 식 세우고 그래프 그리기</div>
-          </div>
-          <span class="item-badge t-activity">활동지</span>
-          <span class="item-arrow">→</span>
-        </a>
-      </div>
-      <div class="stage">② 확인하기 · 차시별 퀴즈</div>
-      <div class="cat-items">
-        <a class="tree-item" href="function_quiz.html">
-          <span class="item-icon">⚔️</span>
-          <div class="item-info">
-            <div class="item-title">1차시 · 함수, 일차함수, 함숫값</div>
-            <div class="item-desc">20문항 · 혼자 풀기 + 모둠 땅따먹기</div>
-          </div>
-          <span class="item-badge t-quiz">차시 퀴즈</span>
-          <span class="item-arrow">→</span>
-        </a>
-        <a class="tree-item" href="linear_graph_quiz.html">
-          <span class="item-icon">📈</span>
-          <div class="item-info">
-            <div class="item-title">2차시 · x절편, y절편, 기울기</div>
-            <div class="item-desc">그래프 기초 개념 20문항 · 혼자 풀기 + 땅따먹기</div>
-          </div>
-          <span class="item-badge t-quiz">차시 퀴즈</span>
-          <span class="item-arrow">→</span>
-        </a>
-        <a class="tree-item" href="linear_property_quiz.html">
-          <span class="item-icon">📊</span>
-          <div class="item-info">
-            <div class="item-title">3차시 · 그래프의 성질과 활용</div>
-            <div class="item-desc">평행·증가·감소, 실생활 적용 20문항</div>
-          </div>
-          <span class="item-badge t-quiz">차시 퀴즈</span>
-          <span class="item-arrow">→</span>
-        </a>
-        <a class="tree-item" href="linear_system_quiz.html">
-          <span class="item-icon">🔀</span>
-          <div class="item-info">
-            <div class="item-title">4차시 · 일차함수와 연립방정식</div>
-            <div class="item-desc">교점과 해의 개수 20문항</div>
-          </div>
-          <span class="item-badge t-quiz">차시 퀴즈</span>
-          <span class="item-arrow">→</span>
-        </a>
-      </div>
-      <div class="stage">③ 다지기 · 복습과 보충</div>
-      <div class="cat-items">
-        <a class="tree-item" href="function_summary.html">
-          <span class="item-icon">📒</span>
-          <div class="item-info">
-            <div class="item-title">함수 핵심 정리</div>
-            <div class="item-desc">함수부터 연립방정식까지 개념 정리 + 연습문제 · 보충이 필요한 학생용</div>
-          </div>
-          <span class="item-badge t-review">개념 정리</span>
-          <span class="item-arrow">→</span>
-        </a>
-      </div>
-      <div class="stage">④ 도전하기 · 심화</div>
-      <div class="cat-items">
-        <a class="tree-item" href="function_advanced.html">
-          <span class="item-icon">🔬</span>
-          <div class="item-info">
-            <div class="item-title">함수 심화 탐구</div>
-            <div class="item-desc">기본~최고난도 단계별 문제 · 수직선 검사, 치환, 세 직선이 한 점에서 만날 조건</div>
-          </div>
-          <span class="item-badge t-advanced">심화</span>
-          <span class="item-arrow">→</span>
-        </a>
-      </div>
-      <div class="stage">⑤ 마무리하기 · 단원 정리 활동</div>
-      <div class="cat-items">
-        <a class="tree-item" href="linear_activity_slides.html">
-          <span class="item-icon">✏️</span>
-          <div class="item-info">
-            <div class="item-title">선분으로 그림 그리기</div>
-            <div class="item-desc">알지오매스로 일차함수 그래프 10개를 이용해 그림 완성 · 학생 자율 진행 슬라이드</div>
-          </div>
-          <span class="item-badge t-wrap">마무리 활동</span>
-          <span class="item-arrow">→</span>
-        </a>
-      </div>
-  </details>
-  <details class="category" style="--c:#00695c" open>
-    <summary>
-      <span class="cat-icon">🔺</span>
-      <span class="cat-name">도형의 성질<small>4단원 · 삼각형의 성질 → 사각형의 성질 (교과서 순서)</small></span>
-      <span class="cat-count">6개</span>
-      <span class="chevron">▶</span>
-    </summary>
-      <div class="stage">① 배우기 · 수업 시간</div>
-      <div class="cat-items">
-        <a class="tree-item" href="isosceles_triangle.html">
-          <span class="item-icon">🔺</span>
-          <div class="item-info">
-            <div class="item-title">이등변삼각형의 성질</div>
-            <div class="item-desc">pp.140~143 · 성질과 조건 탐구 → 증명 → 배우고 익히기</div>
-          </div>
-          <span class="item-badge t-concept">개념 탐구</span>
-          <span class="item-arrow">→</span>
-        </a>
-        <a class="tree-item" href="right_triangle_congruence.html">
-          <span class="item-icon">📐</span>
-          <div class="item-info">
-            <div class="item-title">직각삼각형의 합동 조건</div>
-            <div class="item-desc">pp.144~147 · RHA, RHS 합동을 탐구와 증명으로</div>
-          </div>
-          <span class="item-badge t-concept">개념 탐구</span>
-          <span class="item-arrow">→</span>
-        </a>
-        <a class="tree-item" href="circumcenter.html">
-          <span class="item-icon">⭕</span>
-          <div class="item-info">
-            <div class="item-title">삼각형의 외심</div>
-            <div class="item-desc">pp.148~149 · 외심의 뜻과 성질, 삼각형 모양에 따른 위치</div>
-          </div>
-          <span class="item-badge t-concept">개념 탐구</span>
-          <span class="item-arrow">→</span>
-        </a>
-        <a class="tree-item" href="incenter.html">
-          <span class="item-icon">🔵</span>
-          <div class="item-info">
-            <div class="item-title">삼각형의 내심</div>
-            <div class="item-desc">pp.150~151 · 내심의 뜻과 성질</div>
-          </div>
-          <span class="item-badge t-concept">개념 탐구</span>
-          <span class="item-arrow">→</span>
-        </a>
-        <a class="tree-item" href="parallelogram.html">
-          <span class="item-icon">▱</span>
-          <div class="item-info">
-            <div class="item-title">평행사변형의 성질과 조건</div>
-            <div class="item-desc">pp.158~165 · 대변·대각·대각선의 성질, 평행사변형이 되는 조건</div>
-          </div>
-          <span class="item-badge t-concept">개념 탐구</span>
-          <span class="item-arrow">→</span>
-        </a>
-        <a class="tree-item" href="quadrilaterals.html">
-          <span class="item-icon">🟪</span>
-          <div class="item-info">
-            <div class="item-title">여러 가지 사각형</div>
-            <div class="item-desc">pp.166~176 · 직사각형·마름모·정사각형의 대각선과 사각형 사이의 관계</div>
-          </div>
-          <span class="item-badge t-concept">개념 탐구</span>
-          <span class="item-arrow">→</span>
-        </a>
-      </div>
-  </details>
-  <details class="category" style="--c:#155e6c" open>
-    <summary>
-      <span class="cat-icon">📏</span>
-      <span class="cat-name">도형의 닮음과 피타고라스 정리<small>5단원 · 단원을 마치며 모둠 방탈출로 정리</small></span>
-      <span class="cat-count">3개</span>
-      <span class="chevron">▶</span>
-    </summary>
-      <div class="stage">⑤ 마무리하기 · 단원 정리 활동</div>
-      <div class="cat-items">
-        <a class="tree-item" href="pyramid_escape%28%ED%94%BC%ED%83%80%29.html">
-          <span class="item-icon">🏜️</span>
-          <div class="item-info">
-            <div class="item-title">피라미드 신전 탈출</div>
-            <div class="item-desc">피타고라스 정리 · 숫자를 바꾼 교과서 문제 12개 · 25~30분</div>
-          </div>
-          <span class="item-badge t-escape">방탈출</span>
-          <span class="item-arrow">→</span>
-        </a>
-        <a class="tree-item" href="pythagoras_vault%28%ED%94%BC%ED%83%80%ED%8D%BC%EC%A6%90%29.html">
-          <span class="item-icon">🗝️</span>
-          <div class="item-info">
-            <div class="item-title">피타고라스의 비밀 금고</div>
-            <div class="item-desc">피타고라스 정리 · 종이 퍼즐 7개와 코드 카드로 여는 모둠 방탈출 · 약 30분</div>
-          </div>
-          <span class="item-badge t-escape">방탈출</span>
-          <span class="item-arrow">→</span>
-        </a>
-        <a class="tree-item" href="math_museum_escape%28%EB%8B%AE%EC%9D%8C%ED%94%BC%ED%83%80%29.html">
-          <span class="item-icon">🖼️</span>
-          <div class="item-info">
-            <div class="item-title">한밤의 수학 미술관</div>
-            <div class="item-desc">닮음 + 피타고라스 정리 · 대단원 마무리 수준 12문제 · 25~30분</div>
-          </div>
-          <span class="item-badge t-escape">방탈출</span>
-          <span class="item-arrow">→</span>
-        </a>
-      </div>
-  </details>
-  <details class="category" style="--c:#5a3fb0" open>
-    <summary>
-      <span class="cat-icon">🎲</span>
-      <span class="cat-name">확률<small>6단원 · 경우의 수와 확률</small></span>
-      <span class="cat-count">1개</span>
-      <span class="chevron">▶</span>
-    </summary>
-      <div class="stage">⑤ 마무리하기 · 단원 정리 활동</div>
-      <div class="cat-items">
-        <a class="tree-item" href="starlight_escape%28%ED%99%95%EB%A5%A0%29.html">
-          <span class="item-icon">🎡</span>
-          <div class="item-info">
-            <div class="item-title">별빛랜드 폐장 탈출</div>
-            <div class="item-desc">경우의 수와 확률 기초 문제 12개 · 모둠 방탈출 · 25~30분</div>
-          </div>
-          <span class="item-badge t-escape">방탈출</span>
-          <span class="item-arrow">→</span>
-        </a>
-      </div>
-  </details>
-
-  <details class="category" style="--c:#bf360c" open>
-    <summary>
-      <span class="cat-icon">🃏</span>
-      <span class="cat-name">전 학년 공통 · 용어 익히기<small>단원 시작 전 예습이나 쉬는 시간 복습용</small></span>
-      <span class="cat-count">1개</span>
-      <span class="chevron">▶</span>
-    </summary>
-      <div class="cat-items">
-        <a class="tree-item" href="math_card_game_middle.html">
-          <span class="item-icon">🃏</span>
-          <div class="item-info">
-            <div class="item-title">수학 카드 뒤집기 게임</div>
-            <div class="item-desc">중1~중3 학년별 6개 단원 · 36쌍씩 · 용어와 뜻 짝 맞추기</div>
-          </div>
-          <span class="item-badge t-game">중1~중3</span>
-          <span class="item-arrow">→</span>
-        </a>
-      </div>
-  </details>
-
+  <div class="unit" style="--c:#00695c" id="unit-1">
+    <button class="unit-head" type="button" aria-expanded="false" aria-controls="drop-1">
+      <span class="unit-icon" aria-hidden="true">🔺</span>
+      <span class="unit-text"><b>도형의 성질</b><small>4단원 · 자료 6개</small></span>
+      <span class="unit-chev" aria-hidden="true">▾</span>
+    </button>
+    <div class="drop" id="drop-1">
+      <p class="drop-brief">삼각형의 성질 → 사각형의 성질 (교과서 순서)</p>
+      <ul>
+        <li><a class="mat" href="isosceles_triangle.html">
+          <span class="mat-name"><span class="mat-icon" aria-hidden="true">🔺</span>이등변삼각형의 성질</span>
+          <span class="mat-brief"><span><span class="tag t-concept">개념 탐구</span>pp.140~143 · 성질과 조건 탐구 → 증명 → 배우고 익히기</span></span>
+        </a></li>
+        <li><a class="mat" href="right_triangle_congruence.html">
+          <span class="mat-name"><span class="mat-icon" aria-hidden="true">📐</span>직각삼각형의 합동 조건</span>
+          <span class="mat-brief"><span><span class="tag t-concept">개념 탐구</span>pp.144~147 · RHA, RHS 합동을 탐구와 증명으로</span></span>
+        </a></li>
+        <li><a class="mat" href="circumcenter.html">
+          <span class="mat-name"><span class="mat-icon" aria-hidden="true">⭕</span>삼각형의 외심</span>
+          <span class="mat-brief"><span><span class="tag t-concept">개념 탐구</span>pp.148~149 · 외심의 뜻과 성질, 삼각형 모양에 따른 위치</span></span>
+        </a></li>
+        <li><a class="mat" href="incenter.html">
+          <span class="mat-name"><span class="mat-icon" aria-hidden="true">🔵</span>삼각형의 내심</span>
+          <span class="mat-brief"><span><span class="tag t-concept">개념 탐구</span>pp.150~151 · 내심의 뜻과 성질</span></span>
+        </a></li>
+        <li><a class="mat" href="parallelogram.html">
+          <span class="mat-name"><span class="mat-icon" aria-hidden="true">▱</span>평행사변형의 성질과 조건</span>
+          <span class="mat-brief"><span><span class="tag t-concept">개념 탐구</span>pp.158~165 · 대변·대각·대각선의 성질, 평행사변형이 되는 조건</span></span>
+        </a></li>
+        <li><a class="mat" href="quadrilaterals.html">
+          <span class="mat-name"><span class="mat-icon" aria-hidden="true">🟪</span>여러 가지 사각형</span>
+          <span class="mat-brief"><span><span class="tag t-concept">개념 탐구</span>pp.166~176 · 직사각형·마름모·정사각형의 대각선과 사각형 사이의 관계</span></span>
+        </a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="unit" style="--c:#155e6c" id="unit-2">
+    <button class="unit-head" type="button" aria-expanded="false" aria-controls="drop-2">
+      <span class="unit-icon" aria-hidden="true">📏</span>
+      <span class="unit-text"><b>도형의 닮음과 피타고라스 정리</b><small>5단원 · 자료 3개</small></span>
+      <span class="unit-chev" aria-hidden="true">▾</span>
+    </button>
+    <div class="drop" id="drop-2">
+      <p class="drop-brief">단원을 마치며 모둠 방탈출로 정리</p>
+      <ul>
+        <li><a class="mat" href="pyramid_escape%28%ED%94%BC%ED%83%80%29.html">
+          <span class="mat-name"><span class="mat-icon" aria-hidden="true">🏜️</span>피라미드 신전 탈출</span>
+          <span class="mat-brief"><span><span class="tag t-escape">방탈출</span>피타고라스 정리 · 숫자를 바꾼 교과서 문제 12개 · 25~30분</span></span>
+        </a></li>
+        <li><a class="mat" href="pythagoras_vault%28%ED%94%BC%ED%83%80%ED%8D%BC%EC%A6%90%29.html">
+          <span class="mat-name"><span class="mat-icon" aria-hidden="true">🗝️</span>피타고라스의 비밀 금고</span>
+          <span class="mat-brief"><span><span class="tag t-escape">방탈출</span>피타고라스 정리 · 종이 퍼즐 7개와 코드 카드로 여는 모둠 방탈출 · 약 30분</span></span>
+        </a></li>
+        <li><a class="mat" href="math_museum_escape%28%EB%8B%AE%EC%9D%8C%ED%94%BC%ED%83%80%29.html">
+          <span class="mat-name"><span class="mat-icon" aria-hidden="true">🖼️</span>한밤의 수학 미술관</span>
+          <span class="mat-brief"><span><span class="tag t-escape">방탈출</span>닮음 + 피타고라스 정리 · 대단원 마무리 수준 12문제 · 25~30분</span></span>
+        </a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="unit" style="--c:#5a3fb0" id="unit-3">
+    <button class="unit-head" type="button" aria-expanded="false" aria-controls="drop-3">
+      <span class="unit-icon" aria-hidden="true">🎲</span>
+      <span class="unit-text"><b>확률</b><small>6단원 · 자료 1개</small></span>
+      <span class="unit-chev" aria-hidden="true">▾</span>
+    </button>
+    <div class="drop" id="drop-3">
+      <p class="drop-brief">경우의 수와 확률</p>
+      <ul>
+        <li><a class="mat" href="starlight_escape%28%ED%99%95%EB%A5%A0%29.html">
+          <span class="mat-name"><span class="mat-icon" aria-hidden="true">🎡</span>별빛랜드 폐장 탈출</span>
+          <span class="mat-brief"><span><span class="tag t-escape">방탈출</span>경우의 수와 확률 기초 문제 12개 · 모둠 방탈출 · 25~30분</span></span>
+        </a></li>
+      </ul>
+    </div>
+  </div>
+  <div class="unit" style="--c:#bf360c" id="unit-4">
+    <button class="unit-head" type="button" aria-expanded="false" aria-controls="drop-4">
+      <span class="unit-icon" aria-hidden="true">🃏</span>
+      <span class="unit-text"><b>전 학년 공통 · 용어 익히기</b><small>자료 1개</small></span>
+      <span class="unit-chev" aria-hidden="true">▾</span>
+    </button>
+    <div class="drop" id="drop-4">
+      <p class="drop-brief">단원 시작 전 예습이나 쉬는 시간 복습용</p>
+      <ul>
+        <li><a class="mat" href="math_card_game_middle.html">
+          <span class="mat-name"><span class="mat-icon" aria-hidden="true">🃏</span>수학 카드 뒤집기 게임</span>
+          <span class="mat-brief"><span><span class="tag t-game">중1~중3</span>중1~중3 학년별 6개 단원 · 36쌍씩 · 용어와 뜻 짝 맞추기</span></span>
+        </a></li>
+      </ul>
+    </div>
+  </div>
 </div>
 
 <div class="hint">중학교 2학년 수학 교과서 연계 수업 자료</div>
+
+<script>
+// 터치 기기(마우스 없음)에서는 눌러서 열고 닫아요. 한 번에 한 단원만 열려요.
+(function () {
+  var units = document.querySelectorAll('.unit');
+  var canHover = window.matchMedia('(hover: hover)').matches;
+  function setOpen(u, on) {
+    u.classList.toggle('open', on);
+    u.querySelector('.unit-head').setAttribute('aria-expanded', on ? 'true' : 'false');
+  }
+  units.forEach(function (u) {
+    u.querySelector('.unit-head').addEventListener('click', function () {
+      if (canHover) { return; }
+      var on = !u.classList.contains('open');
+      units.forEach(function (x) { setOpen(x, false); });
+      setOpen(u, on);
+    });
+    if (canHover) {
+      u.addEventListener('mouseenter', function () { u.querySelector('.unit-head').setAttribute('aria-expanded', 'true'); });
+      u.addEventListener('mouseleave', function () { u.querySelector('.unit-head').setAttribute('aria-expanded', 'false'); });
+    }
+  });
+  document.addEventListener('click', function (e) {
+    if (!e.target.closest('.unit')) { units.forEach(function (x) { setOpen(x, false); }); }
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape') { units.forEach(function (x) { setOpen(x, false); }); if (document.activeElement) document.activeElement.blur(); }
+  });
+})();
+</script>
 
 </body>
 </html>
