@@ -77,6 +77,9 @@ body {
 .t-wrap { background: rgba(141,110,99,.15); color: #8d6e63; }
 .t-escape { background: rgba(106,27,154,.12); color: #6a1b9a; }
 .t-game { background: rgba(191,54,12,.12); color: #bf360c; }
+.records { display: flex; justify-content: center; margin: -10px 0 22px; }
+.records a { display: inline-flex; align-items: center; gap: 6px; padding: 8px 18px; background: #fff; border: 1.5px solid #ffcc80; border-radius: 20px; color: #e65100; text-decoration: none; font-size: .86rem; font-weight: 800; box-shadow: 0 3px 10px rgba(0,0,0,.05); }
+.records a:hover { background: #e65100; color: #fff; border-color: #e65100; }
 .hint { margin-top: 30px; font-size: .78rem; color: #f0a060; text-align: center; line-height: 1.8; }
 @media (prefers-reduced-motion: reduce) { .drop, .mat-brief, .unit-chev { transition: none; } }
 @media (max-width: 520px) { .hub-title { font-size: 1.7rem; } }
@@ -87,7 +90,9 @@ body {
 <div class="back-link"><a href="../index.html">← 게임 목록</a></div>
 
 <div class="hub-title">📐 중2 수학 수업 자료</div>
-<div class="hub-sub">단원에 마우스를 올리면 자료가 펼쳐져요. 태블릿에서는 눌러서 열어요. · 자료 19개</div>
+<div class="hub-sub">단원에 마우스를 올리면 자료가 펼쳐져요. 태블릿에서는 눌러서 열어요. · 자료 20개</div>
+
+<div class="records"><a href="lessons/index.html">📸 활동 수업 기록 보기 →</a></div>
 
 <div class="units">
   <div class="unit" style="--c:#e65100" id="unit-0">
@@ -173,12 +178,16 @@ body {
   <div class="unit" style="--c:#155e6c" id="unit-2">
     <button class="unit-head" type="button" aria-expanded="false" aria-controls="drop-2">
       <span class="unit-icon" aria-hidden="true">📏</span>
-      <span class="unit-text"><b>도형의 닮음과 피타고라스 정리</b><small>5단원 · 자료 3개</small></span>
+      <span class="unit-text"><b>도형의 닮음과 피타고라스 정리</b><small>5단원 · 자료 4개</small></span>
       <span class="unit-chev" aria-hidden="true">▾</span>
     </button>
     <div class="drop" id="drop-2">
       <p class="drop-brief">단원을 마치며 모둠 방탈출로 정리</p>
       <ul>
+        <li><a class="mat" href="pythagoras_puzzle_check%28%ED%94%BC%ED%83%80%ED%8D%BC%EC%A6%90%29.html">
+          <span class="mat-name"><span class="mat-icon" aria-hidden="true">🔺</span>피타고라스 퍼즐 확인</span>
+          <span class="mat-brief"><span><span class="tag t-concept">개념 탐구</span>삼각형 모양을 바꿔 가며 퍼즐 2·5·6 조각을 움직여 a² + b² = c² 확인</span></span>
+        </a></li>
         <li><a class="mat" href="pyramid_escape%28%ED%94%BC%ED%83%80%29.html">
           <span class="mat-name"><span class="mat-icon" aria-hidden="true">🏜️</span>피라미드 신전 탈출</span>
           <span class="mat-brief"><span><span class="tag t-escape">방탈출</span>피타고라스 정리 · 숫자를 바꾼 교과서 문제 12개 · 25~30분</span></span>

@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>피타고라스 퍼즐 확인</title>
+<style>
+:root{color-scheme:light}
+*,*::before,*::after{box-sizing:border-box}
+body{margin:0}
+[hidden]{display:none!important}
+</style>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Do+Hyeon&family=IBM+Plex+Mono:wght@500&family=IBM+Plex+Sans+KR:wght@400;500;700&display=swap">
+<style>
+/* Layout: one column worksheet card — header, mode tabs, graph-paper figure, controls, area ledger */
+:root{
+  --bg:#EEF2F7; --surface:#FFFFFF; --ink:#18212E; --muted:#5A6577; --line:#C6CFDB; --grid:#E2E8F0;
+  --accent:#2C56C9; --accent-ink:#FFFFFF; --tri:#FFFFFF;
+  --pa:#E8892A; --pb:#2E9C6F; --pc:#2C56C9;
+  --q0:#E5574A; --q1:#F1C232; --q2:#36A372; --q3:#4A79DB; --q4:#9861C8;
+  --ok:#1E8A55;
+  --f-display:"Do Hyeon","IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  --f-body:"IBM Plex Sans KR","Apple SD Gothic Neo","Malgun Gothic",system-ui,sans-serif;
+  --f-num:"IBM Plex Mono",ui-monospace,Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0F141B; --surface:#171E28; --ink:#E6EBF2; --muted:#98A3B5; --line:#344052; --grid:#1D2633;
+  --accent:#7D9CF4; --accent-ink:#0F141B; --tri:#222B37;
+  --pa:#F0A04A; --pb:#46B887; --pc:#7D9CF4;
+  --q0:#EE6B5E; --q1:#F3CC4E; --q2:#4DB884; --q3:#6E95EA; --q4:#AE80DA; --ok:#5AD08F;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0F141B; --surface:#171E28; --ink:#E6EBF2; --muted:#98A3B5; --line:#344052; --grid:#1D2633;
+  --accent:#7D9CF4; --accent-ink:#0F141B; --tri:#222B37;
+  --pa:#F0A04A; --pb:#46B887; --pc:#7D9CF4;
+  --q0:#EE6B5E; --q1:#F3CC4E; --q2:#4DB884; --q3:#6E95EA; --q4:#AE80DA; --ok:#5AD08F;
+  color-scheme:dark}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:15px;line-height:1.6}
+.wrap{max-width:760px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:24px 40px;display:flex;flex-direction:column;gap:18px}
+.eyebrow{margin:0;font-size:12px;letter-spacing:.04em;color:var(--muted)}
+h1{margin:2px 0 6px;font-family:var(--f-display);font-weight:400;font-size:clamp(30px,7vw,40px);line-height:1.15;text-wrap:balance}
+.lede{margin:0;color:var(--muted);max-width:60ch}
+.tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:5px}
+.tabs button{font:inherit;border:0;background:transparent;color:var(--ink);border-radius:8px;padding:8px 6px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:0;line-height:1.25}
+.tabs button b{font-family:var(--f-display);font-weight:400;font-size:19px}
+.tabs button span{font-size:12px;color:var(--muted)}
+.tabs button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
+.tabs button[aria-selected="true"] span{color:var(--accent-ink);opacity:.85}
+button:focus-visible,input:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.stage{background:var(--surface);border:1px solid var(--line);border-radius:14px;overflow:hidden}
+.modeinfo{margin:0;padding:14px 16px 0;font-size:14px;color:var(--muted)}
+.modeinfo strong{color:var(--ink)}
+.fig-wrap{background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);background-size:22px 22px;margin:10px 0 0;touch-action:none}
+svg{display:block;width:100%;height:auto;max-width:100%}
+.controls{display:flex;align-items:center;gap:12px;padding:12px 16px;border-top:1px solid var(--line);flex-wrap:wrap}
+.play{font:inherit;font-weight:700;border:0;border-radius:999px;background:var(--accent);color:var(--accent-ink);padding:8px 16px;cursor:pointer;min-width:84px}
+.slider{flex:1 1 180px;min-width:0;display:flex;flex-direction:column;gap:2px}
+.slider input{width:100%;accent-color:var(--accent)}
+.slider label{font-size:12px;color:var(--muted);display:flex;justify-content:space-between;gap:8px}
+#status{font-weight:700;color:var(--ok)}
+.presets{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding:0 16px 14px}
+.presets span{font-size:12px;color:var(--muted);margin-right:2px}
+.presets button{font:inherit;font-size:13px;border:1px solid var(--line);background:transparent;color:var(--ink);border-radius:999px;padding:4px 12px;cursor:pointer}
+.ledger{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.cell{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:0}
+.cell .sw{width:12px;height:12px;border-radius:3px;display:inline-block;margin-right:6px;vertical-align:-1px}
+.cell .k{font-size:12px;color:var(--muted)}
+.cell .v{font-family:var(--f-num);font-size:clamp(18px,4.6vw,24px);font-variant-numeric:tabular-nums}
+.cell .s{font-family:var(--f-num);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.eq{margin:0;text-align:center;font-family:var(--f-num);font-size:clamp(15px,4vw,19px);font-variant-numeric:tabular-nums;background:var(--surface);border:1px dashed var(--line);border-radius:12px;padding:10px}
+.eq em{font-style:normal;color:var(--ok);font-weight:700}
+.notes{font-size:14px;color:var(--muted)}
+.notes h2{font-family:var(--f-display);font-weight:400;font-size:20px;color:var(--ink);margin:0 0 4px}
+.notes ol{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:2px}
+.notes p{margin:8px 0 0}
+svg text{font-family:Georgia,"Times New Roman",serif;font-style:italic;paint-order:stroke;stroke:var(--surface);stroke-width:.18px;fill:var(--ink)}
+svg text.sq{font-style:normal;font-family:var(--f-num);fill:var(--muted)}
+.o-sq{fill:none;stroke:var(--line);stroke-width:.05}
+.o-sqA{fill:var(--pa);fill-opacity:.12;stroke:var(--pa);stroke-width:.05}
+.o-sqB{fill:var(--pb);fill-opacity:.12;stroke:var(--pb);stroke-width:.05}
+.o-sqC{fill:var(--pc);fill-opacity:.07;stroke:var(--pc);stroke-width:.06}
+.dash{fill:none;stroke:var(--muted);stroke-width:.04;stroke-dasharray:.18 .14}
+.guide{fill:none;stroke:var(--accent);stroke-width:.035;stroke-dasharray:.08 .16;opacity:.7}
+.tri{fill:var(--tri);stroke:var(--ink);stroke-width:.07;stroke-linejoin:round}
+.ra{fill:none;stroke:var(--ink);stroke-width:.04}
+.pc{stroke:var(--ink);stroke-width:.045;stroke-linejoin:round;fill-opacity:.92}
+.k0{fill:var(--q0)}.k1{fill:var(--q1)}.k2{fill:var(--q2)}.k3{fill:var(--q3)}.k4{fill:var(--q4)}
+.fa{fill:var(--pa)}.fb{fill:var(--pb)}
+.handle{fill:var(--accent);stroke:var(--surface);stroke-width:.08;cursor:grab}
+.halo{fill:var(--accent);opacity:.18}
+@media (prefers-reduced-motion: reduce){.halo{display:none}}
+@media (max-width:420px){.ledger{grid-template-columns:1fr 1fr 1fr;gap:6px}.cell{padding:8px}}
+</style>
+
+</head>
+<body>
+<main class="wrap">
+  <header>
+    <p class="eyebrow">Ⅵ. 도형의 닮음과 피타고라스 정리 · 5 피타고라스의 정리</p>
+    <h1>피타고라스 퍼즐 확인</h1>
+    <p class="lede">파란 점 C를 반원을 따라 끌어 직각삼각형 모양을 바꾼 뒤, 조각을 움직여 보세요. 모양이 달라져도 조각이 빈틈없이 맞는지 확인할 수 있어요.</p>
+  </header>
+
+  <nav class="tabs" role="tablist" aria-label="퍼즐 선택">
+    <button role="tab" id="tab-p2" data-mode="p2" aria-selected="false"><b>퍼즐 2</b><span>삼각형 4개</span></button>
+    <button role="tab" id="tab-p5" data-mode="p5" aria-selected="true"><b>퍼즐 5</b><span>페리갈 조각</span></button>
+    <button role="tab" id="tab-p6" data-mode="p6" aria-selected="false"><b>퍼즐 6</b><span>밀고 돌리기</span></button>
+  </nav>
+
+  <section class="stage" aria-label="움직이는 그림">
+    <p class="modeinfo" id="modeinfo"></p>
+    <div class="fig-wrap"><svg id="fig" role="img" aria-label="직각삼각형과 세 변 위의 정사각형"></svg></div>
+    <div class="controls">
+      <button class="play" id="play" type="button">▶ 재생</button>
+      <div class="slider">
+        <input type="range" id="t" min="0" max="1000" value="0" aria-label="조각 이동 정도">
+        <label for="t"><span id="stepLabel">처음 모양</span><span id="status" aria-live="polite"></span></label>
+      </div>
+    </div>
+    <div class="presets">
+      <span>삼각형 바꾸기</span>
+      <button type="button" id="pre-345" data-a="6">3 : 4 : 5</button>
+      <button type="button" id="pre-iso" data-a="7.0710678">직각이등변</button>
+      <button type="button" id="pre-51213" data-a="3.8461538">5 : 12 : 13</button>
+    </div>
+  </section>
+
+  <section class="ledger" aria-label="넓이">
+    <div class="cell"><span class="k"><i class="sw" style="background:var(--pa)"></i>BC 위 정사각형</span><span class="v" id="vA">36.00</span><span class="s" id="sA">a = 6.00</span></div>
+    <div class="cell"><span class="k"><i class="sw" style="background:var(--pb)"></i>AC 위 정사각형</span><span class="v" id="vB">64.00</span><span class="s" id="sB">b = 8.00</span></div>
+    <div class="cell"><span class="k"><i class="sw" style="background:var(--pc)"></i>AB 위 정사각형</span><span class="v">100.00</span><span class="s">c = 10.00</span></div>
+  </section>
+  <p class="eq" id="eq"></p>
+
+  <section class="notes">
+    <h2>수업에서 이렇게</h2>
+    <ol>
+      <li>종이 퍼즐을 먼저 맞춘 모둠이 같은 번호의 탭을 열어요.</li>
+      <li>재생으로 조각이 옮겨지는 모습을 보며 종이에서 한 일을 확인해요.</li>
+      <li>C를 끌어 삼각형을 바꾼 뒤 다시 재생하고, “모양이 바뀌어도 맞을까?”를 이야기해요.</li>
+    </ol>
+    <p>퍼즐 1·3·4·7은 학습지의 특정한 삼각형에 맞춰 자른 조각이라, 넓이 칸으로 a² + b² = c²를 확인하는 데 쓰면 좋아요.</p>
+  </section>
+</main>
+
+<script>
+// GEOM-START
+const add=(p,q)=>({x:p.x+q.x,y:p.y+q.y}), sub=(p,q)=>({x:p.x-q.x,y:p.y-q.y}), mul=(p,k)=>({x:p.x*k,y:p.y*k});
+const cross=(p,q)=>p.x*q.y-p.y*q.x, dot=(p,q)=>p.x*q.x+p.y*q.y;
+const rot=(p,t)=>({x:p.x*Math.cos(t)-p.y*Math.sin(t),y:p.x*Math.sin(t)+p.y*Math.cos(t)});
+const ccw=p=>({x:-p.y,y:p.x});
+const lerp=(p,q,t)=>add(p,mul(sub(q,p),t));
+const clamp=(x,a,b)=>Math.min(b,Math.max(a,x));
+const cen=poly=>mul(poly.reduce(add,{x:0,y:0}),1/poly.length);
+const sarea=poly=>{let s=0;for(let i=0;i<poly.length;i++)s+=cross(poly[i],poly[(i+1)%poly.length]);return s/2;};
+function clipHalf(poly,p0,n){const out=[];for(let i=0;i<poly.length;i++){const P=poly[i],Q=poly[(i+1)%poly.length];const dp=dot(sub(P,p0),n),dq=dot(sub(Q,p0),n);if(dp>=0)out.push(P);if((dp>=0)!==(dq>=0)){out.push(lerp(P,Q,dp/(dp-dq)));}}return out;}
+const normAng=a=>{while(a>Math.PI)a-=2*Math.PI;while(a<=-Math.PI)a+=2*Math.PI;return a;};
+function rigidPiece(src,tgt,cls){const a1=Math.atan2(src[1].y-src[0].y,src[1].x-src[0].x),a2=Math.atan2(tgt[1].y-tgt[0].y,tgt[1].x-tgt[0].x);const phi=normAng(a2-a1);return {src,phi,t:sub(tgt[0],rot(src[0],phi)),cls};}
+function transPiece(src,d,cls){return {src,phi:0,t:d,cls};}
+function moveAt(pc,s){const g=cen(pc.src);const g1=add(rot(g,pc.phi),pc.t);return pc.src.map(x=>add(add(rot(sub(x,g),pc.phi*s),g),mul(sub(g1,g),s)));}
+
+function geometry(a,c){
+  const th=Math.asin(a/c), b=c*Math.cos(th);
+  const A={x:0,y:0},B={x:c,y:0},C={x:b*Math.cos(th),y:b*Math.sin(th)};
+  const u=sub(C,A),v=sub(B,C),n1=ccw(u),m=ccw(v);
+  return {c,a,b,A,B,C,u,v,n1,m,D:{x:C.x,y:0},
+    sqB:[A,C,add(C,n1),add(A,n1)], sqA:[C,B,add(B,m),add(C,m)], sqC:[A,B,{x:c,y:-c},{x:0,y:-c}]};
+}
+function perigal(g){
+  const bigIsB=g.b>=g.a, big=bigIsB?g.sqB:g.sqA, small=bigIsB?g.sqA:g.sqB, O=cen(big), pieces=[];
+  [[1,1],[-1,1],[-1,-1],[1,-1]].forEach(([sx,sy],i)=>{
+    const poly=clipHalf(clipHalf(big,O,{x:sx,y:0}),O,{x:0,y:sy});
+    const corner={x:sx>0?0:g.c,y:sy>0?-g.c:0};
+    pieces.push(transPiece(poly,sub(corner,O),'k'+i));
+  });
+  pieces.push(transPiece(small,sub({x:g.c/2,y:-g.c/2},cen(small)),'k4'));
+  return {pieces};
+}
+function bhaskara(g){
+  const c=g.c,Z={x:c/2,y:-c/2},R0={x:g.C.x,y:-g.C.y};
+  const L=Math.max(g.a,g.b),s=Math.min(g.a,g.b),W=L+s;
+  const PL=g.b>=g.a?g.A:g.B, PS=g.b>=g.a?g.B:g.A;
+  const rk=(p,k)=>add(Z,rot(sub(p,Z),-k*Math.PI/2));
+  const srcTris=[0,1,2,3].map(k=>[R0,PL,PS].map(p=>rk(p,k)));
+  const inner=[0,1,2,3].map(k=>rk(R0,k));
+  const mir=cross(sub(PL,R0),sub(PS,R0))>0;
+  const x0=c/2-W/2,y0=-c-0.24*c-L;
+  const F=([x,y])=>({x:x0+(mir?W-x:x),y:y0+y});
+  const tT=[[[0,0],[0,L],[s,0]],[[W,0],[s,0],[W,s]],[[s,L],[s,0],[0,L]],[[s,s],[W,s],[s,0]]].map(t=>t.map(F));
+  const pieces=srcTris.map((src,i)=>rigidPiece(src,tT[i],'k'+i));
+  if(L-s>1e-6){
+    let tq=[[s,s],[L,s],[L,L],[s,L]].map(F);
+    if(Math.sign(sarea(tq))!==Math.sign(sarea(inner)))tq.reverse();
+    let best=null;
+    for(let k=0;k<4;k++){const sh=tq.slice(k).concat(tq.slice(0,k));const p=rigidPiece(inner,sh,'k4');if(!best||Math.abs(p.phi)<Math.abs(best.phi))best=p;}
+    pieces.push(best);
+  }
+  const bigSq=[[0,0],[L,0],[L,L],[0,L]].map(F), smallSq=[[L,0],[W,0],[W,s],[L,s]].map(F);
+  return {pieces,bigSq,smallSq,bigIsB:g.b>=g.a};
+}
+function euclid(g,s){
+  const c=g.c,s1=clamp(s,0,1),s2=clamp(s-1,0,1),s3=clamp(s-2,0,1);
+  let p=lerp(g.u,{x:c,y:0},s1),q=g.n1;
+  p=rot(p,-Math.PI/2*s2);q=rot(q,-Math.PI/2*s2);
+  if(s>2)q=lerp(g.u,{x:g.D.x,y:0},s3);
+  const left=[g.A,add(g.A,p),add(add(g.A,p),q),add(g.A,q)];
+  const CB=sub(g.C,g.B);
+  let p2=lerp(CB,{x:-c,y:0},s1),q2=g.m;
+  p2=rot(p2,Math.PI/2*s2);q2=rot(q2,Math.PI/2*s2);
+  if(s>2)q2=lerp(CB,{x:g.D.x-c,y:0},s3);
+  const right=[g.B,add(g.B,p2),add(add(g.B,p2),q2),add(g.B,q2)];
+  return {left,right};
+}
+// GEOM-END
+
+const C10=10;
+const state={mode:'p5',a:6,s:0};
+const MAXS={p2:1,p5:1,p6:3};
+const INFO={
+  p2:'<strong>학습지 퍼즐 2와 같은 생각.</strong> 빗변 위 정사각형을 직각삼각형 4개와 작은 정사각형으로 나눈 뒤, 그대로 옮겨 a²와 b² 두 정사각형을 붙인 모양을 만들어요.',
+  p5:'<strong>학습지 퍼즐 5.</strong> 큰 정사각형을 중심을 지나며 빗변에 평행·수직인 두 선으로 4조각 내면, 돌리지 않고 옮기기만 해도 작은 정사각형과 함께 c²를 채워요.',
+  p6:'<strong>학습지 퍼즐 6.</strong> C에서 빗변에 수선을 내리면 c²가 두 직사각형으로 나뉘어요. 정사각형을 넓이가 그대로인 채 밀고 돌리면 각 직사각형과 꼭 맞아요.'
+};
+const fig=document.getElementById('fig');
+const P=p=>`${p.x.toFixed(3)},${(-p.y).toFixed(3)}`;
+const poly=(pts,cls,extra='')=>`<polygon class="${cls}" points="${pts.map(P).join(' ')}" ${extra}/>`;
+const txt=(p,t,cls='',size=.62)=>`<text class="${cls}" x="${p.x.toFixed(3)}" y="${(-p.y).toFixed(3)}" font-size="${size}" text-anchor="middle" dominant-baseline="central">${t}</text>`;
+const unit=v=>{const l=Math.hypot(v.x,v.y);return {x:v.x/l,y:v.y/l};};
+const ease=x=>x*x*(3-2*x);
+
+function viewBox(){const c=C10;return state.mode==='p2'?[-0.62*c,-1.3*c,2.24*c,3.58*c]:[-0.62*c,-1.3*c,2.24*c,2.42*c];}
+
+function render(){
+  const g=geometry(state.a,C10),c=C10;
+  const vb=viewBox();fig.setAttribute('viewBox',vb.join(' '));
+  let out='';
+  // Thales semicircle guide
+  out+=`<path class="guide" d="M0,0 A${c/2},${c/2} 0 0 1 ${c},0"/>`;
+  out+=poly(g.sqA,'o-sqA')+poly(g.sqB,'o-sqB')+poly(g.sqC,'o-sqC');
+  out+=txt(cen(g.sqA),'a²','sq',.7)+txt(cen(g.sqB),'b²','sq',.7)+txt(cen(g.sqC),'c²','sq',.8);
+  const S=state.s;
+  if(state.mode==='p5'){
+    const {pieces}=perigal(g);
+    pieces.forEach(pc=>out+=poly(moveAt(pc,S),'pc '+pc.cls));
+  }else if(state.mode==='p2'){
+    const r=bhaskara(g);
+    out+=poly(r.bigSq,'dash')+poly(r.smallSq,'dash');
+    out+=txt(cen(r.bigSq),r.bigIsB?'b²':'a²','sq',.7)+txt(cen(r.smallSq),r.bigIsB?'a²':'b²','sq',.6);
+    const top=Math.max(...r.bigSq.map(p=>p.y));
+    out+=txt({x:c/2,y:top+0.55},'a² + b² 를 붙인 모양','sq',.42);
+    r.pieces.forEach(pc=>out+=poly(moveAt(pc,S),'pc '+pc.cls));
+  }else{
+    out+=`<line class="dash" x1="${g.C.x}" y1="${-g.C.y}" x2="${g.D.x}" y2="${c}"/>`;
+    const e=euclid(g,S);
+    out+=poly(e.left,'pc fb')+poly(e.right,'pc fa');
+  }
+  // triangle on top
+  out+=poly([g.A,g.B,g.C],'tri');
+  const k=.42,ua=unit(sub(g.A,g.C)),ub=unit(sub(g.B,g.C));
+  out+=`<polyline class="ra" points="${[add(g.C,mul(ua,k)),add(g.C,mul(add(ua,ub),k)),add(g.C,mul(ub,k))].map(P).join(' ')}"/>`;
+  // side & vertex labels
+  const inC=cen([g.A,g.B,g.C]);
+  const sideLab=(p,q,t)=>{const mpt=lerp(p,q,.5);const d=unit(sub(inC,mpt));return txt(add(mpt,mul(d,.45)),t,'',.6);};
+  out+=sideLab(g.B,g.C,'a')+sideLab(g.A,g.C,'b')+sideLab(g.A,g.B,'c');
+  out+=txt(add(g.A,{x:-.38,y:.3}),'A','',.62)+txt(add(g.B,{x:.38,y:.3}),'B','',.62);
+  out+=`<circle class="halo" cx="${g.C.x}" cy="${-g.C.y}" r=".75"/><circle class="handle" id="handle" cx="${g.C.x}" cy="${-g.C.y}" r=".34"/>`;
+  out+=txt(add(g.C,mul(unit(sub(g.C,inC)),.85)),'C','',.62);
+  fig.innerHTML=out;
+  updateText(g);
+}
+
+function updateText(g){
+  const a2=g.a*g.a,b2=C10*C10-a2;
+  const neat=x=>Math.abs(x-Math.round(x*100)/100)<1e-9;
+  document.getElementById('vA').textContent=a2.toFixed(2);
+  document.getElementById('vB').textContent=b2.toFixed(2);
+  document.getElementById('sA').textContent='a '+(neat(g.a)?'= ':'≈ ')+g.a.toFixed(2);
+  document.getElementById('sB').textContent='b '+(neat(g.b)?'= ':'≈ ')+g.b.toFixed(2);
+  document.getElementById('eq').innerHTML=`${a2.toFixed(2)} + ${b2.toFixed(2)} = <em>100.00</em> = c²`;
+  const max=MAXS[state.mode],S=state.s,done=S>=max-1e-6;
+  let label;
+  if(state.mode==='p6'){label=S<=0?'처음 모양':S<1?'① 밀기 · 넓이는 그대로':S<2?'② 90° 돌리기':S<3?'③ 다시 밀기 · 넓이는 그대로':'완성';}
+  else label=S<=0?'처음 모양':done?'완성':'조각 옮기는 중';
+  document.getElementById('stepLabel').textContent=label;
+  document.getElementById('status').textContent=done?'✓ 빈틈없이 맞아요':'';
+}
+
+// ---- interaction
+const slider=document.getElementById('t');
+slider.addEventListener('input',()=>{stopPlay();state.s=slider.value/1000*MAXS[state.mode];render();});
+function setS(s){state.s=s;slider.value=Math.round(s/MAXS[state.mode]*1000);render();}
+
+document.querySelectorAll('.tabs button').forEach(btn=>btn.addEventListener('click',()=>{
+  stopPlay();state.mode=btn.dataset.mode;
+  document.querySelectorAll('.tabs button').forEach(b=>b.setAttribute('aria-selected',b===btn?'true':'false'));
+  document.getElementById('modeinfo').innerHTML=INFO[state.mode];
+  setS(0);
+}));
+document.querySelectorAll('.presets button').forEach(btn=>btn.addEventListener('click',()=>{state.a=parseFloat(btn.dataset.a);render();}));
+
+let raf=null;
+const playBtn=document.getElementById('play');
+function stopPlay(){if(raf){cancelAnimationFrame(raf);raf=null;}playBtn.textContent='▶ 재생';}
+playBtn.addEventListener('click',()=>{
+  if(raf){stopPlay();return;}
+  const max=MAXS[state.mode];if(state.s>=max-1e-6)setS(0);
+  const reduce=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const per=reduce?250:1500;const start=performance.now(),from=state.s;
+  playBtn.textContent='❚❚ 멈춤';
+  const step=now=>{
+    const raw=from+(now-start)/per;
+    if(raw>=max){setS(max);stopPlay();return;}
+    const seg=Math.floor(raw);setS(seg+ease(raw-seg));
+    raf=requestAnimationFrame(step);
+  };
+  raf=requestAnimationFrame(step);
+});
+
+// drag C along the semicircle
+let dragging=false;
+function toMath(evt){const pt=fig.createSVGPoint();pt.x=evt.clientX;pt.y=evt.clientY;const q=pt.matrixTransform(fig.getScreenCTM().inverse());return {x:q.x,y:-q.y};}
+function dragTo(evt){
+  const m=toMath(evt);let psi=Math.atan2(Math.max(m.y,0.0001),m.x-C10/2);
+  const Cp={x:C10/2+C10/2*Math.cos(psi),y:C10/2*Math.sin(psi)};
+  let a=Math.hypot(C10-Cp.x,Cp.y);a=clamp(Math.round(a*10)/10,3,9.5);
+  if(a!==state.a){state.a=a;render();}
+}
+fig.addEventListener('pointerdown',e=>{
+  const m=toMath(e),g=geometry(state.a,C10);
+  if(Math.hypot(m.x-g.C.x,m.y-g.C.y)<1.4){dragging=true;fig.setPointerCapture(e.pointerId);e.preventDefault();}
+});
+fig.addEventListener('pointermove',e=>{if(dragging)dragTo(e);});
+const endDrag=()=>{dragging=false;};
+fig.addEventListener('pointerup',endDrag);fig.addEventListener('pointercancel',endDrag);
+
+document.getElementById('modeinfo').innerHTML=INFO[state.mode];
+render();
+</script>
+
+</body>
+</html>

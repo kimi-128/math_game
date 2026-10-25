@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>수업 기록 · 피타고라스의 비밀 금고</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: linear-gradient(160deg, #fff8e1 0%, #fff3e0 50%, #fce4ec 100%);
+  min-height: 100vh; font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+  color: #37474f; padding: 40px 16px 60px; line-height: 1.7;
+}
+.back-link { position: fixed; top: 18px; left: 18px; z-index: 5; }
+.back-link a {
+  display: inline-flex; align-items: center; gap: 5px; padding: 7px 16px;
+  background: rgba(255,255,255,.9); border: 1.5px solid #ffcc80; border-radius: 20px;
+  color: #e65100; text-decoration: none; font-size: .82rem; font-weight: 700;
+}
+.back-link a:hover { background: #e65100; color: #fff; border-color: #e65100; }
+.wrap { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+.head { text-align: center; margin: 24px 0 6px; }
+.eyebrow { font-size: .8rem; font-weight: 800; color: #155e6c; letter-spacing: .3px; }
+h1 { font-size: 1.9rem; font-weight: 900; color: #e65100; margin: 4px 0 6px; }
+.meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.meta span { background: #fff; border: 1px solid #ffe0b2; border-radius: 10px; padding: 2px 10px; font-size: .78rem; font-weight: 700; color: #8d6e63; }
+.card { background: #fff; border: 1.5px solid #ffe0b2; border-left: 6px solid #155e6c; border-radius: 16px; padding: 18px 20px; box-shadow: 0 4px 16px rgba(0,0,0,.04); }
+.card h2 { font-size: 1.05rem; font-weight: 900; color: #155e6c; margin-bottom: 8px; }
+.card p, .card li { font-size: .9rem; }
+.card ul, .card ol { padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
+.flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 8px; margin-top: 4px; }
+.step { border: 1.5px solid #eceff1; border-radius: 12px; padding: 10px 12px; }
+.step b { display: block; font-size: .88rem; color: #37474f; }
+.step small { font-size: .74rem; color: #90a4ae; }
+.step .t { display: block; font-size: .72rem; font-weight: 800; color: #155e6c; }
+.links { display: flex; flex-direction: column; gap: 8px; }
+.links a { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1.5px solid #eceff1; border-radius: 12px; text-decoration: none; color: inherit; }
+.links a:hover { border-color: #ffb74d; background: #fff8e1; }
+.links b { font-size: .9rem; }
+.links small { display: block; font-size: .74rem; color: #90a4ae; }
+.todo { border: 2px dashed #ffcc80; border-radius: 12px; padding: 18px; text-align: center; color: #bf8a5a; font-size: .85rem; background: #fffdf7; }
+.photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+.photos figure { margin: 0; }
+.photos img { width: 100%; border-radius: 10px; display: block; }
+.photos figcaption { font-size: .74rem; color: #90a4ae; margin-top: 4px; }
+.hint { margin-top: 14px; font-size: .78rem; color: #f0a060; text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="back-link"><a href="index.html">← 수업 기록</a></div>
+
+<div class="wrap">
+  <div class="head">
+    <div class="eyebrow">5단원 · 피타고라스의 정리 · 학부모 공개수업</div>
+    <h1>피타고라스의 비밀 금고</h1>
+    <div class="meta"><span>중학교 2학년</span><span>45분</span><span>4인 모둠 · 8모둠</span><span>종이 퍼즐 + 태블릿 방탈출</span></div>
+  </div>
+
+  <section class="card">
+    <h2>학습 목표</h2>
+    <p>피타고라스의 정리를 이해하고 피타고라스 퍼즐을 맞출 수 있다.</p>
+    <ul style="margin-top:6px">
+      <li>조각을 옮겨 a² + b² = c² 임을 넓이로 설명한다.</li>
+      <li>피타고라스의 정리로 직각삼각형의 변의 길이를 구한다.</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>수업 흐름</h2>
+    <div class="flow">
+      <div class="step"><span class="t">5분</span><b>도입</b><small>정리 확인, 스토리와 규칙 안내</small></div>
+      <div class="step"><span class="t">7분</span><b>미션 1 · 조각의 방</b><small>퍼즐 1, 2</small></div>
+      <div class="step"><span class="t">7분</span><b>미션 2 · 거울의 방</b><small>퍼즐 3, 4</small></div>
+      <div class="step"><span class="t">7분</span><b>미션 3 · 움직이는 방</b><small>퍼즐 5, 6 · 방향이 바뀜</small></div>
+      <div class="step"><span class="t">8분</span><b>최종 · 비밀 금고</b><small>퍼즐 7 조각 + 계산</small></div>
+      <div class="step"><span class="t">10분</span><b>정리</b><small>모양이 바뀌어도 성립할까?</small></div>
+    </div>
+    <ul style="margin-top:12px">
+      <li>모둠 안에서 두 명씩 짝을 지어 퍼즐을 하나씩 맡고, 조각은 직접 오려서 맞춰요.</li>
+      <li>퍼즐을 완성하면 선생님께 확인받아 코드 카드를 받고, 피타고라스 정리로 계산한 비밀번호를 태블릿에 입력해요.</li>
+      <li>자료는 처음에 모두 나눠 주고, 모둠마다 자기 속도로 다음 미션으로 넘어가요.</li>
+      <li>빨리 탈출한 모둠은 삼각형·육각형·팔각형 피타고라스 퍼즐로 "정사각형이 아니어도 성립할까?"를 탐구해요.</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>사용한 자료</h2>
+    <div class="links">
+      <a href="../pythagoras_vault(%ED%94%BC%ED%83%80%ED%8D%BC%EC%A6%90).html"><span aria-hidden="true">🗝️</span><span><b>피타고라스의 비밀 금고 (방탈출 게임)</b><small>모둠별 태블릿에서 비밀번호를 입력해 자물쇠를 여는 게임</small></span></a>
+      <a href="../pythagoras_puzzle_check(%ED%94%BC%ED%83%80%ED%8D%BC%EC%A6%90).html"><span aria-hidden="true">🔺</span><span><b>피타고라스 퍼즐 확인</b><small>삼각형 모양을 바꿔 가며 퍼즐 조각이 맞는지 움직여 보는 페이지 · 정리 시간에 사용</small></span></a>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>학생 활동 모습</h2>
+    <div class="todo">수업 후 학생 결과물 사진을 넣을 자리예요.<br>얼굴과 이름이 보이지 않는 사진으로 넣어요.</div>
+  </section>
+
+  <section class="card">
+    <h2>수업 후기</h2>
+    <div class="todo">수업 후 잘된 점, 아쉬운 점, 다음에 바꿀 점을 적을 자리예요.</div>
+  </section>
+
+  <div class="hint">중학교 2학년 수학 활동 수업 기록</div>
+</div>
+
+</body>
+</html>
