@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>수업 기록 · 매쓰 트레일 (닮음과 평행선)</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: linear-gradient(160deg, #fff8e1 0%, #fff3e0 50%, #fce4ec 100%);
+  min-height: 100vh; font-family: 'Malgun Gothic', 'Apple SD Gothic Neo', sans-serif;
+  color: #37474f; padding: 40px 16px 60px; line-height: 1.7;
+}
+.back-link { position: fixed; top: 18px; left: 18px; z-index: 5; }
+.back-link a {
+  display: inline-flex; align-items: center; gap: 5px; padding: 7px 16px;
+  background: rgba(255,255,255,.9); border: 1.5px solid #ffcc80; border-radius: 20px;
+  color: #e65100; text-decoration: none; font-size: .82rem; font-weight: 700;
+}
+.back-link a:hover { background: #e65100; color: #fff; border-color: #e65100; }
+.wrap { max-width: 760px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
+.head { text-align: center; margin: 24px 0 6px; }
+.eyebrow { font-size: .8rem; font-weight: 800; color: #155e6c; letter-spacing: .3px; }
+h1 { font-size: 1.9rem; font-weight: 900; color: #e65100; margin: 4px 0 6px; }
+.meta { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; }
+.meta span { background: #fff; border: 1px solid #ffe0b2; border-radius: 10px; padding: 2px 10px; font-size: .78rem; font-weight: 700; color: #8d6e63; }
+.card { background: #fff; border: 1.5px solid #ffe0b2; border-left: 6px solid #155e6c; border-radius: 16px; padding: 18px 20px; box-shadow: 0 4px 16px rgba(0,0,0,.04); }
+.card h2 { font-size: 1.05rem; font-weight: 900; color: #155e6c; margin-bottom: 8px; }
+.card p, .card li { font-size: .9rem; }
+.card ul, .card ol { padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
+.flow { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 8px; margin-top: 4px; }
+.step { border: 1.5px solid #eceff1; border-radius: 12px; padding: 10px 12px; }
+.step b { display: block; font-size: .88rem; color: #37474f; }
+.step small { font-size: .74rem; color: #90a4ae; }
+.step .t { display: block; font-size: .72rem; font-weight: 800; color: #155e6c; }
+.links { display: flex; flex-direction: column; gap: 8px; }
+.links a { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border: 1.5px solid #eceff1; border-radius: 12px; text-decoration: none; color: inherit; }
+.links a:hover { border-color: #ffb74d; background: #fff8e1; }
+.links b { font-size: .9rem; }
+.links small { display: block; font-size: .74rem; color: #90a4ae; }
+.todo { border: 2px dashed #ffcc80; border-radius: 12px; padding: 18px; text-align: center; color: #bf8a5a; font-size: .85rem; background: #fffdf7; }
+.photos { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; }
+.photos figure { margin: 0; }
+.photos img { width: 100%; border-radius: 10px; display: block; }
+.photos figcaption { font-size: .74rem; color: #90a4ae; margin-top: 4px; }
+.rule { counter-reset: r; list-style: none; padding-left: 0 !important; }
+.rule li { counter-increment: r; position: relative; padding-left: 30px; }
+.rule li::before { content: counter(r); position: absolute; left: 0; top: 2px; width: 22px; height: 22px; border-radius: 50%; background: #155e6c; color: #fff; font-size: .74rem; font-weight: 800; display: grid; place-items: center; }
+.note { font-size: .82rem; color: #78909c; margin-top: 8px; }
+.hint { margin-top: 14px; font-size: .78rem; color: #f0a060; text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="back-link"><a href="index.html">← 수업 기록</a></div>
+
+<div class="wrap">
+  <div class="head">
+    <div class="eyebrow">5단원 · 도형의 닮음 · 문제 풀이 활동</div>
+    <h1>매쓰 트레일 (Maths Trail)</h1>
+    <div class="meta"><span>중학교 2학년</span><span>1인 또는 2인 1조</span><span>문제 카드 16장</span><span>교실 돌아다니며 풀기</span></div>
+  </div>
+
+  <section class="card">
+    <h2>다루는 내용</h2>
+    <ul>
+      <li>삼각형에서 평행선과 선분의 길이의 비</li>
+      <li>닮은 도형의 넓이의 비</li>
+      <li>삼각형의 두 변의 중점을 연결한 선분의 성질</li>
+      <li>삼각형의 무게중심과 넓이</li>
+    </ul>
+  </section>
+
+  <section class="card">
+    <h2>활동 방법</h2>
+    <ol class="rule">
+      <li>벽에 붙은 문제 카드 중 하나를 골라 카드 번호를 기록지의 매쓰 트레일 칸에 적고 문제를 풀어요.</li>
+      <li>구한 답이 "previous answer"로 적힌 카드를 찾아가 그 카드 번호를 적고, 아래에 있는 문제를 풀어요.</li>
+      <li>이 과정을 반복해 16칸을 모두 채우면 처음 고른 카드로 돌아오게 돼요.</li>
+      <li>완성하면 선생님께 확인 도장을 받아요.</li>
+    </ol>
+    <p class="note">16장이 하나의 고리로 이어져 있어서 어느 카드에서 시작해도 돼요. 답을 틀리면 이어지는 카드가 없으니 학생이 스스로 오답을 알아차려요. 어려운 문제는 선생님이나 친구에게 도움을 받아요.</p>
+  </section>
+
+  <section class="card">
+    <h2>수업 준비 자료 (PDF)</h2>
+    <p style="font-size:.82rem;color:#78909c;margin-bottom:8px">누르면 내려받아져요. 문제 카드는 한 장씩 출력해 교실 벽에 흩어 붙이고, 기록지는 학생 수만큼 출력해요.</p>
+    <div class="links">
+      <a href="files/maths_trail/0_%EB%A7%A4%EC%93%B0%ED%8A%B8%EB%A0%88%EC%9D%BC_%EC%A7%84%ED%96%89%EB%B0%A9%EB%B2%95.pdf" download><span aria-hidden="true">🖥️</span><span><b>0. 매쓰 트레일 진행 방법</b><small>활동 시작할 때 화면에 띄우는 안내 1쪽</small></span></a>
+      <a href="files/maths_trail/1_%EB%A7%A4%EC%93%B0%ED%8A%B8%EB%A0%88%EC%9D%BC_%EA%B8%B0%EB%A1%9D%EC%A7%80.pdf" download><span aria-hidden="true">📝</span><span><b>1. 매쓰 트레일 기록지</b><small>카드 번호를 적는 트레일 16칸 + 풀이 칸 16개 · 이름, 확인 칸 포함</small></span></a>
+      <a href="files/maths_trail/2_%EB%A7%A4%EC%93%B0%ED%8A%B8%EB%A0%88%EC%9D%BC_%EB%AC%B8%EC%A0%9C%EC%B9%B4%EB%93%9C16%EC%9E%A5.pdf" download><span aria-hidden="true">🗂️</span><span><b>2. 매쓰 트레일 문제 카드 (16장)</b><small>평행선과 선분의 길이 비, 중점 연결, 무게중심 문제 · 카드마다 앞 문제의 답과 카드 번호</small></span></a>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>학생 활동 모습</h2>
+    <div class="todo">수업 후 학생 기록지 사진을 넣을 자리예요.<br>얼굴과 이름이 보이지 않는 사진으로 넣어요.</div>
+  </section>
+
+  <section class="card">
+    <h2>수업 후기</h2>
+    <div class="todo">수업 후 잘된 점, 아쉬운 점, 다음에 바꿀 점을 적을 자리예요.</div>
+  </section>
+
+  <div class="hint">중학교 2학년 수학 활동 수업 기록</div>
+</div>
+
+</body>
+</html>
